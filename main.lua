@@ -1,53 +1,18 @@
-local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Orion/main/source'))()
-local Window = OrionLib:MakeWindow({Name = "Coffee Hub ☕", HidePremium = false, SaveConfig = true, ConfigFolder = "CoffeeConfig"})
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("Coffee Hub", "Midnight")
 
--- ແທັບຫຼັກ
-local MainTab = Window:MakeTab({
-	Name = "Main Player",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
+local MainTab = Window:NewTab("Main Player")
+local MainSection = MainTab:NewSection("Character Settings")
 
-local Section = MainTab:AddSection({
-	Name = "Character Settings"
-})
+MainSection:NewSlider("WalkSpeed", "Adjust your speed", 250, 16, function(s)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s
+end)
 
--- ປັບຄວາມໄວ (WalkSpeed)
-MainTab:AddSlider({
-	Name = "WalkSpeed (ຄວາມໄວ)",
-	Min = 16,
-	Max = 250,
-	Default = 16,
-	Color = Color3.fromRGB(255, 255, 255),
-	Increment = 1,
-	ValueName = "Speed",
-	Callback = function(Value)
-		game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
-	end    
-})
+MainSection:NewSlider("JumpPower", "Adjust your jump power", 300, 50, function(s)
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = s
+end)
 
--- ປັບຄວາມສູງໃນການໂດດ (JumpPower)
-MainTab:AddSlider({
-	Name = "JumpPower (ຄວາມສູງໂດດ)",
-	Min = 50,
-	Max = 300,
-	Default = 50,
-	Color = Color3.fromRGB(255, 255, 255),
-	Increment = 1,
-	ValueName = "Power",
-	Callback = function(Value)
-		game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
-	end    
-})
-
--- ປຸ່ມຣີເຊັດຄ່າເດີມ
-MainTab:AddButton({
-	Name = "Reset Normal (ຄ່າເດີມ)",
-	Callback = function()
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
-        game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
-  	end
-})
-
-OrionLib:Init()
-
+MainSection:NewButton("Reset Normal", "Reset to default settings", function()
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
+end)
