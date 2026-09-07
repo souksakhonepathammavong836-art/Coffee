@@ -1,0 +1,20 @@
+-- Greedy Growers Auto-Buy Seeds Fix
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local PlayerGui = LP:WaitForChild("PlayerGui")
+
+-- Safely trigger seed purchase button if available in GUI
+task.spawn(function()
+    while task.wait(0.2) do
+        pcall(function()
+            for _, gui in ipairs(PlayerGui:GetDescendants()) do
+                if gui:IsA("TextButton") and (gui.Text:lower():find("ซื้อ") or gui.Text:lower():find("buy")) then
+                    -- Simulates a mouse click on the store button
+                    for _, connection in ipairs(getconnections(gui.MouseButton1Click)) do
+                        connection:Fire()
+                    end
+                end
+            end
+        end)
+    end
+end)
