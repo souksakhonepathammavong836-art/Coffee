@@ -1,0 +1,26 @@
+-- ຕົວຢ່າງສະຄິບ Auto Buy เมັດພັນ (Auto Buy Seed Loop)
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+
+-- ໃຫ້ປັບเปลี่ยน Path ໃຫ້ກົງກັບ Remote ຫຼື ProximityPrompt ຂອງແຄມພິເສດໃນເກມ Greedy Growers
+local autoBuyActive = false
+
+-- ຕົວຢ່າງການໃຊ້ RemoteEvent (ຖ້າแมບໃຊ້ Remotes ໃນການຊື້)
+-- local ReplicatedStorage = game:GetService("ReplicatedStorage")
+-- local buyRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("BuySeed") 
+
+while task.wait(0.5) do
+    if autoBuyActive then
+        pcall(function()
+            -- ວິທີທີ່ 1: ຖ້າຊື້ຜ່ານ RemoteEvent
+            -- buyRemote:FireServer("SeedName") -- ใส่ชื่อเมล็ดที่ต้องการซื้อ
+            
+            -- ວິທີທີ່ 2: ຖ້າຕ້ອງเดินไปกด ProximityPrompt 
+            for _, v in ipairs(workspace:GetDescendants()) do
+                if v:IsA("ProximityPrompt") and v.ActionText:lower():find("ซื้อ") then
+                    fireproximityprompt(v)
+                end
+            end
+        end)
+    end
+end
