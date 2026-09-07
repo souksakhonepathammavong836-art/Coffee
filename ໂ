@@ -1,0 +1,136 @@
+-- [[ GREEDY GROWERS - TIER-BASED SEED BUYER GUI ]] --
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+
+pcall(function()
+    if LP.PlayerGui:FindFirstChild("TierSeedHub") then
+        LP.PlayerGui.TierSeedHub:Destroy()
+    end
+end)
+
+local SG = Instance.new("ScreenGui")
+SG.Name = "TierSeedHub"
+SG.Parent = LP:WaitForChild("PlayerGui")
+SG.ResetOnSpawn = false
+
+-- ຫຼັກ GUI Frame
+local Frame = Instance.new("Frame", SG)
+Frame.Size = UDim2.new(0, 220, 0, 240)
+Frame.Position = UDim2.new(0.5, -110, 0.2, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Frame.BorderSizePixel = 0
+Frame.Active = true
+Frame.Draggable = true
+Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 10)
+
+-- Title
+local Title = Instance.new("TextLabel", Frame)
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.Text = "Select Seed Tier to Buy"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize, Title.Font = 14, Enum.Font.SourceSansBold
+Title.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
+
+-- Table ເກັບສະຖານະການເປີດ-ປິດແຕ່ລະລະດັບ
+local toggles = {
+    Normal = false,
+    Rare = false,
+    Epic = false,
+    Legendary = false
+}
+
+local function createTierButton(name, posY, tierKey)
+    local btn = Instance.new("TextButton", Frame)
+    btn.Size = UDim2.new(0, 200, 0, 35)
+    btn.Position = UDim2.new(0.5, -100, 0, posY)
+    btn.Text = name .. ": OFF"
+    btn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize, btn.Font = 13, Enum.Font.SourceSansBold
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    
+    btn.MouseButton1Click:Connect(function()
+        toggles[tierKey] = not toggles[tierKey]
+        if toggles[tierKey] then
+            btn.Text = name .. ": ON"
+            btn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+        else
+            btn.Text = name .. ": OFF"
+            btn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+        end
+    end)
+end
+
+createTierButton("Normal Seeds", 45, "Normal")
+createTierButton("Rare Seeds", 85, "Rare")
+createTierButton("Epic Seeds", 125, "Epic")
+createTierButton("Legendary Seeds", 165, "Legendary")
+
+-- ປຸ່ມປິດ/ເປີດທັງໝົດ ຫຼື ປຸ່ມຍຫໍ້ GUI
+local CloseBtn = Instance.new("TextButton", Frame)
+CloseBtn.Size = UDim2.new(0, 200, 0, 25)
+CloseBtn.Position = UDim2.new(0.5, -100, 0, 205)
+CloseBtn.Text = "Close Menu"
+CloseBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.TextSize, CloseBtn.Font = 12, Enum.Font.SourceSansBold
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    SG.Enabled = not SG.Enabled
+end)
+
+-- ລະບົບປະມວນຜົນແຍກຕາມລະດັບແທ້
+task.spawn(function()
+    while task.wait(0.1) do
+        pcall(function()
+            for _, v in ipairs(workspace:GetDescendants()) do
+                if v:IsA("ProximityPrompt") then
+                    local path = v:GetFullName():lower()
+                    
+                    -- ຕັດ UI, Shop, Pet, Wheel, Plot ອອກທັງໝົດກ່ອນ
+                    if not path:find("shop") and not path:find("store") and not path:find("wheel") and not path:find("spin") and not path:find("like") and not path:find("reward") and not path:find("claim") and not path:find("plot") and not path:find("pet") and not path:find("gui") and not path:find("decor") then
+                        
+                        -- ກວດສອບຊື່ Model ຫລື Text ດ້ານໃນເພື່ອແຍກລະດັບ
+                        local part = v.Parent
+                        if part and part:IsA("BasePart") then
+                            local model = part.Parent
+                            if model and model:IsA("Model") then
+                                local mName = model.Name:lower()
+                                
+                                -- ລະດັບ Normal
+                                if toggles.Normal and (mName:find("normal") or mName:find("ธรรมดา") or mName:find("basic")) then
+                                    v.MaxActivationDistance = 999999
+                                    v.RequiresLineOfSight = false
+                                    fireproximityprompt(v)
+                                end
+                                
+                                -- ລະດັບ Rare
+                                if toggles.Rare and (mName:find("rare") or mName:find("หายาก")) then
+                                    v.MaxActivationDistance = 999999
+                                    v.RequiresLineOfSight = false
+                                    fireproximityprompt(v)
+                                end
+                                
+                                -- ລະດັບ Epic
+                                if toggles.Epic and (mName:find("epic") or mName:find("อี픽")) then
+                                    v.MaxActivationDistance = 999999
+                                    v.RequiresLineOfSight = false
+                                    fireproximityprompt(v)
+                                end
+                                
+                                -- ລະດັບ Legendary
+                                if toggles.Legendary and (mName:find("legendary") or mName:find("mythic")) then
+                                    v.MaxActivationDistance = 999999
+                                    v.RequiresLineOfSight = false
+                                    fireproximityprompt(v)
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+    end
+end)
