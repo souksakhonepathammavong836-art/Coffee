@@ -1,0 +1,73 @@
+-- [[ GREEDY GROWERS - SMART WHITELIST SEED BUYER ]] --
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+
+pcall(function()
+    if LP.PlayerGui:FindFirstChild("SmartSeedHub") then
+        LP.PlayerGui.SmartSeedHub:Destroy()
+    end
+end)
+
+local SG = Instance.new("ScreenGui")
+SG.Name = "SmartSeedHub"
+SG.Parent = LP:WaitForChild("PlayerGui")
+SG.ResetOnSpawn = false
+
+local Btn = Instance.new("TextButton", SG)
+Btn.Size = UDim2.new(0, 150, 0, 40)
+Btn.Position = UDim2.new(0.5, -75, 0.1, 0)
+Btn.Text = "Auto Seeds: OFF"
+Btn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Btn.TextSize, Btn.Font = 14, Enum.Font.SourceSansBold
+Btn.Active = true
+Btn.Draggable = true
+Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 8)
+
+local autoActive = false
+Btn.MouseButton1Click:Connect(function()
+    autoActive = not autoActive
+    if autoActive then
+        Btn.Text = "Auto Seeds: ON"
+        Btn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        Btn.Text = "Auto Seeds: OFF"
+        Btn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    end
+end)
+
+-- ລະບົບ Whitelist: ກວດຈັບສະເພາະກ່ອງເມັດພັນເທິງສາຍພານ 100%
+task.spawn(function()
+    while task.wait(0.1) do
+        if autoActive then
+            pcall(function()
+                for _, v in ipairs(workspace:GetDescendants()) do
+                    if v:IsA("ProximityPrompt") then
+                        local part = v.Parent
+                        if part and part:IsA("BasePart") then
+                            local isLegitSeed = false
+                            
+                            -- ກວດເບິ່ງວ່າໃນ Object ນັ້ນມີ TextLabel ທີ່ບົ່ງບອກວ່າເປັນເມັດພັນແທ້ຫລືບໍ່
+                            for _, desc in ipairs(part:GetDescendants()) do
+                                if desc:IsA("TextLabel") then
+                                    local txt = desc.Text:lower()
+                                    if txt:find("seed") or txt:find("ເມັດ") or txt:find("ພັນ") or txt:find("ormal") or txt:find("are") or txt:find("pic") then
+                                        isLegitSeed = true
+                                        break
+                                    end
+                                end
+                            end
+                            
+                            -- ຖ້າເປັນກ່ອງເມັດພັນແທ້ ຈຶ່ງຄ່ອຍກົດຊື້ (ຕັດຮ້ານສັດລ້ຽງ, ວົງລໍ້, ພล็อต ອອກທັງໝົດໂດຍອັດຕະໂນມັດ)
+                            if isLegitSeed then
+                                v.MaxActivationDistance = 999999
+                                v.RequiresLineOfSight = false
+                                fireproximityprompt(v)
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
