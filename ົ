@@ -1,0 +1,181 @@
+-- [[ GREEDY GROWERS - MINIMIZABLE TIER SEED BUYER ]] --
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+
+pcall(function()
+    if LP.PlayerGui:FindFirstChild("MinimizableTierHub") then
+        LP.PlayerGui.MinimizableTierHub:Destroy()
+    end
+end)
+
+local SG = Instance.new("ScreenGui")
+SG.Name = "MinimizableTierHub"
+SG.Parent = LP:WaitForChild("PlayerGui")
+SG.ResetOnSpawn = false
+
+-- ຫຼັກ GUI Frame
+local Frame = Instance.new("Frame", SG)
+Frame.Size = UDim2.new(0, 220, 0, 290)
+Frame.Position = UDim2.new(0.5, -110, 0.2, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Frame.BorderSizePixel = 0
+Frame.Active = true
+Frame.Draggable = true
+Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 10)
+
+-- Title
+local Title = Instance.new("TextLabel", Frame)
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.Text = "  Select Tier & Buy"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize, Title.Font = 14, Enum.Font.SourceSansBold
+Title.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
+
+-- Container ສຳລັບເກັບອົງປະກອບພາຍໃນ (ໄວ້ໃຊ້ตอนຫຍໍ້/ຂະຫຍາຍ)
+local Container = Instance.new("Folder", Frame)
+Container.Name = "Elements"
+
+-- Table ເກັບສະຖານະ
+local toggles = {
+    Normal = false,
+    Rare = false,
+    Epic = false,
+    Legendary = false,
+    MasterTrigger = false,
+    Minimized = false
+}
+
+-- ປຸ່ມຫຍໍ້/ຂະຫຍາຍ (- / +)
+local MinBtn = Instance.new("TextButton", Frame)
+MinBtn.Size = UDim2.new(0, 30, 0, 30)
+MinBtn.Position = UDim2.new(1, -33, 0, 2)
+MinBtn.Text = "-"
+MinBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+MinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinBtn.TextSize, MinBtn.Font = 16, Enum.Font.SourceSansBold
+Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 6)
+
+MinBtn.MouseButton1Click:Connect(function()
+    toggles.Minimized = not toggles.Minimized
+    if toggles.Minimized then
+        MinBtn.Text = "+"
+        Frame.Size = UDim2.new(0, 220, 0, 35)
+        for _, obj in ipairs(Frame:GetChildren()) do
+            if obj ~= Title and obj ~= MinBtn then
+                obj.Visible = false
+            end
+        end
+    else
+        MinBtn.Text = "-"
+        Frame.Size = UDim2.new(0, 220, 0, 290)
+        for _, obj in ipairs(Frame:GetChildren()) do
+            obj.Visible = true
+        end
+    end
+end)
+
+local function createTierButton(name, posY, tierKey)
+    local btn = Instance.new("TextButton", Frame)
+    btn.Size = UDim2.new(0, 200, 0, 30)
+    btn.Position = UDim2.new(0.5, -100, 0, posY)
+    btn.Text = name .. ": OFF"
+    btn.BackgroundColor3 = Color3.fromRGB(150, 50, 50)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize, btn.Font = 12, Enum.Font.SourceSansBold
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    
+    btn.MouseButton1Click:Connect(function()
+        toggles[tierKey] = not toggles[tierKey]
+        if toggles[tierKey] then
+            btn.Text = name .. ": ON"
+            btn.BackgroundColor3 = Color3.fromRGB(0, 140, 70)
+        else
+            btn.Text = name .. ": OFF"
+            btn.BackgroundColor3 = Color3.fromRGB(150, 50, 50)
+        end
+    end)
+end
+
+createTierButton("Normal Seeds", 45, "Normal")
+createTierButton("Rare Seeds", 80, "Rare")
+createTierButton("Epic Seeds", 115, "Epic")
+createTierButton("Legendary Seeds", 150, "Legendary")
+
+-- ປຸ່ມກົດຊື້ແຍກຕ່າງຫາກ (Master Trigger Button)
+local BuyBtn = Instance.new("TextButton", Frame)
+BuyBtn.Size = UDim2.new(0, 200, 0, 40)
+BuyBtn.Position = UDim2.new(0.5, -100, 0, 190)
+BuyBtn.Text = "BUY NOW: OFF"
+BuyBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+BuyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+BuyBtn.TextSize, BuyBtn.Font = 14, Enum.Font.SourceSansBold
+Instance.new("UICorner", BuyBtn).CornerRadius = UDim.new(0, 8)
+
+BuyBtn.MouseButton1Click:Connect(function()
+    toggles.MasterTrigger = not toggles.MasterTrigger
+    if toggles.MasterTrigger then
+        BuyBtn.Text = "BUY NOW: ON"
+        BuyBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        BuyBtn.Text = "BUY NOW: OFF"
+        BuyBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    end
+end)
+
+-- ປຸ່ມປິດ GUI ຫຼັກ
+local CloseBtn = Instance.new("TextButton", Frame)
+CloseBtn.Size = UDim2.new(0, 200, 0, 25)
+CloseBtn.Position = UDim2.new(0.5, -100, 0, 245)
+CloseBtn.Text = "Close Menu"
+CloseBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.TextSize, CloseBtn.Font = 12, Enum.Font.SourceSansBold
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    SG.Enabled = not SG.Enabled
+end)
+
+-- ລະບົບປະມວນຜົນການຊື້ເມັດພັນ
+task.spawn(function()
+    while task.wait(0.1) do
+        if toggles.MasterTrigger then
+            pcall(function()
+                for _, v in ipairs(workspace:GetDescendants()) do
+                    if v:IsA("ProximityPrompt") then
+                        local path = v:GetFullName():lower()
+                        
+                        if not path:find("shop") and not path:find("store") and not path:find("wheel") and not path:find("spin") and not path:find("like") and not path:find("reward") and not path:find("claim") and not path:find("plot") and not path:find("pet") and not path:find("gui") and not path:find("decor") then
+                            
+                            local part = v.Parent
+                            if part and part:IsA("BasePart") then
+                                local model = part.Parent
+                                local mName = model and model:IsA("Model") and model.Name:lower() or ""
+                                
+                                if toggles.Normal and (mName:find("normal") or mName:find("basic")) then
+                                    v.MaxActivationDistance = 999999
+                                    v.RequiresLineOfSight = false
+                                    fireproximityprompt(v)
+                                elseif toggles.Rare and mName:find("rare") then
+                                    v.MaxActivationDistance = 999999
+                                    v.RequiresLineOfSight = false
+                                    fireproximityprompt(v)
+                                elseif toggles.Epic and mName:find("epic") then
+                                    v.MaxActivationDistance = 999999
+                                    v.RequiresLineOfSight = false
+                                    fireproximityprompt(v)
+                                elseif toggles.Legendary and (mName:find("legendary") or mName:find("mythic")) then
+                                    v.MaxActivationDistance = 999999
+                                    v.RequiresLineOfSight = false
+                                    fireproximityprompt(v)
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
