@@ -1,0 +1,71 @@
+-- [[ GREEDY GROWERS - MULTI-SELECT RARITY AUTO BUY ]] --
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local PlayerGui = LP:WaitForChild("PlayerGui")
+
+if PlayerGui:FindFirstChild("MultiSelectAutoBuy") then
+    PlayerGui.MultiSelectAutoBuy:Destroy()
+end
+
+local SG = Instance.new("ScreenGui", PlayerGui)
+SG.Name = "MultiSelectAutoBuy"
+
+local Frame = Instance.new("Frame", SG)
+Frame.Size = UDim2.new(0, 260, 0, 260)
+Frame.Position = UDim2.new(0.5, -130, 0.4, -130)
+Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+Frame.Active = true
+Frame.Draggable = true
+Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 10)
+
+local Title = Instance.new("TextLabel", Frame)
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.Text = "🌱 Multi-Select Auto Buy"
+Title.TextColor3 = Color3.fromRGB(0, 255, 150)
+Title.TextSize, Title.Font = 14, Enum.Font.SourceSansBold
+Title.BackgroundTransparency = 1
+
+-- ຕາຕະລາງເກັບສະຖານະການເລືອກ (True/False)
+local selectedRarities = {
+    ["Normal"] = false,
+    ["Rare"] = false,
+    ["Epic"] = false,
+    ["Legendary"] = false
+}
+
+-- ຟັງຊັນສ້າງປຸ່ມ Checkbox ແຕ່ລະລະດັບ
+local function createCheckbox(name, posY, rarityKey)
+    local btn = Instance.new("TextButton", Frame)
+    btn.Size = UDim2.new(0.9, 0, 0, 35)
+    btn.Position = UDim2.new(0.05, 0, 0, posY)
+    btn.Text = "❌ " .. name .. " [OFF]"
+    btn.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize, btn.Font = 13, Enum.Font.SourceSansBold
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    
+    btn.MouseButton1Click:Connect(function()
+        selectedRarities[rarityKey] = not selectedRarities[rarityKey]
+        if selectedRarities[rarityKey] then
+            btn.Text = "✅ " .. name .. " [ON]"
+            btn.BackgroundColor3 = Color3.fromRGB(0, 150, 80)
+        else
+            btn.Text = "❌ " .. name .. " [OFF]"
+            btn.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+        end
+    end)
+    return btn
+end
+
+createCheckbox("Normal (ທຳມະດາ)", 40, "Normal")
+createCheckbox("Rare (ຫາຍາກ)", 80, "Rare")
+createCheckbox("Epic", 120, "Epic")
+createCheckbox("Legendary", 160, "Legendary")
+
+-- ປຸ່ມເປີດ/ປິດ ລະບົບຫຼັກ (Main Toggle)
+local ToggleBtn = Instance.new("TextButton", Frame)
+ToggleBtn.Size = UDim2.new(0.9, 0, 0, 35)
+ToggleBtn.Position = UDim2.new(0.05, 0, 205, 0)
+ToggleBtn.Text = "Master Status: OFF"
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255
