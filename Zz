@@ -1,0 +1,93 @@
+-- [[ GREEDY GROWERS - DUAL SEPARATED BUTTONS SYSTEM ]] --
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+
+pcall(function()
+    if LP.PlayerGui:FindFirstChild("DualSystemHub") then
+        LP.PlayerGui.DualSystemHub:Destroy()
+    end
+end)
+
+local SG = Instance.new("ScreenGui")
+SG.Name = "DualSystemHub"
+SG.Parent = LP:WaitForChild("PlayerGui")
+SG.ResetOnSpawn = false
+
+-- ປຸ່ມທີ 1: ຊື້ເມັດພັນເທິງສາຍພານ
+local BtnBelt = Instance.new("TextButton", SG)
+BtnBelt.Size = UDim2.new(0, 160, 0, 35)
+BtnBelt.Position = UDim2.new(0.5, -170, 0.08, 0)
+BtnBelt.Text = "Belt Seeds: OFF"
+BtnBelt.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+BtnBelt.TextColor3 = Color3.fromRGB(255, 255, 255)
+BtnBelt.TextSize, BtnBelt.Font = 13, Enum.Font.SourceSansBold
+BtnBelt.Active = true
+BtnBelt.Draggable = true
+Instance.new("UICorner", BtnBelt).CornerRadius = UDim.new(0, 6)
+
+-- ປຸ່ມທີ 2: ຊື້ຂອງໃນຮ້ານ (แยกต่างหาก)
+local BtnShop = Instance.new("TextButton", SG)
+BtnShop.Size = UDim2.new(0, 160, 0, 35)
+BtnShop.Position = UDim2.new(0.5, 10, 0.08, 0)
+BtnShop.Text = "Shop Items: OFF"
+BtnShop.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+BtnShop.TextColor3 = Color3.fromRGB(255, 255, 255)
+BtnShop.TextSize, BtnShop.Font = 13, Enum.Font.SourceSansBold
+BtnShop.Active = true
+BtnShop.Draggable = true
+Instance.new("UICorner", BtnShop).CornerRadius = UDim.new(0, 6)
+
+local autoBelt = false
+BtnBelt.MouseButton1Click:Connect(function()
+    autoBelt = not autoBelt
+    if autoBelt then
+        BtnBelt.Text = "Belt Seeds: ON"
+        BtnBelt.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        BtnBelt.Text = "Belt Seeds: OFF"
+        BtnBelt.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    end
+end)
+
+local autoShop = false
+BtnShop.MouseButton1Click:Connect(function()
+    autoShop = not autoShop
+    if autoShop then
+        BtnShop.Text = "Shop Items: ON"
+        BtnShop.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        BtnShop.Text = "Shop Items: OFF"
+        BtnShop.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    end
+end)
+
+-- ລະບົບປະມວນຜົນແຍກການทำงาน 2 ຝ່າຍ
+task.spawn(function()
+    while task.wait(0.1) do
+        pcall(function()
+            for _, v in ipairs(workspace:GetDescendants()) do
+                if v:IsA("ProximityPrompt") then
+                    local path = v:GetFullName():lower()
+                    
+                    -- 1. ລະບົບຊື້ເມັດພັນເທິງສາຍພານ (ເຮັດວຽກເມື່ອເປີດ Belt Seeds: ON)
+                    if autoBelt then
+                        if not path:find("shop") and not path:find("wheel") and not path:find("spin") and not path:find("like") and not path:find("reward") and not path:find("claim") and not path:find("plot") and not path:find("pet") and not path:find("gui") then
+                            v.MaxActivationDistance = 999999
+                            v.RequiresLineOfSight = false
+                            fireproximityprompt(v)
+                        end
+                    end
+                    
+                    -- 2. ລະບົບຊື້ຂອງໃນຮ້ານ (ເຮັດວຽກສະເພາະເມື່ອເປີດ Shop Items: ON)
+                    if autoShop then
+                        if path:find("shop") or path:find("store") then
+                            v.MaxActivationDistance = 999999
+                            v.RequiresLineOfSight = false
+                            fireproximityprompt(v)
+                        end
+                    end
+                end
+            end
+        end)
+    end
+end)
