@@ -1,0 +1,65 @@
+-- [[ GREEDY GROWERS - PURE CONVEYOR SEED ONLY (NO OTHER UI) ]] --
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+
+pcall(function()
+    if LP.PlayerGui:FindFirstChild("PureConveyorHub") then
+        LP.PlayerGui.PureConveyorHub:Destroy()
+    end
+end)
+
+local SG = Instance.new("ScreenGui")
+SG.Name = "PureConveyorHub"
+SG.Parent = LP:WaitForChild("PlayerGui")
+SG.ResetOnSpawn = false
+
+local Btn = Instance.new("TextButton", SG)
+Btn.Size = UDim2.new(0, 140, 0, 35)
+Btn.Position = UDim2.new(0.5, -70, 0.08, 0)
+Btn.Text = "Auto Seeds: OFF"
+Btn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Btn.TextSize, Btn.Font = 13, Enum.Font.SourceSansBold
+Btn.Active = true
+Btn.Draggable = true
+Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 6)
+
+local autoActive = false
+Btn.MouseButton1Click:Connect(function()
+    autoActive = not autoActive
+    if autoActive then
+        Btn.Text = "Auto Seeds: ON"
+        Btn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        Btn.Text = "Auto Seeds: OFF"
+        Btn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    end
+end)
+
+-- ລະບົບຊື້ສະເພາະເມັດພັນເທິງສາຍພານ ຕັດທຸກປຸ່ມອື່ນໆອອກ 100%
+task.spawn(function()
+    while task.wait(0.08) do
+        if autoActive then
+            pcall(function()
+                for _, v in ipairs(workspace:GetDescendants()) do
+                    if v:IsA("ProximityPrompt") then
+                        local parent = v.Parent
+                        if parent and parent:IsA("BasePart") then
+                            local model = parent.Parent
+                            if model and model:IsA("Model") then
+                                local name = model.Name:lower()
+                                
+                                -- ບັງຄັບໃຫ້ກວດຈັບສະເພາະ Model ທີ່ມີຊື່ກ່ຽວຂ້ອງກັບເມັດພັນ ຫຼື ກ່ອງເທິງສາຍພານເທົ່ານັ້ນ
+                                if name:find("seed") or name:find("box") or name:find("normal") or name:find("rare") or name:find("epic") or name:find("legendary") or name:find("free") then
+                                    v.MaxActivationDistance = 999999
+                                    v.RequiresLineOfSight = false
+                                    fireproximityprompt(v)
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
