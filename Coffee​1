@@ -1,0 +1,181 @@
+-- [[ PRO UTILITY HUB - NEW CLEAN VERSION ]] --
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+-- Clear previous GUI if exists
+if CoreGui:FindFirstChild("ProUtilityHub") then
+    CoreGui.ProUtilityHub:Destroy()
+end
+
+local SG = Instance.new("ScreenGui", CoreGui)
+SG.Name = "ProUtilityHub"
+
+-- Main Frame
+local MainFrame = Instance.new("Frame", SG)
+MainFrame.Size = UDim2.new(0, 260, 0, 320)
+MainFrame.Position = UDim2.new(0.5, -130, 0.5, -160)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
+
+local UIStroke = Instance.new("UIStroke", MainFrame)
+UIStroke.Color = Color3.fromRGB(0, 170, 255)
+UIStroke.Thickness = 2
+
+-- Title Label
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Text = "⚡ PRO UTILITY HUB ⚡"
+Title.TextColor3 = Color3.fromRGB(0, 170, 255)
+Title.TextSize = 16
+Title.Font = Enum.Font.SourceSansBold
+Title.BackgroundTransparency = 1
+
+-- Scrolling Content
+local Container = Instance.new("ScrollingFrame", MainFrame)
+Container.Size = UDim2.new(1, -20, 1, -60)
+Container.Position = UDim2.new(0, 10, 0, 50)
+Container.BackgroundTransparency = 1
+Container.CanvasSize = UDim2.new(0, 0, 0, 400)
+Container.ScrollBarThickness = 4
+
+-- Helper function to create buttons
+local function createButton(name, posY, color)
+    local btn = Instance.new("TextButton", Container)
+    btn.Size = UDim2.new(1, 0, 0, 35)
+    btn.Position = UDim2.new(0, 0, 0, posY)
+    btn.Text = name
+    btn.BackgroundColor3 = color
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 13
+    btn.Font = Enum.Font.SourceSansBold
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+    return btn
+end
+
+-- Features
+local speedBtn = createButton("🏃 WalkSpeed: 16 (Normal)", 0, Color3.fromRGB(50, 50, 60))
+local jumpBtn = createButton("🦘 JumpPower: 50 (Normal)", 45, Color3.fromRGB(50, 50, 60))
+local noclipBtn = createButton("🧱 Noclip: OFF", 90, Color3.fromRGB(200, 50, 50))
+local infJumpBtn = createButton("🚀 Infinite Jump: OFF", 135, Color3.fromRGB(200, 50, 50))
+local fullbrightBtn = createButton("💡 Fullbright: OFF", 180, Color3.fromRGB(200, 50, 50))
+local resetBtn = createButton("🔄 Reset Character", 225, Color3.fromRGB(180, 100, 0))
+local closeBtn = createButton("❌ Close Hub", 270, Color3.fromRGB(150, 40, 40))
+
+-- Variables for states
+local speedActive = false
+local jumpActive = false
+local noclipActive = false
+local infJumpActive = false
+local fullbrightActive = false
+
+-- 1. WalkSpeed Toggle
+speedBtn.MouseButton1Click:Connect(function()
+    speedActive = not speedActive
+    if speedActive then
+        speedBtn.Text = "🏃 WalkSpeed: 50 (Fast)"
+        speedBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 100)
+        if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+            LP.Character.Humanoid.WalkSpeed = 50
+        end
+    else
+        speedBtn.Text = "🏃 WalkSpeed: 16 (Normal)"
+        speedBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+        if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+            LP.Character.Humanoid.WalkSpeed = 16
+        end
+    end
+end)
+
+-- 2. JumpPower Toggle
+jumpBtn.MouseButton1Click:Connect(function()
+    jumpActive = not jumpActive
+    if jumpActive then
+        jumpBtn.Text = "🦘 JumpPower: 120 (High)"
+        jumpBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 100)
+        if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+            LP.Character.Humanoid.JumpPower = 120
+        end
+    else
+        jumpBtn.Text = "🦘 JumpPower: 50 (Normal)"
+        jumpBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+        if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+            LP.Character.Humanoid.JumpPower = 50
+        end
+    end
+end)
+
+-- 3. Noclip Toggle
+noclipBtn.MouseButton1Click:Connect(function()
+    noclipActive = not noclipActive
+    if noclipActive then
+        noclipBtn.Text = "🧱 Noclip: ON"
+        noclipBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 100)
+    else
+        noclipBtn.Text = "🧱 Noclip: OFF"
+        noclipBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    end
+end)
+
+game:GetService("RunService").Stepped:Connect(function()
+    if noclipActive and LP.Character then
+        for _, part in ipairs(LP.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = false
+            end
+        end
+    end
+end)
+
+-- 4. Infinite Jump Toggle
+infJumpBtn.MouseButton1Click:Connect(function()
+    infJumpActive = not infJumpActive
+    if infJumpActive then
+        infJumpBtn.Text = "🚀 Infinite Jump: ON"
+        infJumpBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 100)
+    else
+        infJumpBtn.Text = "🚀 Infinite Jump: OFF"
+        infJumpBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    end
+end)
+
+UserInputService.JumpRequest:Connect(function()
+    if infJumpActive and LP.Character and LP.Character:FindFirstChildOfClass("Humanoid") then
+        LP.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
+
+-- 5. Fullbright Toggle
+fullbrightBtn.MouseButton1Click:Connect(function()
+    fullbrightActive = not fullbrightActive
+    local Lighting = game:GetService("Lighting")
+    if fullbrightActive then
+        fullbrightBtn.Text = "💡 Fullbright: ON"
+        fullbrightBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 100)
+        Lighting.Brightness = 2
+        Lighting.ClockTime = 14
+        Lighting.GlobalShadows = false
+    else
+        fullbrightBtn.Text = "💡 Fullbright: OFF"
+        fullbrightBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+        Lighting.Brightness = 1
+        Lighting.ClockTime = 12
+        Lighting.GlobalShadows = true
+    end
+end)
+
+-- 6. Reset Character
+resetBtn.MouseButton1Click:Connect(function()
+    if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+        LP.Character.Humanoid.Health = 0
+    end
+end)
+
+-- 7. Close Hub
+closeBtn.MouseButton1Click:Connect(function()
+    SG:Destroy()
+end)
