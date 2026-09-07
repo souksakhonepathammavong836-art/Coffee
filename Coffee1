@@ -1,0 +1,72 @@
+-- [[ GREEDY GROWERS - BUY SEEDS ONLY (NO SHOP ITEMS) ]] --
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local PlayerGui = LP:WaitForChild("PlayerGui")
+
+if PlayerGui:FindFirstChild("OnlySeedsHub") then
+    PlayerGui.OnlySeedsHub:Destroy()
+end
+
+local SG = Instance.new("ScreenGui")
+SG.Name = "OnlySeedsHub"
+SG.Parent = PlayerGui
+SG.ResetOnSpawn = false
+
+local Btn = Instance.new("TextButton", SG)
+Btn.Size = UDim2.new(0, 200, 0, 50)
+Btn.Position = UDim2.new(0.5, -100, 0.2, 0)
+Btn.Text = "Auto Buy Seeds: OFF"
+Btn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Btn.TextSize, Btn.Font = 15, Enum.Font.SourceSansBold
+Btn.Active = true
+Btn.Draggable = true
+Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 10)
+
+local autoActive = false
+Btn.MouseButton1Click:Connect(function()
+    autoActive = not autoActive
+    if autoActive then
+        Btn.Text = "Auto Buy Seeds: ON"
+        Btn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        Btn.Text = "Auto Buy Seeds: OFF"
+        Btn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    end
+end)
+
+-- ລະບົບກວດສອບຊື້ສະເພາະເມັດພັນເທົ່ານັ້ນ (ກວດຄຳວ່າ "ເມັດ" ຫຼື "Seed" ຢູ່ທາງໃນ)
+task.spawn(function()
+    while task.wait(0.1) do
+        if autoActive then
+            pcall(function()
+                for _, v in ipairs(workspace:GetDescendants()) do
+                    if v:IsA("ProximityPrompt") then
+                        local parentPart = v.Parent
+                        if parentPart and parentPart:IsA("BasePart") then
+                            local isSeed = false
+                            
+                            -- ກວດເບິ່ງວ່າປຸ່ມນີ້ ຫຼື ຊິ້ນສ່ວນນີ້ກ່ຽວຂ້ອງກັບເມັດພັນ (Seeds) ແທ້ ຫຼື ບໍ່
+                            for _, desc in ipairs(parentPart:GetDescendants()) do
+                                if desc:IsA("TextLabel") then
+                                    local txt = desc.Text:lower()
+                                    if txt:find("ເມັດ") or txt:find("seed") then
+                                        isSeed = true
+                                        break
+                                    end
+                                end
+                            end
+                            
+                            -- ຖ້າເປັນເມັດພັນເທິງສາຍພານ ຈຶ່ງทำการກົດຊື້
+                            if isSeed then
+                                v.MaxActivationDistance = 999999
+                                v.RequiresLineOfSight = false
+                                fireproximityprompt(v)
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
