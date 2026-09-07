@@ -1,0 +1,62 @@
+-- [[ GREEDY GROWERS - STRICT BELT SEEDS ONLY (NO SHOPS) ]] --
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+
+pcall(function()
+    if LP.PlayerGui:FindFirstChild("StrictBeltHubV2") then
+        LP.PlayerGui.StrictBeltHubV2:Destroy()
+    end
+end)
+
+local SG = Instance.new("ScreenGui")
+SG.Name = "StrictBeltHubV2"
+SG.Parent = LP:WaitForChild("PlayerGui")
+SG.ResetOnSpawn = false
+
+local Btn = Instance.new("TextButton", SG)
+Btn.Size = UDim2.new(0, 150, 0, 40)
+Btn.Position = UDim2.new(0.5, -75, 0.08, 0)
+Btn.Text = "Belt Seeds Only: OFF"
+Btn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Btn.TextSize, Btn.Font = 14, Enum.Font.SourceSansBold
+Btn.Active = true
+Btn.Draggable = true
+Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 8)
+
+local autoActive = false
+Btn.MouseButton1Click:Connect(function()
+    autoActive = not autoActive
+    if autoActive then
+        Btn.Text = "Belt Seeds Only: ON"
+        Btn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        Btn.Text = "Belt Seeds Only: OFF"
+        Btn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    end
+end)
+
+-- ລະບົບກັ່ນຕອງ: ບລັອກຄຳສັບຮ້ານຄ້າ, ຂອງຕົກແຕ່ງ, ຕູ້ປາ, ແລະ UI ຕ່າງໆທັງໝົດ
+task.spawn(function()
+    while task.wait(0.1) do
+        if autoActive then
+            pcall(function()
+                for _, v in ipairs(workspace:GetDescendants()) do
+                    if v:IsA("ProximityPrompt") then
+                        local path = v:GetFullName():lower()
+                        
+                        -- ຕັດທຸກຢ່າງທີ່ກ່ຽວຂ້ອງກັບ Shop, Store, Decoration, Fish, Pond, Wheel, Like, Plot, Pet ອອກທັງໝົດ
+                        if not path:find("shop") and not path:find("store") and not path:find("decor") and not path:find("fish") and not path:find("pond") and not path:find("wheel") and not path:find("spin") and not path:find("like") and not path:find("reward") and not path:find("claim") and not path:find("plot") and not path:find("pet") and not path:find("gui") then
+                            local part = v.Parent
+                            if part and part:IsA("BasePart") then
+                                v.MaxActivationDistance = 999999
+                                v.RequiresLineOfSight = false
+                                fireproximityprompt(v)
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
