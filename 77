@@ -1,0 +1,33 @@
+-- [[ GREEDY GROWERS - AUTO HARVEST ON LIGHTNING ]] --
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local Workspace = game:GetService("Workspace")
+
+-- แจ้งเตือนว่าเปิดระบบแล้ว
+print("Auto Harvest Lightning Active!")
+
+task.spawn(function()
+   while true do
+      task.wait(0.1)
+      pcall(function()
+         -- ตรวจจับว่ามีสถานะฟ้าผ่า (Lightning Active) หรือไม่
+         local isLightning = false
+         for _, obj in ipairs(Workspace:GetDescendants()) do
+            if obj.Name:lower():find("lightning") or obj.Name:lower():find("storm") then
+               isLightning = true
+               break
+            end
+         end
+
+         -- ຖ້າຟ້າກຳລັງຈະຜ່າ ໃຫ້ວາບໄປເກັບຕົ້ນໄມ້ທັນທີ
+         if isLightning and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            for _, obj in ipairs(Workspace:GetDescendants()) do
+               if (obj.Name:lower():find("tree") or obj.Name:lower():find("fruit") or obj.Name:lower():find("starfruit")) and obj:IsA("BasePart") then
+                  LP.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 3, 0)
+                  task.wait(0.1)
+               end
+            end
+         end
+      end)
+   end
+end)
