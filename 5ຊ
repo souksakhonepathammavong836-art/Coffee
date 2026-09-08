@@ -1,0 +1,139 @@
+-- [[ SPEED HUB X | STEAL AN EGG - MOBILE VIP ]] --
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local LP = game:GetService("Players").LocalPlayer
+local Lighting = game:GetService("Lighting")
+
+local Window = Rayfield:CreateWindow({
+   Name = "Speed Hub X | Steal An Egg",
+   LoadingTitle = "กำลังโหลด Speed Hub X...",
+   LoadingSubtitle = "by Souksakhone",
+   ConfigurationSaving = { Enabled = false },
+   KeySystem = false
+})
+
+-- สร้าง Tabs ให้เหมือนต้นฉบับในรูป
+local HomeTab = Window:CreateTab("🏠 หน้าหลัก (Home)", 4483362458)
+local FarmTab = Window:CreateTab("🌾 ฟาร์ม (Farm)", 4483362458)
+local MiscTab = Window:CreateTab("⚙️ อื่นๆ (Misc)", 4483362458)
+
+---------------------------------------------------
+-- 1. หน้าหลัก (Home Tab)
+---------------------------------------------------
+HomeTab:CreateSection("ยินดีต้อนรับสู่ Speed Hub X VIP")
+HomeTab:CreateParagraph({Title = "สถานะระบบ", Content = "สถานะ: พร้อมใช้งาน\nผู้เล่น: " .. LP.Name})
+
+HomeTab:CreateButton({
+   Name = "⚡ ตั้งค่าความเร็วเดิน (WalkSpeed = 150)",
+   Callback = function()
+      if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+         LP.Character.Humanoid.WalkSpeed = 150
+      end
+   end,
+})
+
+local infJump = true
+HomeTab:CreateToggle({
+   Name = "🦘 กระโดดไม่จำกัด (Infinite Jump)",
+   CurrentValue = true,
+   Callback = function(v) infJump = v end,
+})
+game:GetService("UserInputService").JumpRequest:Connect(function()
+   if infJump and LP.Character and LP.Character:FindFirstChildOfClass("Humanoid") then
+      LP.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+   end
+end)
+
+
+---------------------------------------------------
+-- 2. ฟาร์ม (Farm Tab - ตามในรูปภาพต้นฉบับ)
+---------------------------------------------------
+FarmTab:CreateSection("ระบบฟาร์มอัตโนมัติ")
+
+-- Automation Steal
+local autoSteal = false
+FarmTab:CreateToggle({
+   Name = "Automation Steal (ขโมยอัตโนมัติ)",
+   CurrentValue = false,
+   Callback = function(v) autoSteal = v end,
+})
+
+-- Automation Place Egg
+local autoPlace = false
+FarmTab:CreateToggle({
+   Name = "Automation Place Egg (วางไข่อัตโนมัติ)",
+   CurrentValue = false,
+   Callback = function(v) autoPlace = v end,
+})
+
+-- Automation Hatch & Equip
+local autoHatch = false
+FarmTab:CreateToggle({
+   Name = "Automation Hatch & Equip (ฟักและสวมใส่อัตโนมัติ)",
+   CurrentValue = false,
+   Callback = function(v) autoHatch = v end,
+})
+
+-- The Rift & Abyss Overload (ตามลูกศรชี้ในรูป)
+FarmTab:CreateButton({
+   Name = "🌀 วาบไป The Rift & Abyss Overload",
+   Callback = function()
+      pcall(function()
+         if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            for _, obj in ipairs(workspace:GetDescendants()) do
+               if (obj.Name:lower():find("rift") or obj.Name:lower():find("abyss")) and obj:IsA("BasePart") then
+                  LP.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 5, 0)
+                  break
+               end
+            end
+         end
+      end)
+   end,
+})
+
+-- Auto Teleport Eggs
+local autoEgg = false
+FarmTab:CreateToggle({
+   Name = "🥚 วาบไปเก็บไข่อัตโนมัติ",
+   CurrentValue = false,
+   Callback = function(v)
+      autoEgg = v
+      task.spawn(function()
+         while autoEgg and task.wait(1) do
+            pcall(function()
+               if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+                  for _, obj in ipairs(workspace:GetDescendants()) do
+                     if autoEgg and (obj.Name:lower():find("egg") or obj.Name:lower():find("trex")) and obj:IsA("BasePart") then
+                        LP.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 3, 0)
+                        task.wait(1.5)
+                     end
+                  end
+               end
+            end)
+         end
+      end)
+   end,
+})
+
+
+---------------------------------------------------
+-- 3. อื่นๆ & ภาพ (Misc Tab)
+---------------------------------------------------
+MiscTab:CreateSection("ตั้งค่าการแสดงผลและป้องกัน")
+
+MiscTab:CreateToggle({
+   Name = "💡 Fullbright (เร่งความสว่างแมพ)",
+   CurrentValue = false,
+   Callback = function(v)
+      Lighting.Brightness = v and 2 or 1
+      Lighting.ClockTime = v and 14 or 12
+      Lighting.GlobalShadows = not v
+   end,
+})
+
+MiscTab:CreateButton({
+   Name = "❌ ปิด/ลบเมนูทิ้ง",
+   Callback = function()
+      Rayfield:Destroy()
+   end,
+})
