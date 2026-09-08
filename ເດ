@@ -1,0 +1,57 @@
+-- [[ GREEDY GROWERS - ACCURATE GAME UI WATCHER ]] --
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+
+if CoreGui:FindFirstChild("AccurateGameWatcher") then
+   CoreGui.AccurateGameWatcher:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "AccurateGameWatcher"
+ScreenGui.Parent = CoreGui
+
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Size = UDim2.new(0, 260, 0, 45)
+StatusLabel.Position = UDim2.new(0.5, -130, 0, 15)
+StatusLabel.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
+StatusLabel.TextSize = 15
+StatusLabel.Font = Enum.Font.GothamBold
+StatusLabel.Text = "🛡️ ລະບົບພ້ອມ: ລໍຖ້າຈັງຫວະເກມ..."
+StatusLabel.Parent = ScreenGui
+
+Instance.new("UICorner", StatusLabel).CornerRadius = UDim.new(0, 8)
+local UIStroke = Instance.new("UIStroke", StatusLabel)
+UIStroke.Color = Color3.fromRGB(0, 255, 100)
+UIStroke.Thickness = 2
+
+-- ດຶງຂໍ້ມູນຈາກ PlayerGui ຂອງຕົວເກມໂດຍກົງ (ຖ້າເກມເປີດ PlayerGui ໄວ້)
+task.spawn(function()
+   while true do
+      task.wait(0.5)
+      pcall(function()
+         local playerGui = LP:FindFirstChild("PlayerGui")
+         if playerGui then
+            -- ຊອກຫາ UI ຫຼັກຂອງເກມທີ່ກ່ຽວຂ້ອງກັບ Lightning Bar
+            for _, gui in ipairs(playerGui:GetDescendants()) do
+               if gui:IsA("TextLabel") or gui:IsA("TextButton") then
+                  local txt = gui.Text:lower()
+                  -- ຖ້າພบบົດຶງຂໍ້ຄວາມຈາກ UI ຫຼ่อສີແດງໃນເກມ
+                  if txt:find("lightning") or txt:find("storm") or txt:find("⚡") then
+                     StatusLabel.Text = "🚨 ຟ້າໃກ້ຈະຜ່າແລ້ວ! (ກົດເກັບດ่วน!)"
+                     StatusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+                     UIStroke.Color = Color3.fromRGB(255, 0, 0)
+                     return
+                  end
+               end
+            end
+         end
+         
+         -- ຖ້າບໍ່ພบบັນຫາ ໃຫ້ສະຖານະປົກກະຕິ
+         StatusLabel.Text = "🛡️ ປลอดภัย - ຕົ້ນໄມ້ກຳລັງເຕີບໂຕ"
+         StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
+         UIStroke.Color = Color3.fromRGB(0, 255, 100)
+      end)
+   end
+end)
