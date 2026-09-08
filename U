@@ -1,0 +1,61 @@
+-- [[ COFFEE VIP HUB - RAYFIELD MOBILE VERSION ]] --
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local LP = game:GetService("Players").LocalPlayer
+local Lighting = game:GetService("Lighting")
+
+local Window = Rayfield:CreateWindow({
+   Name = "☕ Coffee VIP Hub | Mobile",
+   LoadingTitle = "กำลังโหลดระบบ Coffee VIP...",
+   LoadingSubtitle = "by Souksakhone",
+   ConfigurationSaving = { Enabled = false },
+   KeySystem = false
+})
+
+local MainTab = Window:CreateTab("🏠 ฟังก์ชันหลัก", 4483362458)
+
+-- 1. Anti-Stun
+local antiStunActive = false
+MainTab:CreateToggle({
+   Name = "🛡️ Anti-Stun (ป้องกันการสตัน)",
+   CurrentValue = false,
+   Callback = function(v)
+      antiStunActive = v
+      task.spawn(function()
+         while antiStunActive and task.wait(0.2) do
+            pcall(function()
+               if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+                  LP.Character.Humanoid.PlatformStand = false
+               end
+            end)
+         end
+      end)
+   end,
+})
+
+-- 2. Auto Teleport Eggs
+local autoEgg = false
+MainTab:CreateToggle({
+   Name = "🥚 Auto Teleport Eggs (วาบเก็บไข่อัตโนมัติ)",
+   CurrentValue = false,
+   Callback = function(v)
+      autoEgg = v
+      task.spawn(function()
+         while autoEgg and task.wait(1) do
+            pcall(function()
+               if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+                  for _, obj in ipairs(workspace:GetDescendants()) do
+                     if autoEgg and (obj.Name:lower():find("egg") or obj.Name:lower():find("trex")) and obj:IsA("BasePart") then
+                        LP.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 3, 0)
+                        task.wait(1.5)
+                     end
+                  end
+               end
+            end)
+         end
+      end)
+   end,
+})
+
+-- 3. Set WalkSpeed to 150
+Main
