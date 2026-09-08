@@ -1,0 +1,210 @@
+-- [[ COFFEE VIP HUB - FIXED TOGGLE BUTTON MOBILE ]] --
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local PlayerGui = LP:WaitForChild("PlayerGui")
+local UserInputService = game:GetService("UserInputService")
+
+-- ລຶບອັນເກົ່າຖ້າມີຄ້າງ
+if PlayerGui:FindFirstChild("CoffeeVIPMobileFixed") then
+    PlayerGui.CoffeeVIPMobileFixed:Destroy()
+end
+
+local SG = Instance.new("ScreenGui")
+SG.Name = "CoffeeVIPMobileFixed"
+SG.ResetOnSpawn = false
+SG.Parent = PlayerGui
+
+-- ໜ້າຕ່າງຫຼັກ (Main Window) - ຕັ້ງຄ່າໃຫ້ເປີດຂຶ້ນມາກ່ອນເລີ່ມຕົ້ນ
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 280, 0, 320)
+MainFrame.Position = UDim2.new(0.5, -140, 0.5, -160)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+MainFrame.Parent = SG
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(255, 170, 0)
+MainStroke.Thickness = 2
+
+-- ຫົວຂໍ້
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -40, 0, 40)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.Text = "☕ COFFEE VIP HUB"
+Title.TextColor3 = Color3.fromRGB(255, 200, 0)
+Title.TextSize, Title.Font = 13, Enum.Font.SourceSansBold
+Title.BackgroundTransparency = 1
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = MainFrame
+
+-- ປຸ່ມປິດໜ້າຕ່າງ (X)
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Size = UDim2.new(0, 28, 0, 28)
+CloseBtn.Position = UDim2.new(1, -34, 0, 6)
+CloseBtn.Text = "X"
+CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.TextSize, CloseBtn.Font = 12, Enum.Font.SourceSansBold
+CloseBtn.Parent = MainFrame
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    SG:Destroy()
+end)
+
+-- ປຸ່ມເປີດ-ປິດ Hub (ແກ້ໄຂໃຫ້ໃຫຍ່ຂຶ້ນ ແລະ ວາງໄວ້ບ່ອນເຫັນຊັດເຈນ)
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Size = UDim2.new(0, 70, 0, 70)
+ToggleBtn.Position = UDim2.new(0, 15, 0, 100) -- ຕຳແໜ່ງດ້ານຊ້າຍເທິງ
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ToggleBtn.Text = "☕ MENU"
+ToggleBtn.TextSize = 13
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.Active = true
+ToggleBtn.Draggable = true
+ToggleBtn.Parent = SG
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
+
+local ToggleStroke = Instance.new("UIStroke", ToggleBtn)
+ToggleStroke.Color = Color3.fromRGB(255, 170, 0)
+ToggleStroke.Thickness = 2
+
+-- ຟັງຊັ່ນກົດເປີດ-ປິດ UI
+local function toggleUI()
+    MainFrame.Visible = not MainFrame.Visible
+end
+
+ToggleBtn.MouseButton1Click:Connect(toggleUI)
+ToggleBtn.TouchTap:Connect(toggleUI)
+
+-- ScrollingFrame + UIListLayout (ຈັດການລຽງປຸ່ມ)
+local Container = Instance.new("ScrollingFrame")
+Container.Size = UDim2.new(1, -16, 1, -55)
+Container.Position = UDim2.new(0, 8, 0, 45)
+Container.BackgroundTransparency = 1
+Container.CanvasSize = UDim2.new(0, 0, 0, 320)
+Container.ScrollBarThickness = 3
+Container.Parent = MainFrame
+
+local UIList = Instance.new("UIListLayout", Container)
+UIList.SortOrder = Enum.SortOrder.LayoutOrder
+UIList.Padding = UDim.new(0, 8)
+
+-- Function ສ້າງປຸ່ມ
+local function createButton(name, defaultColor, callback)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -8, 0, 38)
+    btn.Text = "  " .. name
+    btn.BackgroundColor3 = defaultColor
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize, btn.Font = 12, Enum.Font.SourceSansBold
+    btn.TextXAlignment = Enum.TextXAlignment.Left
+    btn.Parent = Container
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    
+    local active = false
+    local function onClick()
+        active = not active
+        callback(active, btn)
+    end
+    btn.MouseButton1Click:Connect(onClick)
+    btn.TouchTap:Connect(onClick)
+    return btn
+end
+
+-- 1. Anti-Stun
+createButton("🛡️ Anti-Stun: OFF", Color3.fromRGB(0, 140, 70), function(v, btn)
+    btn.Text = v and "  🛡️ Anti-Stun: ON" or "  🛡️ Anti-Stun: OFF"
+    btn.BackgroundColor3 = v and Color3.fromRGB(200, 100, 0) or Color3.fromRGB(0, 140, 70)
+    task.spawn(function()
+        while v and task.wait(0.1) do
+            pcall(function()
+                local hum = LP.Character and LP.Character:FindFirstChild("Humanoid")
+                if hum then
+                    hum.Health = hum.MaxHealth
+                    for _, obj in ipairs(LP.Character:GetChildren()) do
+                        if obj:IsA("StringValue") and (obj.Name:lower():find("stun") or obj.Name:lower():find("ragdoll")) then
+                            obj:Destroy()
+                        end
+                    end
+                end
+            end)
+        end
+    end)
+end)
+
+-- 2. Auto Teleport Eggs
+createButton("🥚 Auto Teleport Eggs: OFF", Color3.fromRGB(0, 140, 70), function(v, btn)
+    btn.Text = v and "  🥚 Auto Teleport Eggs: ON" or "  🥚 Auto Teleport Eggs: OFF"
+    btn.BackgroundColor3 = v and Color3.fromRGB(200, 100, 0) or Color3.fromRGB(0, 140, 70)
+    task.spawn(function()
+        while v and task.wait(1) do
+            pcall(function()
+                if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+                    for _, obj in ipairs(workspace:GetDescendants()) do
+                        if v and (obj.Name:lower():find("egg") or obj.Name:lower():find("trex")) and obj:IsA("BasePart") then
+                            LP.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 3, 0)
+                            task.wait(1.5)
+                        end
+                    end
+                end
+            end)
+        end
+    end)
+end)
+
+-- 3. WalkSpeed Booster
+createButton("⚡ Set WalkSpeed to 150", Color3.fromRGB(40, 100, 160), function(v, btn)
+    if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+        LP.Character.Humanoid.WalkSpeed = 150
+    end
+    btn.Text = "  ⚡ WalkSpeed Set to 150!"
+    task.wait(1)
+    btn.Text = "  ⚡ Set WalkSpeed to 150"
+end)
+
+-- 4. Teleport to The Rift
+createButton("🌀 Teleport to The Rift", Color3.fromRGB(40, 100, 160), function(v, btn)
+    pcall(function()
+        if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            for _, obj in ipairs(workspace:GetDescendants()) do
+                if obj.Name:lower():find("rift") and obj:IsA("BasePart") then
+                    LP.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 5, 0)
+                    break
+                end
+            end
+        end
+    end)
+    btn.Text = "  🌀 Teleported!"
+    task.wait(1)
+    btn.Text = "  🌀 Teleport to The Rift"
+end)
+
+-- 5. Infinite Jump
+local infJump = true
+createButton("🦘 Infinite Jump: ON", Color3.fromRGB(200, 100, 0), function(v, btn)
+    infJump = v
+    btn.Text = v and "  🦘 Infinite Jump: ON" or "  🦘 Infinite Jump: OFF"
+    btn.BackgroundColor3 = v and Color3.fromRGB(200, 100, 0) or Color3.fromRGB(0, 140, 70)
+end)
+
+UserInputService.JumpRequest:Connect(function()
+    if infJump and LP.Character and LP.Character:FindFirstChildOfClass("Humanoid") then
+        LP.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
+
+-- 6. Fullbright
+createButton("💡 Fullbright ON/OFF", Color3.fromRGB(0, 140, 70), function(v, btn)
+    btn.Text = v and "  💡 Fullbright: ON" or "  💡 Fullbright: OFF"
+    btn.BackgroundColor3 = v and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(0, 140, 70)
+    local Lighting = game:GetService("Lighting")
+    Lighting.Brightness = v and 2 or 1
+    Lighting.ClockTime = v and 14 or 12
+    Lighting.GlobalShadows = not v
+end)
+
+print("Coffee VIP Toggle Fixed Successfully!")
