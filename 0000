@@ -1,0 +1,138 @@
+-- [[ COFFEE VIP HUB - STEAL AN EGG (ULTIMATE AUTO FARM & ANTI-STUN) ]] --
+local LP = game:GetService("Players").LocalPlayer
+local RS = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local Cam = workspace.CurrentCamera
+
+local SG = Instance.new("ScreenGui", game:GetService("CoreGui"))
+SG.Name = "CoffeeVIPUltimate"
+
+local MainFrame = Instance.new("Frame", SG)
+MainFrame.Size = UDim2.new(0, 280, 0, 360)
+MainFrame.Position = UDim2.new(0, 50, 0, 100)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
+
+local Stroke = Instance.new("UIStroke", MainFrame)
+Stroke.Color = Color3.fromRGB(255, 170, 0)
+Stroke.Thickness = 2
+
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Text = "☕ COFFEE VIP | AUTO EGG & NO STUN"
+Title.TextColor3 = Color3.fromRGB(255, 200, 0)
+Title.TextSize, Title.Font = 12, Enum.Font.SourceSansBold
+Title.BackgroundTransparency = 1
+
+local Container = Instance.new("ScrollingFrame", MainFrame)
+Container.Size = UDim2.new(1, -10, 1, -50)
+Container.Position = UDim2.new(0, 5, 0, 45)
+Container.BackgroundTransparency = 1
+Container.CanvasSize = UDim2.new(0, 0, 0, 450)
+Container.ScrollBarThickness = 4
+
+local function createButton(name, posY, callback)
+    local btn = Instance.new("TextButton", Container)
+    btn.Size = UDim2.new(0, 250, 0, 35)
+    btn.Position = UDim2.new(0, 10, 0, posY)
+    btn.Text = name
+    btn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize, btn.Font = 12, Enum.Font.SourceSansBold
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    btn.MouseButton1Click:Connect(callback)
+end
+
+-- 1. Anti-Stun & God Mode (ປ້ອງກັນສະຕັ້ນ ແລະ ບໍ່ຕາຍ)
+local antiStunActive = false
+createButton("🛡️ Anti-Stun & God Mode: OFF", 10, function()
+    antiStunActive = not antiStunActive
+    if antiStunActive then
+        script.Parent = nil -- ປ່ຽນສະຖານະ
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.1) do
+        if antiStunActive and LP.Character then
+            pcall(function()
+                local hum = LP.Character:FindFirstChild("Humanoid")
+                if hum then
+                    hum.Health = hum.MaxHealth
+                    -- ລຶບສະຖານະສະຕັ້ນ ຫຼື เอฟเฟกต์ล้ม (ถ้ามีในระบบเกม)
+                    for _, v in ipairs(LP.Character:GetChildren()) do
+                        if v:IsA("StringValue") and (v.Name:lower():find("stun") or v.Name:lower():find("ragdoll")) then
+                            v:Destroy()
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- 2. Auto Teleport to Eggs (ວາບໄປເກັບໄຂ່ອັດຕະໂນມັດ)
+local autoFarmEgg = false
+createButton("🥚 Auto Teleport to Eggs: OFF", 55, function()
+    autoFarmEgg = not autoFarmEgg
+end)
+
+task.spawn(function()
+    while task.wait(1) do
+        if autoFarmEgg and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            pcall(function()
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if autoFarmEgg and (obj.Name:lower():find("egg") or obj.Name:lower():find("trex")) and obj:IsA("BasePart") then
+                        LP.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 3, 0)
+                        task.wait(1.5) -- ຢຸດຖ້າປະມານ 1.5 ວິນາທີໃຫ້ລະບົບເກັບໄຂ່ทำงาน
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- 3. WalkSpeed Booster
+createButton("⚡ Set WalkSpeed to 150", 100, function()
+    if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+        LP.Character.Humanoid.WalkSpeed = 150
+    end
+end)
+
+-- 4. Teleport to The Rift
+createButton("🌀 Teleport to The Rift", 145, function()
+    if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            if obj.Name:lower():find("rift") and obj:IsA("BasePart") then
+                LP.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 5, 0)
+                break
+            end
+        end
+    end
+end)
+
+-- 5. Infinite Jump
+local infJump = true
+createButton("🦘 Infinite Jump: ON", 190, function()
+    infJump = not infJump
+end)
+
+UIS.JumpRequest:Connect(function()
+    if infJump and LP.Character and LP.Character:FindFirstChildOfClass("Humanoid") then
+        LP.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
+
+-- 6. Fullbright
+createButton("💡 Fullbright ON/OFF", 235, function()
+    local Lighting = game:GetService("Lighting")
+    Lighting.Brightness = Lighting.Brightness == 2 and 1 or 2
+    Lighting.GlobalShadows = not Lighting.GlobalShadows
+end)
+
+-- 7. Close Hub
+createButton("❌ Close Hub", 280, function()
+    SG:Destroy()
+end)
