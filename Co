@@ -1,0 +1,340 @@
+-- [[ SPEED HUB X STYLE - COFFEE VIP FULL FEATURES COMBINED ]] --
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local LP = game:GetService("Players").LocalPlayer
+local UIS = game:GetService("UserInputService")
+local RS = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local Camera = workspace.CurrentCamera
+
+local Window = Rayfield:CreateWindow({
+   Name = "Speed Hub X | Coffee VIP Unified",
+   LoadingTitle = "Loading Coffee VIP Pro...",
+   LoadingSubtitle = "by Souksakhone",
+   ConfigurationSaving = { Enabled = false },
+   KeySystem = false
+})
+
+-- Tabs
+local MainTab = Window:CreateTab("🏠 Main & Stats", 4483362458)
+local CombatTab = Window:CreateTab("⚔️ Combat & ESP", 4483362458)
+local MovementTab = Window:CreateTab("🕊️ Movement", 4483362458)
+local MiscTab = Window:CreateTab("⚙️ Misc & Visuals", 4483362458)
+
+---------------------------------------------------
+-- 1. MAIN & STATS TAB
+---------------------------------------------------
+MainTab:CreateSlider({
+   Name = "Walk Speed",
+   Range = {16, 500},
+   Increment = 1,
+   CurrentValue = 16,
+   Callback = function(v)
+      if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+         LP.Character.Humanoid.WalkSpeed = v
+      end
+   end,
+})
+
+local godActive = false
+MainTab:CreateToggle({
+   Name = "God Mode (Infinite Health)",
+   CurrentValue = false,
+   Callback = function(v)
+      godActive = v
+   end,
+})
+task.spawn(function()
+   while task.wait(0.1) do
+      if godActive and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+         LP.Character.Humanoid.Health = LP.Character.Humanoid.MaxHealth
+      end
+   end
+end)
+
+local dmgActive = false
+MainTab:CreateToggle({
+   Name = "Damage Booster (999k)",
+   CurrentValue = false,
+   Callback = function(v)
+      dmgActive = v
+   end,
+})
+task.spawn(function()
+   while task.wait(0.5) do
+      if dmgActive and LP.Character then
+         for _, item in ipairs(LP.Character:GetChildren()) do
+            if item:IsA("Tool") then
+               for _, sub in ipairs(item:GetDescendants()) do
+                  if (sub:IsA("NumberValue") or sub:IsA("IntValue")) and (sub.Name:lower():find("damage") or sub.Name:lower():find("dmg")) then
+                     sub.Value = 999999
+                  end
+               end
+            end
+         end
+      end
+   end
+end)
+
+local fastAtkActive = false
+MainTab:CreateToggle({
+   Name = "Fast Attack",
+   CurrentValue = false,
+   Callback = function(v)
+      fastAtkActive = v
+   end,
+})
+task.spawn(function()
+   while task.wait(0.05) do
+      if fastAtkActive and LP.Character then
+         local tool = LP.Character:FindFirstChildOfClass("Tool")
+         if tool then pcall(function() tool:Activate() end) end
+      end
+   end
+end)
+
+
+---------------------------------------------------
+-- 2. COMBAT & ESP TAB
+---------------------------------------------------
+local hitboxActive = false
+CombatTab:CreateToggle({
+   Name = "Hitbox Extender (Size 20)",
+   CurrentValue = false,
+   Callback = function(v)
+      hitboxActive = v
+   end,
+})
+task.spawn(function()
+   while task.wait(1) do
+      if hitboxActive then
+         for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+            if player ~= LP and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+               local hrp = player.Character.HumanoidRootPart
+               hrp.Size = Vector3.new(20, 20, 20)
+               hrp.Transparency = 0.5
+               hrp.CanCollide = false
+               if not hrp:FindFirstChild("RedHitboxSelection") then
+                  local sb = Instance.new("SelectionBox", hrp)
+                  sb.Name = "RedHitboxSelection"
+                  sb.Adornee = hrp
+                  sb.Color3 = Color3.fromRGB(255, 0, 0)
+                  sb.LineThickness = 0.05
+               end
+            end
+         end
+      end
+   end
+end)
+
+local aimbotActive = false
+local currentAimbotDist = 85
+local currentLockStrength = 0.25
+
+CombatTab:CreateToggle({
+   Name = "Lock Head (Aimbot)",
+   CurrentValue = false,
+   Callback = function(v)
+      aimbotActive = v
+   end,
+})
+
+CombatTab:CreateSlider({
+   Name = "Aimbot Distance",
+   Range = {10, 300},
+   Increment = 1,
+   CurrentValue = 85,
+   Callback = function(v) currentAimbotDist = v end,
+})
+
+CombatTab:CreateSlider({
+   Name = "Lock Strength (Smoothness)",
+   Range = {0.05, 1},
+   Increment = 0.05,
+   CurrentValue = 0.25,
+   Callback = function(v) currentLockStrength = v end,
+})
+
+RS.RenderStepped:Connect(function()
+   if aimbotActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+      pcall(function()
+         local closestTarget = nil
+         local shortestDist = math.huge
+         local myPos = LP.Character.HumanoidRootPart.Position
+         for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+            if player ~= LP and player.Character and player.Character:FindFirstChild("Head") and player.Character:FindFirstChild("Humanoid") then
+               local hum = player.Character.Humanoid
+               local head = player.Character.Head
+               if hum.Health > 0 and (head.Position - myPos).Magnitude <= currentAimbotDist then
+                  local screenPt, onScreen = Camera:WorldToViewportPoint(head.Position)
+                  if onScreen then
+                     local dist = (Vector2.new(screenPt.X, screenPt.Y) - UIS:GetMouseLocation()).Magnitude
+                     if dist < shortestDist then
+                        shortestDist = dist
+                        closestTarget = head
+                     end
+                  end
+               end
+            end
+         end
+         if closestTarget then
+            Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, closestTarget.Position), currentLockStrength)
+         end
+      end)
+   end
+end)
+
+local espActive = false
+local espFolder = Instance.new("Folder", workspace)
+espFolder.Name = "SpeedHubESP"
+
+CombatTab:CreateToggle({
+   Name = "ESP Wallhack (Highlight)",
+   CurrentValue = false,
+   Callback = function(v)
+      espActive = v
+      if not v then espFolder:ClearAllChildren() end
+   end,
+})
+
+RS.RenderStepped:Connect(function()
+   if espActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+      local myPos = LP.Character.HumanoidRootPart.Position
+      for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+         if player ~= LP and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
+            local hrp = player.Character.HumanoidRootPart
+            local hum = player.Character.Humanoid
+            local box = espFolder:FindFirstChild(player.Name)
+            if hum.Health > 0 and (hrp.Position - myPos).Magnitude <= 150 then
+               if not box then
+                  box = Instance.new("Highlight", espFolder)
+                  box.Name = player.Name
+                  box.FillColor = Color3.fromRGB(255, 0, 0)
+                  box.FillTransparency = 0.5
+               end
+               box.Adornee = player.Character
+            else
+               if box then box:Destroy() end
+            end
+         end
+      end
+   end
+end)
+
+
+---------------------------------------------------
+-- 3. MOVEMENT TAB
+---------------------------------------------------
+local flying = false
+local currentFlySpeed = 50
+local verticalDir = 0
+
+MovementTab:CreateToggle({
+   Name = "Fly ON / OFF",
+   CurrentValue = false,
+   Callback = function(v) flying = v end,
+})
+
+MovementTab:CreateSlider({
+   Name = "Fly Speed",
+   Range = {1, 500},
+   Increment = 1,
+   CurrentValue = 50,
+   Callback = function(v) currentFlySpeed = v end,
+})
+
+RS.RenderStepped:Connect(function()
+   if flying and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") and LP.Character:FindFirstChild("Humanoid") then
+      local hrp = LP.Character.HumanoidRootPart
+      local hum = LP.Character.Humanoid
+      hrp.Velocity = Vector3.new(0, 1, 0)
+      local moveDir = hum.MoveDirection
+      if moveDir.Magnitude > 0 then
+         hrp.CFrame = hrp.CFrame + (Camera.CFrame.LookVector * Vector3.new(1,0,1)).Unit * moveDir.Magnitude * (currentFlySpeed / 15)
+      end
+   end
+end)
+
+local infJumpEnabled = true
+MovementTab:CreateToggle({
+   Name = "Infinite Jump",
+   CurrentValue = true,
+   Callback = function(v) infJumpEnabled = v end,
+})
+UIS.JumpRequest:Connect(function()
+   if infJumpEnabled and LP.Character and LP.Character:FindFirstChildOfClass("Humanoid") then
+      LP.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+   end
+end)
+
+local noclipEnabled = false
+MovementTab:CreateToggle({
+   Name = "Noclip (Walk Through Walls)",
+   CurrentValue = false,
+   Callback = function(v) noclipEnabled = v end,
+})
+RS.Stepped:Connect(function()
+   if noclipEnabled and LP.Character then
+      for _, part in ipairs(LP.Character:GetDescendants()) do
+         if part:IsA("BasePart") then part.CanCollide = false end
+      end
+   end
+end)
+
+local spinActive = false
+MovementTab:CreateToggle({
+   Name = "Spin Bot",
+   CurrentValue = false,
+   Callback = function(v) spinActive = v end,
+})
+RS.RenderStepped:Connect(function()
+   if spinActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+      LP.Character.HumanoidRootPart.CFrame = LP.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(50), 0)
+   end
+end)
+
+
+---------------------------------------------------
+-- 4. MISC & VISUALS TAB
+---------------------------------------------------
+local invisActive = false
+MiscTab:CreateToggle({
+   Name = "Invisibility",
+   CurrentValue = false,
+   Callback = function(v)
+      invisActive = v
+      if LP.Character then
+         for _, part in ipairs(LP.Character:GetDescendants()) do
+            if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+               part.Transparency = v and 1 or 0
+            end
+         end
+      end
+   end,
+})
+
+MiscTab:CreateToggle({
+   Name = "Fullbright (Bright Map)",
+   CurrentValue = false,
+   Callback = function(v)
+      Lighting.Brightness = v and 2 or 1
+      Lighting.ClockTime = v and 14 or 12
+      Lighting.GlobalShadows = not v
+   end,
+})
+
+MiscTab:CreateToggle({
+   Name = "Max Camera Zoom (99999)",
+   CurrentValue = true,
+   Callback = function(v)
+      LP.CameraMaxZoomDistance = v and 99999 or 400
+   end,
+})
+
+MiscTab:CreateButton({
+   Name = "Close / Destroy Hub",
+   Callback = function()
+      Rayfield:Destroy()
+      if espFolder then espFolder:Destroy() end
+   end,
+})
