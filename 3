@@ -1,0 +1,47 @@
+-- [[ GREEDY GROWERS - SIMPLE & SECURE SEED BUYER ]] --
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+
+pcall(function()
+    if LP.PlayerGui:FindFirstChild("SimpleSafeHub") then
+        LP.PlayerGui.SimpleSafeHub:Destroy()
+    end
+end)
+
+local SG = Instance.new("ScreenGui")
+SG.Name = "SimpleSafeHub"
+SG.Parent = LP:WaitForChild("PlayerGui")
+SG.ResetOnSpawn = false
+
+-- ຫຼັກ GUI Frame
+local Frame = Instance.new("Frame", SG)
+Frame.Size = UDim2.new(0, 220, 0, 290)
+Frame.Position = UDim2.new(0.5, -110, 0.2, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Frame.BorderSizePixel = 0
+Frame.Active = true
+Frame.Draggable = true
+Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 10)
+
+-- Title
+local Title = Instance.new("TextLabel", Frame)
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.Text = "  Simple Seed Buyer"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize, Title.Font = 14, Enum.Font.SourceSansBold
+Title.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
+
+local toggles = {
+    Normal = false,
+    Rare = false,
+    Epic = false,
+    Legendary = false,
+    MasterTrigger = false,
+    Minimized = false
+}
+
+-- ປຸ່ມຫຍໍ້/ຂະຫຍາຍ (- / +)
+local MinBtn = Instance.new("TextButton", Frame)
+MinBtn.Size = UDim2.new(
