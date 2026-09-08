@@ -1,0 +1,69 @@
+-- [[ COFFEE VIP HUB - ULTRA LIGHTWEIGHT MOBILE FIXED ]] --
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+local PlayerGui = LP:WaitForChild("PlayerGui")
+
+-- ປ້ອງກັນການສ້າງຊ້ອນ
+if CoreGui:FindFirstChild("CoffeeVIPMobileFixed") then
+    CoreGui.CoffeeVIPMobileFixed:Destroy()
+end
+if PlayerGui:FindFirstChild("CoffeeVIPMobileFixed") then
+    PlayerGui.CoffeeVIPMobileFixed:Destroy()
+end
+
+local SG = Instance.new("ScreenGui")
+SG.Name = "CoffeeVIPMobileFixed"
+SG.ResetOnSpawn = false
+
+-- ພະຍາຍາມເອົາໄປໃສ່ CoreGui ກ່ອນ (ຖ້າ Executor ຮອງຮັບ ຈະບໍ່ຫຼຸດເວລາຕາຍ)
+local success = pcall(function()
+    SG.Parent = CoreGui
+end)
+if not success then
+    SG.Parent = PlayerGui
+end
+
+-- 1. ປຸ່ມເປີດ-ປິດ Hub (ວົງມົນ ☕)
+local ToggleBtn = Instance.new("TextButton", SG)
+ToggleBtn.Size = UDim2.new(0, 65, 0, 65)
+ToggleBtn.Position = UDim2.new(0, 20, 0, 120)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ToggleBtn.Text = "☕"
+ToggleBtn.TextSize = 26
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.Active = true
+ToggleBtn.Draggable = true
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
+
+local ToggleStroke = Instance.new("UIStroke", ToggleBtn)
+ToggleStroke.Color = Color3.fromRGB(255, 170, 0)
+ToggleStroke.Thickness = 2
+
+-- 2. ໜ້າຕ່າງຫຼັກ (Main Window)
+local MainFrame = Instance.new("Frame", SG)
+MainFrame.Size = UDim2.new(0, 270, 0, 310)
+MainFrame.Position = UDim2.new(0.5, -135, 0.5, -155)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true -- ຕັ້ງຄ່າໃຫ້ເຫັນເລີຍຕອນຣັນ
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(255, 170, 0)
+MainStroke.Thickness = 2
+
+-- ຫົວຂໍ້
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, -40, 0, 35)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.Text = "☕ COFFEE VIP HUB"
+Title.TextColor3 = Color3.fromRGB(255, 200, 0)
+Title.TextSize, Title.Font = 13, Enum.Font.SourceSansBold
+Title.BackgroundTransparency = 1
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- ປຸ່ມປິດ (X)
+local CloseBtn = Instance.new("TextButton", MainFrame)
+CloseBtn.Size = UDim2.new(0,
