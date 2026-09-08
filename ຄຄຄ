@@ -1,0 +1,78 @@
+-- [[ GREEDY GROWERS - LIGHTNING COUNTDOWN TIMER ]] --
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+
+local Window = Rayfield:CreateWindow({
+   Name = "Greedy Growers | Lightning Countdown",
+   LoadingTitle = "กำลังโหลดระบบจับเวลาฟ้าผ่า...",
+   LoadingSubtitle = "by Souksakhone",
+   ConfigurationSaving = { Enabled = false },
+   KeySystem = false
+})
+
+local Tab = Window:CreateTab("⚡ จับเวลาฟ้าผ่า", 4483362458)
+
+-- ສ້າງ UI ປ້າຍຕົວເລກນັບຖອຍຫຼັງລອຍເທິງໜ້າຈໍ (Floating Timer)
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "LightningTimerGui"
+ScreenGui.Parent = CoreGui
+
+local TimerLabel = Instance.new("TextLabel")
+TimerLabel.Name = "CountdownText"
+TimerLabel.Size = UDim2.new(0, 220, 0, 50)
+TimerLabel.Position = UDim2.new(0.5, -110, 0, 10) -- ຢູ່ເທິງກາງໜ້າຈໍ
+TimerLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+TimerLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+TimerLabel.TextSize = 18
+TimerLabel.Font = Enum.Font.SourceSansBold
+TimerLabel.Text = "⚡ Lightning in: Calculating..."
+TimerLabel.Visible = false
+TimerLabel.Parent = ScreenGui
+
+Instance.new("UICorner", TimerLabel).CornerRadius = UDim.new(0, 8)
+local UIStroke = Instance.new("UIStroke", TimerLabel)
+UIStroke.Color = Color3.fromRGB(255, 165, 0)
+UIStroke.Thickness = 2
+
+-- ປຸ່ມເປີດ/ປິດ ຕົວເລກນັບຖອຍຫຼັງເທິງໜ້າຈໍ
+Tab:CreateToggle({
+   Name = "⏱️ ສະແດງຕົວເລກນັບຖອຍຫຼັງຟ້າຜ່າ (Timer UI)",
+   CurrentValue = false,
+   Callback = function(v)
+      TimerLabel.Visible = v
+   end,
+})
+
+-- ລະບົບປະມວນຜົນການຈັບເວລາ (Countdown Logic)
+task.spawn(function()
+   local countdownTime = 60 -- ຕັ້ງຕົ້ນເວລາສະເລ່ຍ (ວິນາທີ) ລະຫວ່າງຮອບຟ້າຜ່າ
+   while true do
+      task.wait(1)
+      pcall(function()
+         -- ຊອກຫາ Object ທີ່ກ່ຽວຂ້ອງກັບຝົນ ຫຼື ພາຍຸໃນ Workspace ເພື່ອຣີເຊັດເວລາ
+         for _, obj in ipairs(workspace:GetDescendants()) do
+            if obj.Name:lower():find("storm") or obj.Name:lower():find("thunder") or obj.Name:lower():find("lightning") then
+               countdownTime = 45 -- ປັບເວລາຖ້າພາຍຸເລີ່ມມາ
+            end
+         end
+         
+         if countdownTime > 0 then
+            countdownTime = countdownTime - 1
+            TimerLabel.Text = "⚡ ຟ້າຈະຜ່າໃນ: " .. countdownTime .. " ວິນາທີ"
+            
+            if countdownTime <= 10 and countdownTime > 0 then
+               TimerLabel.TextColor3 = Color3.fromRGB(255, 0, 0) -- ປ່ຽນເປັນสีແດງເຕືອນວິກິດ
+            else
+               TimerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            end
+         else
+            TimerLabel.Text = "⚡ ລະວັງ! ຟ້າກຳລັງຈະຜ່າ!"
+            task.wait(5)
+            countdownTime = 60 -- ຣີເຊັດວົງອບໃໝ່
+         end
+      end)
+   end
+end)
