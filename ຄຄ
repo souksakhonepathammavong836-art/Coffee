@@ -1,0 +1,46 @@
+-- [[ COFFEE VIP HUB - FIXED TOGGLE BUTTON MOBILE ]] --
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local PlayerGui = LP:WaitForChild("PlayerGui")
+local UserInputService = game:GetService("UserInputService")
+
+-- ລຶບອັນເກົ່າຖ້າມີຄ້າງ
+if PlayerGui:FindFirstChild("CoffeeVIPMobileFixed") then
+    PlayerGui.CoffeeVIPMobileFixed:Destroy()
+end
+
+local SG = Instance.new("ScreenGui")
+SG.Name = "CoffeeVIPMobileFixed"
+SG.ResetOnSpawn = false
+SG.Parent = PlayerGui
+
+-- ໜ້າຕ່າງຫຼັກ (Main Window) - ຕັ້ງຄ່າໃຫ້ເປີດຂຶ້ນມາກ່ອນເລີ່ມຕົ້ນ
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 280, 0, 320)
+MainFrame.Position = UDim2.new(0.5, -140, 0.5, -160)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+MainFrame.Parent = SG
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(255, 170, 0)
+MainStroke.Thickness = 2
+
+-- ຫົວຂໍ້
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -40, 0, 40)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.Text = "☕ COFFEE VIP HUB"
+Title.TextColor3 = Color3.fromRGB(255, 200, 0)
+Title.TextSize, Title.Font = 13, Enum.Font.SourceSansBold
+Title.BackgroundTransparency = 1
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = MainFrame
+
+-- ປຸ່ມປິດໜ້າຕ່າງ (X)
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Size = UDim2.new(0, 28, 0, 28)
+Close
