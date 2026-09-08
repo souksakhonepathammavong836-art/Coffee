@@ -1,0 +1,53 @@
+-- [[ GREEDY GROWERS - FIXED LIGHTNING TIMER ]] --
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local Workspace = game:GetService("Workspace")
+
+-- ລຶບ UI ເກົ່າຖ້າມີ
+if CoreGui:FindFirstChild("FixedLightningTimerGui") then
+   CoreGui.FixedLightningTimerGui:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "FixedLightningTimerGui"
+ScreenGui.Parent = CoreGui
+
+local TimerLabel = Instance.new("TextLabel")
+TimerLabel.Size = UDim2.new(0, 240, 0, 45)
+TimerLabel.Position = UDim2.new(0.5, -120, 0, 15)
+TimerLabel.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+TimerLabel.TextColor3 = Color3.fromRGB(255, 200, 0)
+TimerLabel.TextSize = 16
+TimerLabel.Font = Enum.Font.GothamBold
+TimerLabel.Text = "⚡ กำลังค้นหารอบฟ้าผ่า..."
+TimerLabel.Parent = ScreenGui
+
+Instance.new("UICorner", TimerLabel).CornerRadius = UDim.new(0, 8)
+local UIStroke = Instance.new("UIStroke", TimerLabel)
+UIStroke.Color = Color3.fromRGB(255, 100, 0)
+UIStroke.Thickness = 2
+
+-- ระบบตรวจจับสัญญาณฟ้าผ่าจริงจาก Workspace
+task.spawn(function()
+   while true do
+      task.wait(0.2)
+      pcall(function()
+         local foundStorm = false
+         for _, obj in ipairs(Workspace:GetDescendants()) do
+            local name = obj.Name:lower()
+            if name:find("lightning") or name:find("storm") or name:find("thunder") or name:find("flash") then
+               foundStorm = true
+               break
+            end
+         end
+
+         if foundStorm then
+            TimerLabel.Text = "🚨 ຟ້າກຳລັງຈະຜ່າ! (Lightning Active!)"
+            TimerLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+         else
+            TimerLabel.Text = "🛡️ ปลอดภัย - กำลังเติบโต..."
+            TimerLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
+         end
+      end)
+   end
+end)
