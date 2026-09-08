@@ -1,0 +1,107 @@
+-- [[ GREEDY GROWERS - TREE ESP & STORM PREDICTOR ]] --
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local Workspace = game:GetService("Workspace")
+
+local Window = Rayfield:CreateWindow({
+   Name = "Greedy Growers | Tree Size & Storm ESP",
+   LoadingTitle = "กำลังโหลดระบบเช็คต้นไม้...",
+   LoadingSubtitle = "by Souksakhone",
+   ConfigurationSaving = { Enabled = false },
+   KeySystem = false
+})
+
+local Tab = Window:CreateTab("🌲 ระบบตรวจสอบต้นไม้", 4483362458)
+
+-- เปิด/ปิด ESP แสดงขนาดและมูลค่าต้นไม้
+local treeESPActive = false
+Tab:CreateToggle({
+   Name = "📊 แสดงขนาดและมูลค่าต้นไม้ล่วงหน้า (Tree ESP)",
+   CurrentValue = false,
+   Callback = function(v)
+      treeESPActive = v
+   end,
+})
+
+-- ระบบสแกนหาต้นไม้และสร้างป้ายบอกขนาด
+task.spawn(function()
+   while true do
+      task.wait(0.5)
+      pcall(function()
+         if treeESPActive then
+            for _, obj in ipairs(Workspace:GetDescendants()) do
+               if obj:IsA("Model") and (obj.Name:lower():find("tree") or obj.Name:lower():find("plant")) then
+                  local rootPart = obj:FindFirstChild("HumanoidRootPart") or obj.PrimaryPart or obj:FindFirstChildWhichIsA("BasePart")
+                  if rootPart then
+                     -- เช็คว่ามี BillboardGui ຢູູ່ແລ້ວບໍ ຖ້າ ຍັງ ໃຫ້ສ້າງໃໝ່
+                     local billboard = rootPart:FindFirstChild("TreeESP_Gui")
+                     if not billboard then
+                        billboard = Instance.new("BillboardGui")
+                        billboard.Name = "TreeESP_Gui"
+                        billboard.Size = UDim2.new(0, 100, 0, 50)
+                        billboard.StudsOffset = Vector3.new(0, 3, 0)
+                        billboard.AlwaysOnTop = true
+                        billboard.Parent = rootPart
+                        
+                        local textLabel = Instance.new("TextLabel")
+                        textLabel.Name = "InfoText"
+                        textLabel.Size = UDim2.new(1, 0, 1, 0)
+                        textLabel.BackgroundTransparency = 1
+                        textLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
+                        textLabel.TextScaled = true
+                        textLabel.Font = Enum.Font.SourceSansBold
+                        textLabel.Parent = billboard
+                     else
+                        -- ອັບເດດຂໍ້ມູນຂະໜາດ (ຄິດໄລ່ຈາກ Size ຂອງ Model)
+                        local size = obj:GetExtentsSize()
+                        local textLabel = billboard:FindFirstChild("InfoText")
+                        if textLabel then
+                           textLabel.Text = string.format("Size: %.1f\nStatus: Growing", size.Y)
+                        end
+                     end
+                  end
+               end
+            end
+         else
+            -- ລຶບป้าย ESP ອອກເມື່ອປິດใช้งาน
+            for _, obj in ipairs(Workspace:GetDescendants()) do
+               if obj:IsA("BasePart") then
+                  local bg = obj:FindFirstChild("TreeESP_Gui")
+                  if bg then bg:Destroy() end
+               end
+            end
+         end
+      end)
+   end
+end)
+
+-- ระบบแจ้งเตือนสภาพอากาศ / ฟ้าผ่าล่วงหน้า
+Tab:CreateToggle({
+   Name = "⚡ แจ้งเตือนฟ้าผ่าล่วงหน้า (Storm Warning)",
+   CurrentValue = true,
+   Callback = function(v)
+      _G.StormAlert = v
+   end,
+})
+
+task.spawn(function()
+   while true do
+      task.wait(1)
+      if _G.StormAlert then
+         pcall(function()
+            for _, obj in ipairs(Workspace:GetDescendants()) do
+               if obj.Name:lower():find("storm") or obj.Name:lower():find("thunder") or obj.Name:lower():find("lightning") then
+                  Rayfield:Notify({
+                     Title = "⚠️ คำเตือนฟ้าผ่า!",
+                     Content = "ฟ้ากำลังจะผ่าลงมา! รีบเก็บเกี่ยวต้นไม้ด่วน!",
+                     Duration = 4,
+                  })
+                  task.wait(20)
+               end
+            end
+         end)
+      end
+   end
+end)
