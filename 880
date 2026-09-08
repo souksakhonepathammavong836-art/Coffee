@@ -1,0 +1,61 @@
+-- [[ GREEDY GROWERS - STRICT 3 SECONDS ACCURATE TIMER ]] --
+local CoreGui = game:GetService("CoreGui")
+local Workspace = game:GetService("Workspace")
+
+if CoreGui:FindFirstChild("StrictLightningTimer") then
+   CoreGui.StrictLightningTimer:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "StrictLightningTimer"
+ScreenGui.Parent = CoreGui
+
+local TimerLabel = Instance.new("TextLabel")
+TimerLabel.Size = UDim2.new(0, 240, 0, 50)
+TimerLabel.Position = UDim2.new(0.5, -120, 0, 15)
+TimerLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+TimerLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
+TimerLabel.TextSize = 16
+TimerLabel.Font = Enum.Font.GothamBold
+TimerLabel.Text = "🛡️ ລໍຖ້າຈັບສັນຍານຟ້າຜ່າ..."
+TimerLabel.Parent = ScreenGui
+
+Instance.new("UICorner", TimerLabel).CornerRadius = UDim.new(0, 8)
+local UIStroke = Instance.new("UIStroke", TimerLabel)
+UIStroke.Color = Color3.fromRGB(0, 255, 100)
+UIStroke.Thickness = 2
+
+-- ລະບົບກວດຈັບແບບຕັດຮອບ ຖ້າຟ້າຜ່າແທ້ຈຶ່ງນັບ 3 ວິ
+task.spawn(function()
+   while true do
+      task.wait(0.1)
+      pcall(string.format, "") -- dummy
+      
+      local activeLightning = nil
+      for _, obj in ipairs(Workspace:GetDescendants()) do
+         local name = obj.Name:lower()
+         -- ໃຊ້ຄຳສຳຄັນທີ່ບົ່ງບອກວ່າຟ້າກຳລັງຈະຜ່າລົງມາແທ້ໆ
+         if name == "lightning" or name == "strike" or obj:IsA("Lightning") then
+            activeLightning = obj
+            break
+         end
+      end
+
+      if activeLightning then
+         -- ນັບถອຍຫຼັງ 3 ວິທັນທີເມື່ອມີສັນຍານຜ່າແທ້
+         for i = 3, 1, -1 do
+            TimerLabel.Text = "🚨 ຟ້າຜ່າໃນ: " .. i .. " ວິ!"
+            TimerLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+            UIStroke.Color = Color3.fromRGB(255, 50, 50)
+            task.wait(1)
+         end
+         
+         TimerLabel.Text = "⚡ ຜ່າແລ້ວ! (ກົດເກັບດ່ວນ!)"
+         task.wait(3) -- ພັກຈົນกว่าจะຈົບຮອບ
+      else
+         TimerLabel.Text = "🛡️ ປອດໄພ - ຍັງບໍ່ມີຟ້າຜ່າ"
+         TimerLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
+         UIStroke.Color = Color3.fromRGB(0, 255, 100)
+      end
+   end
+end)
