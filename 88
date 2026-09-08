@@ -1,0 +1,150 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "☕ Coffee VIP Hub | Steal An Egg Edition",
+   LoadingTitle = "Loading Steal An Egg Script...",
+   LoadingSubtitle = "by Souksakhone",
+   ConfigurationSaving = { Enabled = false },
+   KeySystem = false,
+})
+
+local LP = game:GetService("Players").LocalPlayer
+local RS = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local Cam = workspace.CurrentCamera
+
+-- 1. Tab: Home
+local HomeTab = Window:CreateTab("🏠 Home", 4483362458)
+HomeTab:CreateSection("Information")
+HomeTab:CreateParagraph({Title = "Coffee VIP Hub", Content = "Game: Steal An Egg\nOwner: Souksakhone\nStatus: Active!"})
+
+-- 2. Tab: Farm & Auto (ສຳລັບຟາມໄຂ່ ແລະ ຄວາມໄວ)
+local FarmTab = Window:CreateTab("🥚 Auto Farm", 4483362458)
+
+FarmTab:CreateInput({
+   Name = "Set WalkSpeed",
+   PlaceholderText = "16",
+   RemoveTextAfterFocusLost = false,
+   Callback = function(Text)
+      local val = tonumber(Text)
+      if val and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+         LP.Character.Humanoid.WalkSpeed = val
+      end
+   end,
+})
+
+FarmTab:CreateSlider({
+   Name = "Walk Speed Slider",
+   Range = {16, 500},
+   Increment = 1,
+   CurrentValue = 16,
+   Callback = function(Value)
+      if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+         LP.Character.Humanoid.WalkSpeed = Value
+      end
+   end,
+})
+
+local infJumpEnabled = true
+FarmTab:CreateToggle({
+   Name = "🦘 Infinite Jump",
+   CurrentValue = true,
+   Callback = function(Value)
+      infJumpEnabled = Value
+   end,
+})
+
+UIS.JumpRequest:Connect(function()
+   if infJumpEnabled and LP.Character and LP.Character:FindFirstChildOfClass("Humanoid") then
+      LP.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+   end
+end)
+
+-- 3. Tab: Teleport / World (ວາບໄປຈຸດຕ່າງໆໃນເເມບ)
+local TeleportTab = Window:CreateTab("🗺️ Teleport", 4483362458)
+
+TeleportTab:CreateButton({
+   Name = "📍 Teleport to Spawn / Base",
+   Callback = function()
+      if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+         -- ປັບຕຳແໜ່ງ Vector3 ຕາມຈຸດ spawn ຂອງເເມບ
+         LP.Character.HumanoidRootPart.CFrame = CFrame.new(0, 10, 0)
+      end
+   end,
+})
+
+TeleportTab:CreateButton({
+   Name = "🌀 Teleport to The Rift",
+   Callback = function()
+      for _, obj in ipairs(workspace:GetDescendants()) do
+         if obj.Name:lower():find("rift") and obj:IsA("BasePart") then
+            LP.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 5, 0)
+            break
+         end
+      end
+   end,
+})
+
+-- 4. Tab: Visuals (ESP)
+local VisualTab = Window:CreateTab("👀 Visuals", 4483362458)
+local espActive = false
+local espBoxFolder = Instance.new("Folder", game:GetService("CoreGui"))
+espBoxFolder.Name = "EggESPFolder"
+
+VisualTab:CreateToggle({
+   Name = "👀 ESP Players & Eggs",
+   CurrentValue = false,
+   Callback = function(Value)
+      espActive = Value
+      if not espActive then espBoxFolder:ClearAllChildren() end
+   end,
+})
+
+RS.RenderStepped:Connect(function()
+   if espActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+      local myPos = LP.Character.HumanoidRootPart.Position
+      for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+         if player ~= LP and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local hrp = player.Character.HumanoidRootPart
+            local box = espBoxFolder:FindFirstChild(player.Name)
+            if not box then
+               box = Instance.new("Highlight", espBoxFolder)
+               box.Name = player.Name
+               box.FillColor = Color3.fromRGB(255, 170, 0)
+               box.OutlineColor = Color3.fromRGB(255, 255, 255)
+               box.FillTransparency = 0.5
+            end
+            box.Adornee = player.Character
+         end
+      end
+   else
+      espBoxFolder:ClearAllChildren()
+   end
+end)
+
+-- 5. Tab: Misc (Fullbright, Close)
+local MiscTab = Window:CreateTab("⚙️ Misc", 4483362458)
+
+MiscTab:CreateToggle({
+   Name = "💡 Fullbright (Bright Map)",
+   CurrentValue = false,
+   Callback = function(Value)
+      local Lighting = game:GetService("Lighting")
+      if Value then
+         Lighting.Brightness = 2
+         Lighting.ClockTime = 14
+         Lighting.GlobalShadows = false
+      else
+         Lighting.Brightness = 1
+         Lighting.ClockTime = 12
+         Lighting.GlobalShadows = true
+      end
+   end,
+})
+
+MiscTab:CreateButton({
+   Name = "❌ Close Hub",
+   Callback = function()
+      Rayfield:Destroy()
+   end,
+})
