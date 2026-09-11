@@ -1,0 +1,90 @@
+import subprocess
+import platform
+import threading
+import time
+import tkinter as tk
+from tkinter import scrolledtext
+
+# ລາຍຊື່ IP ຫຼື Domain ຂອງເຊີບເວີທີ່ຕ້ອງການກວດສອບ
+SERVERS = {
+    "Server 01 (US East)": "104.160.131.3",
+    "Server 02 (EU West)": "146.66.155.1",
+    "Server 03 (Asia SG)": "128.199.204.0",
+    "Server 04 (Japan)": "133.242.67.7"
+}
+
+class ServerCheckerApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Server Latency Finder")
+        self.root.geometry("500x400")
+        self.root.config(bg="#1e1e1e")
+
+        # Title Label
+        title_label = tk.Label(root, text="ລະບົບຊອກຫາເຊີບເວີ Ping ຕໍ່າ", font=("Saysettha OT", 14, "bold"), fg="#ffffff", bg="#1e1e1e")
+        title_label.pack(pady=10)
+
+        # Start Button
+        self.btn_start = tk.Button(root, text="🔍 ຄົ້ນຫາເຊີບເວີທີ່ດີທີ່ສຸດ", font=("Saysettha OT", 12), bg="#007acc", fg="#ffffff", command=self.start_check_thread)
+        self.btn_start.pack(pady=5)
+
+        # Result Text Area
+        self.result_area = scrolledtext.ScrolledText(root, width=55, height=15, font=("Consolas", 10), bg="#2d2d2d", fg="#00ff00")
+        self.result_area.pack(pady=10)
+
+    def ping_server(self, host):
+        param = "-n" if platform.system().lower() == "windows" else "-c"
+        command = ["ping", param, "1", host]
+        
+        try:
+            start_time = time.perf_counter()
+            output = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=2)
+            end_time = time.perf_counter()
+            
+            if output.returncode == 0:
+                # ຄິດໄລ່ເວລາ ping ເປັນ ms
+                latency = int((end_time - start_time) * 1000)
+                return max(latency, 1) # ຢ່າງໜ້ອຍ 1 ms
+        except Exception:
+            pass
+        return 9999 # ກໍລະນີເຊີບເວີລົ້ມ ຫຼື ຕອບຊ້າ
+
+    def run_check(self):
+        self.result_area.delete("1.0", tk.END)
+        self.result_area.insert(tk.END, "ກຳລັງກວດສອບເຊີບເວີທັງໝົດ...\n\n")
+        self.btn_start.config(state=tk.DISABLED)
+
+        best_server = None
+        lowest_ping = 9999
+        results = []
+
+        for name, ip in SERVERS.items():
+            self.result_area.insert(tk.END, f"ກຳລັງກວດສອບ {name} ({ip})...\n")
+            self.result_area.see(tk.END)
+            
+            ping_val = self.ping_server(ip)
+            results.append((name, ip, ping_val))
+            
+            if ping_val < lowest_ping:
+                lowest_ping = ping_val
+                best_server = name
+
+        self.result_area.insert(tk.END, "\n--- ສົນຜົນການກວດສອບ ---\n")
+        for name, ip, p in results:
+            status = f"{p} ms" if p != 9999 else "Timeout / ບໍ່ຕອບສະໜອງ"
+            self.result_area.insert(tk.END, f"• {name} ➔ {status}\n")
+
+        if best_server and lowest_ping != 9999:
+            self.result_area.insert(tk.END, f"\n✨ ເຊີບເວີທີ່ແນະນຳ (Ping ຕໍ່າສຸດ): {best_server} ({lowest_ping} ms)\n")
+        else:
+            self.result_area.insert(tk.END, "\n❌ ບໍ່ພົບເຊີບເວີທີ່ສາມາດເຊື່ອມຕໍ່ໄດ້ໃນຂະນະນີ້.\n")
+
+        self.btn_start.config(state=tk.NORMAL)
+
+    def start_check_thread(self):
+        threading.Thread(target=self.run_check).daemon = True
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = ServerCheckerApp(root)
+    root.mainloop()
