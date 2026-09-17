@@ -1,0 +1,39 @@
+-- [[ COFFEE HUB LOADER ]] --
+local CoffeeHub_SAE = "ລິ້ງ_Raw_GitHub_ສຳລັບເກມທີ_1_ຂອງເຈົ້າ"
+local CoffeeHub_SAB = "ລິ້ງ_Raw_GitHub_ສຳລັບເກມທີ_2_ຂອງເຈົ້າ"
+
+local byGameId = {
+    [10563114921] = CoffeeHub_SAE,
+    [7709344486] = CoffeeHub_SAB,
+}
+
+local byPlaceId = {
+    [107778070777162] = CoffeeHub_SAE,
+    [109983668079237] = CoffeeHub_SAB,
+}
+
+local gameId = game.GameId
+while gameId == 0 and game.PlaceId == 0 do
+    task.wait()
+    gameId = game.GameId
+end
+
+local url = byGameId[gameId] or byPlaceId[game.PlaceId]
+if not url or url:find("ລິ້ງ_Raw_GitHub") then
+    print("☕ Coffee Hub: ຍັງບໍ່ມີລິ້ງສະຄຣິບສຳລັບເກມນີ້!")
+    return
+end
+
+print("☕ Coffee Hub: ກຳລັງໂຫຼດສະຄຣິບ...")
+for _ = 1, 3 do
+    local ok, source = pcall(game.HttpGet, game, url)
+    if ok and type(source) == "string" and source ~= "" then
+        local chunk = loadstring(source)
+        if chunk then
+            print("☕ Coffee Hub: ເປີດໃຊ້ງານสำเร็จ!")
+            chunk()
+        end
+        return
+    end
+    task.wait(0.5)
+end
