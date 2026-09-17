@@ -1,0 +1,43 @@
+-- [[ COFFEE HUB LOADER ]] --
+local CoffeeHub_SAE = "https://raw.githubusercontent.com/ຊື່_GitHub_ເຈົ້າ/Repo_ເຈົ້າ/main/ຊື່ໄຟລ໌ທີ1.lua"
+local CoffeeHub_SAB = "https://raw.githubusercontent.com/ຊື່_GitHub_ເຈົ້າ/Repo_ເຈົ້າ/main/ຊື່ໄຟລ໌ທີ2.lua"
+
+local byGameId = {
+    [10563114921] = CoffeeHub_SAE,
+    [7709344486] = CoffeeHub_SAB,
+}
+
+local byPlaceId = {
+    [107778070777162] = CoffeeHub_SAE,
+    [109983668079237] = CoffeeHub_SAB,
+}
+
+local gameId = game.GameId
+while gameId == 0 and game.PlaceId == 0 do
+    task.wait()
+    gameId = game.GameId
+end
+
+local url = byGameId[gameId] or byPlaceId[game.PlaceId]
+if not url or url:find("ຊື່_GitHub_ເຈົ້າ") then
+    print("☕ Coffee Hub: ຍังບໍ່ໄດ້ໃສ່ລິ້ງ GitHub ທີ່ຖືກຕ້ອງ!")
+    return
+end
+
+print("☕ Coffee Hub: ກຳລັງໂຫຼດສະຄຣິບ...")
+for _ = 1, 3 do
+    local ok, source = pcall(game.HttpGet, game, url)
+    if ok and type(source) == "string" and source ~= "" then
+        local chunk, err = loadstring(source)
+        if chunk then
+            print("☕ Coffee Hub: ເປີດໃຊ້ງານສຳເລັດ!")
+            chunk()
+        else
+            print("☕ Coffee Hub Loadstring Error:", err)
+        end
+        return
+    end
+    task.wait(0.5)
+end
+
+print("☕ Coffee Hub: ໂຫຼດສະຄຣິບບໍ່ສຳເລັດ")
