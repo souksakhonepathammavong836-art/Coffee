@@ -1,0 +1,222 @@
+-- [[ COFFEE HUB - ZOMBIE SURVIVAL & WAVE DEFENSE ]] --
+local LP = game:GetService("Players").LocalPlayer
+local SG = Instance.new("ScreenGui", game:GetService("CoreGui"))
+SG.Name = "CoffeeZombieHub"
+
+-- Main Frame
+local MainFrame = Instance.new("Frame", SG)
+MainFrame.Size = UDim2.new(0, 240, 0, 360)
+MainFrame.Position = UDim2.new(0, 40, 0, 120)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(0, 255, 100)
+MainStroke.Thickness = 2
+
+local MainTitle = Instance.new("TextLabel", MainFrame)
+MainTitle.Size = UDim2.new(0, 240, 0, 35)
+MainTitle.Text = "🧟 ZOMBIE SURVIVAL HUB 🧟"
+MainTitle.TextColor3 = Color3.fromRGB(0, 255, 100)
+MainTitle.TextSize, MainTitle.Font = 13, Enum.Font.SourceSansBold
+MainTitle.BackgroundTransparency = 1
+
+local ContentContainer = Instance.new("ScrollingFrame", MainFrame)
+ContentContainer.Size = UDim2.new(1, 0, 1, -45)
+ContentContainer.Position = UDim2.new(0, 0, 0, 40)
+ContentContainer.BackgroundTransparency = 1
+ContentContainer.CanvasSize = UDim2.new(0, 0, 0, 500)
+ContentContainer.ScrollBarThickness = 4
+
+-- 1. WalkSpeed Section
+local SpeedBox = Instance.new("TextBox", ContentContainer)
+SpeedBox.Size = UDim2.new(0, 130, 0, 28)
+SpeedBox.Position = UDim2.new(0, 15, 0, 10)
+SpeedBox.PlaceholderText = "Walk speed..."
+SpeedBox.Text = ""
+SpeedBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+SpeedBox.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+SpeedBox.TextSize = 12
+Instance.new("UICorner", SpeedBox).CornerRadius = UDim.new(0, 6)
+
+local ApplySpeedBtn = Instance.new("TextButton", ContentContainer)
+ApplySpeedBtn.Size = UDim2.new(0, 70, 0, 28)
+ApplySpeedBtn.Position = UDim2.new(0, 155, 0, 10)
+ApplySpeedBtn.Text = "Set Speed"
+ApplySpeedBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 80)
+ApplySpeedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ApplySpeedBtn.TextSize, ApplySpeedBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", ApplySpeedBtn).CornerRadius = UDim.new(0, 6)
+
+-- 2. Kill Aura / Auto Hit Zombies Button
+local AuraBtn = Instance.new("TextButton", ContentContainer)
+AuraBtn.Size = UDim2.new(0, 210, 0, 32)
+AuraBtn.Position = UDim2.new(0, 15, 0, 50)
+AuraBtn.Text = "⚔️ Kill Aura (Auto Hit): OFF"
+AuraBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+AuraBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AuraBtn.TextSize, AuraBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", AuraBtn).CornerRadius = UDim.new(0, 6)
+
+-- 3. ESP Zombies Button
+local EspBtn = Instance.new("TextButton", ContentContainer)
+EspBtn.Size = UDim2.new(0, 210, 0, 32)
+EspBtn.Position = UDim2.new(0, 15, 0, 90)
+EspBtn.Text = "👀 ESP Zombies: OFF"
+EspBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+EspBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+EspBtn.TextSize, EspBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", EspBtn).CornerRadius = UDim.new(0, 6)
+
+-- 4. Infinite Jump Button
+local InfJumpBtn = Instance.new("TextButton", ContentContainer)
+InfJumpBtn.Size = UDim2.new(0, 210, 0, 32)
+InfJumpBtn.Position = UDim2.new(0, 15, 0, 130)
+InfJumpBtn.Text = "🦘 Infinite Jump: ON"
+InfJumpBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 80)
+InfJumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+InfJumpBtn.TextSize, InfJumpBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", InfJumpBtn).CornerRadius = UDim.new(0, 6)
+
+-- 5. Fullbright Button
+local FullbrightBtn = Instance.new("TextButton", ContentContainer)
+FullbrightBtn.Size = UDim2.new(0, 210, 0, 32)
+FullbrightBtn.Position = UDim2.new(0, 15, 0, 170)
+FullbrightBtn.Text = "💡 Fullbright (Bright Map): OFF"
+FullbrightBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+FullbrightBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FullbrightBtn.TextSize, FullbrightBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", FullbrightBtn).CornerRadius = UDim.new(0, 6)
+
+-- 6. Close Button
+local ExitBtn = Instance.new("TextButton", ContentContainer)
+ExitBtn.Size = UDim2.new(0, 210, 0, 35)
+ExitBtn.Position = UDim2.new(0, 15, 0, 215)
+ExitBtn.Text = "❌ Close Hub"
+ExitBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+ExitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ExitBtn.TextSize, ExitBtn.Font = 12, Enum.Font.SourceSansBold
+Instance.new("UICorner", ExitBtn).CornerRadius = UDim.new(0, 6)
+
+-- Logic
+-- WalkSpeed
+ApplySpeedBtn.MouseButton1Click:Connect(function()
+    local val = tonumber(SpeedBox.Text)
+    if val and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+        LP.Character.Humanoid.WalkSpeed = val
+    end
+end)
+
+-- Kill Aura Logic (Teleports tools or attacks nearby enemies/mobs)
+local auraActive = false
+AuraBtn.MouseButton1Click:Connect(function()
+    auraActive = not auraActive
+    if auraActive then
+        AuraBtn.Text = "⚔️ Kill Aura (Auto Hit): ON"
+        AuraBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 80)
+    else
+        AuraBtn.Text = "⚔️ Kill Aura (Auto Hit): OFF"
+        AuraBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.2) do
+        if auraActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            pcall(function()
+                local myPos = LP.Character.HumanoidRootPart.Position
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if obj:IsA("Model") and obj:FindFirstChild("Humanoid") and obj:FindFirstChild("HumanoidRootPart") then
+                        if obj ~= LP.Character and obj.Humanoid.Health > 0 then
+                            -- Check if it's an enemy/zombie (not a player)
+                            local isPlayer = false
+                            for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
+                                if p.Character == obj then isPlayer = true end
+                            end
+                            if not isPlayer then
+                                local dist = (obj.HumanoidRootPart.Position - myPos).Magnitude
+                                if dist <= 25 then
+                                    -- Auto pull/attack logic if applicable
+                                    obj.HumanoidRootPart.CFrame = LP.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -3)
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- ESP Zombies
+local espActive = false
+local espFolder = Instance.new("Folder", SG)
+espFolder.Name = "ZombieESP"
+
+EspBtn.MouseButton1Click:Connect(function()
+    espActive = not espActive
+    if espActive then
+        EspBtn.Text = "👀 ESP Zombies: ON"
+        EspBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 80)
+    else
+        EspBtn.Text = "👀 ESP Zombies: OFF"
+        EspBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        espFolder:ClearAllChildren()
+    end
+end)
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    if espActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+        local myPos = LP.Character.HumanoidRootPart.Position
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            if obj:IsA("Model") and obj:FindFirstChild("Humanoid") and obj:FindFirstChild("HumanoidRootPart") then
+                local isPlayer = false
+                for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
+                    if p.Character == obj then isPlayer = true end
+                end
+                if not isPlayer and obj.Humanoid.Health > 0 then
+                    local box = espFolder:FindFirstChild(obj.Name)
+                    if not box then
+                        box = Instance.new("Highlight", espFolder)
+                        box.Name = obj.Name
+                        box.FillColor = Color3.fromRGB(255, 50, 50)
+                        box.OutlineColor = Color3.fromRGB(255, 255, 255)
+                        box.FillTransparency = 0.5
+                    end
+                    box.Adornee = obj
+                end
+            end
+        end
+    else
+        espFolder:ClearAllChildren()
+    end
+end)
+
+-- Infinite Jump
+local infJump = true
+InfJumpBtn.MouseButton1Click:Connect(function()
+    infJump = not infJump
+    InfJumpBtn.Text = infJump and "🦘 Infinite Jump: ON" or "🦘 Infinite Jump: OFF"
+    InfJumpBtn.BackgroundColor3 = infJump and Color3.fromRGB(0, 180, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+game:GetService("UserInputService").JumpRequest:Connect(function()
+    if infJump and LP.Character and LP.Character:FindFirstChildOfClass("Humanoid") then
+        LP.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
+
+-- Fullbright
+local fullbright = false
+FullbrightBtn.MouseButton1Click:Connect(function()
+    fullbright = not fullbright
+    FullbrightBtn.Text = fullbright and "💡 Fullbright (Bright Map): ON" or "💡 Fullbright (Bright Map): OFF"
+    FullbrightBtn.BackgroundColor3 = fullbright and Color3.fromRGB(0, 180, 80) or Color3.fromRGB(100, 100, 100)
+    game:GetService("Lighting").Brightness = fullbright and 2 or 1
+    game:GetService("Lighting").GlobalShadows = not fullbright
+end)
+
+ExitBtn.MouseButton1Click:Connect(function() SG:Destroy() end)
