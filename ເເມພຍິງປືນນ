@@ -1,0 +1,433 @@
+-- [[ COFFEE VIP HUB - FPS X-RAY & AIM HUB (FIXED) ]] --
+local LP = game:GetService("Players").LocalPlayer
+local SG = Instance.new("ScreenGui", game:GetService("CoreGui"))
+SG.Name = "CoffeeVFPSHub"
+
+-- Main Menu Frame
+local MainFrame = Instance.new("Frame", SG)
+MainFrame.Size = UDim2.new(0, 240, 0, 390)
+MainFrame.Position = UDim2.new(0, 40, 0, 120)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(0, 170, 255)
+MainStroke.Thickness = 2
+
+local MainTitle = Instance.new("TextLabel", MainFrame)
+MainTitle.Size = UDim2.new(0, 240, 0, 35)
+MainTitle.Text = "🎯 FPS X-RAY & AIM HUB 🎯"
+MainTitle.TextColor3 = Color3.fromRGB(0, 170, 255)
+MainTitle.TextSize = 14
+MainTitle.Font = Enum.Font.SourceSansBold
+MainTitle.BackgroundTransparency = 1
+
+local OwnerMain = Instance.new("TextLabel", MainFrame)
+OwnerMain.Size = UDim2.new(0, 240, 0, 20)
+OwnerMain.Position = UDim2.new(0, 0, 0, 28)
+OwnerMain.Text = "Mode: FPS / X-Ray Map"
+OwnerMain.TextColor3 = Color3.fromRGB(150, 150, 150)
+OwnerMain.TextSize = 11
+OwnerMain.Font = Enum.Font.SourceSansItalic
+OwnerMain.BackgroundTransparency = 1
+
+local ToggleBtn = Instance.new("TextButton", MainFrame)
+ToggleBtn.Size = UDim2.new(0, 32, 0, 26)
+ToggleBtn.Position = UDim2.new(0, 198, 0, 5)
+ToggleBtn.Text = "🎯"
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 50, 80)
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.TextSize = 14
+ToggleBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 4)
+
+local RoundIconBtn = Instance.new("ImageButton", SG)
+RoundIconBtn.Size = UDim2.new(0, 50, 0, 50)
+RoundIconBtn.Position = UDim2.new(0, 40, 0, 120)
+RoundIconBtn.Image = "rbxassetid://1392880262"
+RoundIconBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+RoundIconBtn.Visible = false
+RoundIconBtn.Active = true
+RoundIconBtn.Draggable = true
+Instance.new("UICorner", RoundIconBtn).CornerRadius = UDim.new(1, 0)
+
+local RoundIconStroke = Instance.new("UIStroke", RoundIconBtn)
+RoundIconStroke.Color = Color3.fromRGB(0, 170, 255)
+RoundIconStroke.Thickness = 2
+
+-- ScrollingFrame
+local ContentContainer = Instance.new("ScrollingFrame", MainFrame)
+ContentContainer.Size = UDim2.new(1, 0, 1, -55)
+ContentContainer.Position = UDim2.new(0, 0, 0, 50)
+ContentContainer.BackgroundTransparency = 1
+ContentContainer.CanvasSize = UDim2.new(0, 0, 0, 650)
+ContentContainer.ScrollBarThickness = 4
+
+-- 1. WalkSpeed Section
+local SpeedBox = Instance.new("TextBox", ContentContainer)
+SpeedBox.Size = UDim2.new(0, 130, 0, 28)
+SpeedBox.Position = UDim2.new(0, 15, 0, 5)
+SpeedBox.PlaceholderText = "Walk speed..."
+SpeedBox.Text = ""
+SpeedBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+SpeedBox.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+SpeedBox.TextSize = 12
+Instance.new("UICorner", SpeedBox).CornerRadius = UDim.new(0, 6)
+
+local ApplySpeedBtn = Instance.new("TextButton", ContentContainer)
+ApplySpeedBtn.Size = UDim2.new(0, 70, 0, 28)
+ApplySpeedBtn.Position = UDim2.new(0, 155, 0, 5)
+ApplySpeedBtn.Text = "Set Speed"
+ApplySpeedBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+ApplySpeedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ApplySpeedBtn.TextSize = 12
+ApplySpeedBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", ApplySpeedBtn).CornerRadius = UDim.new(0, 6)
+
+-- 2. X-Ray Map (Transparent Buildings) Button
+local XrayBtn = Instance.new("TextButton", ContentContainer)
+XrayBtn.Size = UDim2.new(0, 210, 0, 32)
+XrayBtn.Position = UDim2.new(0, 15, 0, 42)
+XrayBtn.Text = "🧱 X-Ray Map (Transparent): OFF"
+XrayBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+XrayBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+XrayBtn.TextSize, XrayBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", XrayBtn).CornerRadius = UDim.new(0, 6)
+
+-- 3. Hitbox Extender Button
+local HitboxBtn = Instance.new("TextButton", ContentContainer)
+HitboxBtn.Size = UDim2.new(0, 210, 0, 32)
+HitboxBtn.Position = UDim2.new(0, 15, 0, 80)
+HitboxBtn.Text = "🎯 Hitbox Extender: OFF"
+HitboxBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+HitboxBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+HitboxBtn.TextSize, HitboxBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", HitboxBtn).CornerRadius = UDim.new(0, 6)
+
+-- 4. Lock Head (Aimbot) Button
+local AimbotBtn = Instance.new("TextButton", ContentContainer)
+AimbotBtn.Size = UDim2.new(0, 210, 0, 32)
+AimbotBtn.Position = UDim2.new(0, 15, 0, 118)
+AimbotBtn.Text = "🎯 Aimbot (Lock Head): OFF"
+AimbotBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+AimbotBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AimbotBtn.TextSize, AimbotBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", AimbotBtn).CornerRadius = UDim.new(0, 6)
+
+-- 5. Aimbot Distance Slider
+local AimbotSliderBg = Instance.new("Frame", ContentContainer)
+AimbotSliderBg.Size = UDim2.new(0, 210, 0, 26)
+AimbotSliderBg.Position = UDim2.new(0, 15, 0, 156)
+AimbotSliderBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Instance.new("UICorner", AimbotSliderBg).CornerRadius = UDim.new(0, 6)
+
+local AimbotSliderFill = Instance.new("Frame", AimbotSliderBg)
+AimbotSliderFill.Size = UDim2.new(0.5, 0, 1, 0)
+AimbotSliderFill.BackgroundColor3 = Color3.fromRGB(170, 0, 255)
+Instance.new("UICorner", AimbotSliderFill).CornerRadius = UDim.new(0, 6)
+
+local AimbotSliderText = Instance.new("TextLabel", AimbotSliderBg)
+AimbotSliderText.Size = UDim2.new(1, 0, 1, 0)
+AimbotSliderText.Text = "Aimbot Dist: 150"
+AimbotSliderText.TextColor3 = Color3.fromRGB(255, 255, 255)
+AimbotSliderText.TextSize, AimbotSliderText.Font = 11, Enum.Font.SourceSansBold
+AimbotSliderText.BackgroundTransparency = 1
+
+local AimbotSliderButton = Instance.new("TextButton", AimbotSliderBg)
+AimbotSliderButton.Size = UDim2.new(1, 0, 1, 0)
+AimbotSliderButton.Text = ""
+AimbotSliderButton.BackgroundTransparency = 1
+
+-- 6. ESP Wallhack Button
+local EspBtn = Instance.new("TextButton", ContentContainer)
+EspBtn.Size = UDim2.new(0, 210, 0, 32)
+EspBtn.Position = UDim2.new(0, 15, 0, 194)
+EspBtn.Text = "👀 ESP Wallhack: OFF"
+EspBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+EspBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+EspBtn.TextSize, EspBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", EspBtn).CornerRadius = UDim.new(0, 6)
+
+-- 7. Fullbright Button
+local FullbrightBtn = Instance.new("TextButton", ContentContainer)
+FullbrightBtn.Size = UDim2.new(0, 210, 0, 32)
+FullbrightBtn.Position = UDim2.new(0, 15, 0, 232)
+FullbrightBtn.Text = "💡 Fullbright (Bright Map): OFF"
+FullbrightBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+FullbrightBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FullbrightBtn.TextSize, FullbrightBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", FullbrightBtn).CornerRadius = UDim.new(0, 6)
+
+-- 8. Infinite Jump Button
+local InfJumpBtn = Instance.new("TextButton", ContentContainer)
+InfJumpBtn.Size = UDim2.new(0, 210, 0, 32)
+InfJumpBtn.Position = UDim2.new(0, 15, 0, 270)
+InfJumpBtn.Text = "🦘 Infinite Jump: ON"
+InfJumpBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+InfJumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+InfJumpBtn.TextSize, InfJumpBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", InfJumpBtn).CornerRadius = UDim.new(0, 6)
+
+-- 9. Exit Hub Button
+local ExitHubBtn = Instance.new("TextButton", ContentContainer)
+ExitHubBtn.Size = UDim2.new(0, 210, 0, 35)
+ExitHubBtn.Position = UDim2.new(0, 15, 0, 312)
+ExitHubBtn.Text = "❌ Close Hub"
+ExitHubBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+ExitHubBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ExitHubBtn.TextSize, ExitHubBtn.Font = 12, Enum.Font.SourceSansBold
+Instance.new("UICorner", ExitHubBtn).CornerRadius = UDim.new(0, 6)
+
+-- Logic & Sliders
+local UIS = game:GetService("UserInputService")
+local aimbotDragging = false
+local currentAimbotDist = 150
+
+AimbotSliderButton.MouseButton1Down:Connect(function() aimbotDragging = true end)
+UIS.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        aimbotDragging = false
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if aimbotDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local mousePos = UIS:GetMouseLocation()
+        local absPos = AimbotSliderBg.AbsolutePosition
+        local absSize = AimbotSliderBg.AbsoluteSize
+        local relX = math.clamp((mousePos.X - absPos.X) / absSize.X, 0, 1)
+        currentAimbotDist = math.floor(50 + relX * (500 - 50))
+        AimbotSliderFill.Size = UDim2.new(relX, 0, 1, 0)
+        AimbotSliderText.Text = "Aimbot Dist: " .. currentAimbotDist
+    end
+end)
+
+-- X-Ray Map Logic (Transparent Buildings)
+local xrayActive = false
+XrayBtn.MouseButton1Click:Connect(function()
+    xrayActive = not xrayActive
+    if xrayActive then
+        XrayBtn.Text = "🧱 X-Ray Map (Transparent): ON"
+        XrayBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        XrayBtn.Text = "🧱 X-Ray Map (Transparent): OFF"
+        XrayBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+task.spawn(function()
+    while task.wait(1) do
+        if xrayActive then
+            for _, obj in ipairs(workspace:GetDescendants()) do
+                if obj:IsA("BasePart") and not obj:IsDescendantOf(LP.Character) then
+                    if obj.Name ~= "Terrain" then
+                        if obj.Transparency < 0.5 then
+                            obj.Transparency = 0.6
+                        end
+                    end
+                end
+            end
+        else
+            for _, obj in ipairs(workspace:GetDescendants()) do
+                if obj:IsA("BasePart") and not obj:IsDescendantOf(LP.Character) then
+                    if obj.Transparency == 0.6 then
+                        obj.Transparency = 0
+                    end
+                end
+            end
+        end
+    end
+end)
+
+-- Hitbox Extender Logic
+local hitboxActive = false
+HitboxBtn.MouseButton1Click:Connect(function()
+    hitboxActive = not hitboxActive
+    if hitboxActive then
+        HitboxBtn.Text = "🎯 Hitbox Extender: ON"
+        HitboxBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        HitboxBtn.Text = "🎯 Hitbox Extender: OFF"
+        HitboxBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+task.spawn(function()
+    while task.wait(1) do
+        if hitboxActive then
+            for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+                if player ~= LP and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                    local hrp = player.Character.HumanoidRootPart
+                    hrp.Size = Vector3.new(15, 15, 15)
+                    hrp.Transparency = 0.6
+                    hrp.CanCollide = false
+                end
+            end
+        end
+    end
+end)
+
+-- Aimbot Logic
+local aimbotActive = false
+AimbotBtn.MouseButton1Click:Connect(function()
+    aimbotActive = not aimbotActive
+    if aimbotActive then
+        AimbotBtn.Text = "🎯 Aimbot (Lock Head): ON"
+        AimbotBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        AimbotBtn.Text = "🎯 Aimbot (Lock Head): OFF"
+        AimbotBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+local cam = workspace.CurrentCamera
+local rs = game:GetService("RunService")
+
+rs.RenderStepped:Connect(function()
+    if aimbotActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+        pcall(function()
+            local closestTarget = nil
+            local shortestDist = math.huge
+            local myPos = LP.Character.HumanoidRootPart.Position
+            
+            for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+                if player ~= LP and player.Character and player.Character:FindFirstChild("Head") and player.Character:FindFirstChild("Humanoid") then
+                    local hum = player.Character.Humanoid
+                    local head = player.Character.Head
+                    if hum.Health > 0 then
+                        local distToMe = (head.Position - myPos).Magnitude
+                        if distToMe <= currentAimbotDist then
+                            local screenPoint, onScreen = cam:WorldToViewportPoint(head.Position)
+                            if onScreen then
+                                local mousePos = UIS:GetMouseLocation()
+                                local dist = (Vector2.new(screenPoint.X, screenPoint.Y) - mousePos).Magnitude
+                                if dist < shortestDist then
+                                    shortestDist = dist
+                                    closestTarget = head
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+            
+            if closestTarget then
+                cam.CFrame = CFrame.new(cam.CFrame.Position, closestTarget.Position)
+            end
+        end)
+    end
+end)
+
+-- ESP Wallhack Logic
+local espActive = false
+local espBoxFolder = Instance.new("Folder", SG)
+espBoxFolder.Name = "FPS_ESPFolder"
+
+EspBtn.MouseButton1Click:Connect(function()
+    espActive = not espActive
+    if espActive then
+        EspBtn.Text = "👀 ESP Wallhack: ON"
+        EspBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        EspBtn.Text = "👀 ESP Wallhack: OFF"
+        EspBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        espBoxFolder:ClearAllChildren()
+    end
+end)
+
+rs.RenderStepped:Connect(function()
+    if espActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+        local myPos = LP.Character.HumanoidRootPart.Position
+        for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+            if player ~= LP and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
+                local hrp = player.Character.HumanoidRootPart
+                local hum = player.Character.Humanoid
+                local dist = (hrp.Position - myPos).Magnitude
+                
+                local box = espBoxFolder:FindFirstChild(player.Name)
+                if hum.Health > 0 and dist <= 300 then
+                    if not box then
+                        box = Instance.new("Highlight", espBoxFolder)
+                        box.Name = player.Name
+                        box.FillColor = Color3.fromRGB(255, 0, 0)
+                        box.OutlineColor = Color3.fromRGB(255, 255, 255)
+                        box.FillTransparency = 0.4
+                        box.OutlineTransparency = 0
+                    end
+                    box.Adornee = player.Character
+                else
+                    if box then box:Destroy() end
+                end
+            end
+        end
+    else
+        espBoxFolder:ClearAllChildren()
+    end
+end)
+
+-- Fullbright Logic
+local fullbrightActive = false
+local Lighting = game:GetService("Lighting")
+FullbrightBtn.MouseButton1Click:Connect(function()
+    fullbrightActive = not fullbrightActive
+    if fullbrightActive then
+        FullbrightBtn.Text = "💡 Fullbright (Bright Map): ON"
+        FullbrightBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+        Lighting.Brightness = 2
+        Lighting.ClockTime = 14
+        Lighting.GlobalShadows = false
+    else
+        FullbrightBtn.Text = "💡 Fullbright (Bright Map): OFF"
+        FullbrightBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        Lighting.Brightness = 1
+        Lighting.GlobalShadows = true
+    end
+end)
+
+-- Infinite Jump Logic
+local infJumpEnabled = true
+InfJumpBtn.MouseButton1Click:Connect(function()
+    infJumpEnabled = not infJumpEnabled
+    if infJumpEnabled then
+        InfJumpBtn.Text = "🦘 Infinite Jump: ON"
+        InfJumpBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        InfJumpBtn.Text = "🦘 Infinite Jump: OFF"
+        InfJumpBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+UIS.JumpRequest:Connect(function()
+    if infJumpEnabled and LP.Character and LP.Character:FindFirstChildOfClass("Humanoid") then
+        LP.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
+
+-- Speed Set
+ApplySpeedBtn.MouseButton1Click:Connect(function()
+    local val = tonumber(SpeedBox.Text)
+    if val and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+        LP.Character.Humanoid.WalkSpeed = val
+    else
+        SpeedBox.Text = ""
+        SpeedBox.PlaceholderText = "Invalid!"
+    end
+end)
+
+-- Toggle Menu Icon
+ToggleBtn.MouseButton1Click:Connect(function()
+    RoundIconBtn.Position = MainFrame.Position
+    MainFrame.Visible = false
+    RoundIconBtn.Visible = true
+end)
+
+RoundIconBtn.MouseButton1Click:Connect(function()
+    MainFrame.Position = RoundIconBtn.Position
+    RoundIconBtn.Visible = false
+    MainFrame.Visible = true
+end)
+
+ExitHubBtn.MouseButton1Click:Connect(function() SG:Destroy() end)
