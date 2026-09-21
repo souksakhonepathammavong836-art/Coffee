@@ -1,0 +1,2 @@
+-- Muscle Legends OP Script (Auto Farm, Fast Punch, Infinite Rebirth)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ahmadsgaming/script/main/MuscleLegends", true))()
