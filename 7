@@ -1,0 +1,173 @@
+-- [[ WOOD CUTTER HUB - FAST GLOBAL CHOP ]] --
+local LP = game:GetService("Players").LocalPlayer
+local SG = Instance.new("ScreenGui", game:GetService("CoreGui"))
+SG.Name = "WoodCutterHubFast"
+
+local MainFrame = Instance.new("Frame", SG)
+MainFrame.Size = UDim2.new(0, 240, 0, 300)
+MainFrame.Position = UDim2.new(0, 40, 0, 120)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(255, 170, 0)
+MainStroke.Thickness = 2
+
+local MainTitle = Instance.new("TextLabel", MainFrame)
+MainTitle.Size = UDim2.new(0, 240, 0, 35)
+MainTitle.Text = "🪓 FAST GLOBAL WOOD CUTTER 🪓"
+MainTitle.TextColor3 = Color3.fromRGB(255, 200, 0)
+MainTitle.TextSize = 12
+MainTitle.Font = Enum.Font.SourceSansBold
+MainTitle.BackgroundTransparency = 1
+
+local ContentContainer = Instance.new("ScrollingFrame", MainFrame)
+ContentContainer.Size = UDim2.new(1, 0, 1, -45)
+ContentContainer.Position = UDim2.new(0, 0, 0, 40)
+ContentContainer.BackgroundTransparency = 1
+ContentContainer.CanvasSize = UDim2.new(0, 0, 0, 500)
+ContentContainer.ScrollBarThickness = 4
+
+-- 1. Fast Global Chop Button
+local FastChopBtn = Instance.new("TextButton", ContentContainer)
+FastChopBtn.Size = UDim2.new(0, 210, 0, 40)
+FastChopBtn.Position = UDim2.new(0, 15, 0, 15)
+FastChopBtn.Text = "⚡ Fast Global Chop: OFF"
+FastChopBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+FastChopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FastChopBtn.TextSize, FastChopBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", FastChopBtn).CornerRadius = UDim.new(0, 6)
+
+-- 2. Bring All Woods to Me
+local BringAllBtn = Instance.new("TextButton", ContentContainer)
+BringAllBtn.Size = UDim2.new(0, 210, 0, 40)
+BringAllBtn.Position = UDim2.new(0, 15, 0, 65)
+BringAllBtn.Text = "📦 Bring All Woods to Me"
+BringAllBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+BringAllBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+BringAllBtn.TextSize, BringAllBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", BringAllBtn).CornerRadius = UDim.new(0, 6)
+
+-- 3. Tree ESP
+local TreeEspBtn = Instance.new("TextButton", ContentContainer)
+TreeEspBtn.Size = UDim2.new(0, 210, 0, 40)
+TreeEspBtn.Position = UDim2.new(0, 15, 0, 115)
+TreeEspBtn.Text = "👀 Tree ESP: OFF"
+TreeEspBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+TreeEspBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+TreeEspBtn.TextSize, TreeEspBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", TreeEspBtn).CornerRadius = UDim.new(0, 6)
+
+-- 4. Close Hub
+local CloseBtn = Instance.new("TextButton", ContentContainer)
+CloseBtn.Size = UDim2.new(0, 210, 0, 35)
+CloseBtn.Position = UDim2.new(0, 15, 0, 165)
+CloseBtn.Text = "❌ Close Hub"
+CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.TextSize, CloseBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
+
+-- Logic: Fast Global Chop
+local fastChopActive = false
+FastChopBtn.MouseButton1Click:Connect(function()
+    fastChopActive = not fastChopActive
+    if fastChopActive then
+        FastChopBtn.Text = "⚡ Fast Global Chop: ON"
+        FastChopBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        FastChopBtn.Text = "⚡ Fast Global Chop: OFF"
+        FastChopBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.1) do
+        if fastChopActive then
+            pcall(function()
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if obj:IsA("Model") and (obj.Name:find("Tree") or obj.Name:find("Wood") or obj.Name:lower():find("pine") or obj.Name:lower():find("oak")) then
+                        for _, part in ipairs(obj:GetDescendants()) do
+                            if part:IsA("BasePart") and (part.Name:find("WoodSection") or part.Name:find("Part") or part.Name:find(" tronco")) then
+                                -- ຈຳລອງການທຳລາຍ ຫຼື ສັ່ງ Fire Remote ໄປຫາທຸກສ່ວນຂອງຕົ້ນໄມ້ໃນແມບພ້ອມກັນ
+                                local tool = LP.Character and LP.Character:FindFirstChildOfClass("Tool") or LP.Backpack and LP.Backpack:FindFirstChildOfClass("Tool")
+                                if tool then
+                                    for _, remote in ipairs(tool:GetDescendants()) do
+                                        if remote:IsA("RemoteEvent") then
+                                            remote:FireServer(part)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- Logic: Bring All Woods
+BringAllBtn.MouseButton1Click:Connect(function()
+    pcall(function()
+        if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            local myPos = LP.Character.HumanoidRootPart.Position
+            for _, obj in ipairs(workspace:GetDescendants()) do
+                if obj:IsA("Model") and (obj.Name:find("Wood") or obj.Name:find("Log")) then
+                    for _, part in ipairs(obj:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.CFrame = CFrame.new(myPos + Vector3.new(math.random(-5,5), 3, math.random(-5,5)))
+                        end
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+-- Logic: Tree ESP
+local treeEspActive = false
+local treeFolder = Instance.new("Folder", SG)
+treeFolder.Name = "TreeESPFolder"
+
+TreeEspBtn.MouseButton1Click:Connect(function()
+    treeEspActive = not treeEspActive
+    if treeEspActive then
+        TreeEspBtn.Text = "👀 Tree ESP: ON"
+        TreeEspBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        TreeEspBtn.Text = "👀 Tree ESP: OFF"
+        TreeEspBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        treeFolder:ClearAllChildren()
+    end
+end)
+
+task.spawn(function()
+    while task.wait(1) do
+        if treeEspActive then
+            for _, obj in ipairs(workspace:GetDescendants()) do
+                if obj:IsA("Model") and (obj.Name:find("Tree") or obj.Name:find("Wood")) then
+                    local targetPart = obj.PrimaryPart or obj:FindFirstChildWhichIsA("BasePart")
+                    if targetPart and not targetPart:FindFirstChild("TreeHighlight") then
+                        local hl = Instance.new("Highlight", treeFolder)
+                        hl.Name = "TreeHighlight"
+                        hl.Adornee = obj
+                        hl.FillColor = Color3.fromRGB(255, 170, 0)
+                        hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+                        hl.FillTransparency = 0.5
+                    end
+                end
+            end
+        else
+            treeFolder:ClearAllChildren()
+        end
+    end
+end)
+
+-- Logic: Close Hub
+CloseBtn.MouseButton1Click:Connect(function()
+    SG:Destroy()
+end)
