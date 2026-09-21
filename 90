@@ -1,0 +1,203 @@
+-- [[ +1 TREASURE WOOD HUB - CUSTOM RANGE & SPEED ]] --
+local LP = game:GetService("Players").LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+
+if CoreGui:FindFirstChild("WoodTreasureHub") then
+    CoreGui.WoodTreasureHub:Destroy()
+end
+
+local SG = Instance.new("ScreenGui", CoreGui)
+SG.Name = "WoodTreasureHub"
+SG.ResetOnSpawn = false
+
+-- ປຸ່ມວົງມົນເປີດ/ປິດ GUI
+local ToggleBtn = Instance.new("TextButton", SG)
+ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
+ToggleBtn.Position = UDim2.new(0, 20, 0, 120)
+ToggleBtn.Text = "🪓"
+ToggleBtn.TextSize = 24
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.Active = true
+ToggleBtn.Draggable = true
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
+
+local ToggleStroke = Instance.new("UIStroke", ToggleBtn)
+ToggleStroke.Color = Color3.fromRGB(255, 170, 0)
+ToggleStroke.Thickness = 2
+
+-- ໜ້າຕ່າງຫຼັກ
+local MainFrame = Instance.new("Frame", SG)
+MainFrame.Size = UDim2.new(0, 250, 0, 360)
+MainFrame.Position = UDim2.new(0, 80, 0, 120)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(255, 170, 0)
+MainStroke.Thickness = 2
+
+local MainTitle = Instance.new("TextLabel", MainFrame)
+MainTitle.Size = UDim2.new(0, 250, 0, 35)
+MainTitle.Text = "⚡ ULTRA FAST WIDE CHOP ⚡"
+MainTitle.TextColor3 = Color3.fromRGB(255, 200, 0)
+MainTitle.TextSize, MainTitle.Font = 11, Enum.Font.SourceSansBold
+MainTitle.BackgroundTransparency = 1
+
+local CloseTopBtn = Instance.new("TextButton", MainFrame)
+CloseTopBtn.Size = UDim2.new(0, 30, 0, 30)
+CloseTopBtn.Position = UDim2.new(1, -35, 0, 3)
+CloseTopBtn.Text = "X"
+CloseTopBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseTopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseTopBtn.TextSize, CloseTopBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", CloseTopBtn).CornerRadius = UDim.new(0, 6)
+
+local ContentContainer = Instance.new("ScrollingFrame", MainFrame)
+ContentContainer.Size = UDim2.new(1, 0, 1, -45)
+ContentContainer.Position = UDim2.new(0, 0, 0, 40)
+ContentContainer.BackgroundTransparency = 1
+ContentContainer.CanvasSize = UDim2.new(0, 0, 0, 420)
+ContentContainer.ScrollBarThickness = 4
+
+ToggleBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+CloseTopBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+end)
+
+-- 1. ປຸ່ມເປີດ/ປິດ Auto Farm
+local AutoFarmBtn = Instance.new("TextButton", ContentContainer)
+AutoFarmBtn.Size = UDim2.new(0, 220, 0, 40)
+AutoFarmBtn.Position = UDim2.new(0, 15, 0, 10)
+AutoFarmBtn.Text = "⚡ Ultra Auto Farm: OFF"
+AutoFarmBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+AutoFarmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoFarmBtn.TextSize, AutoFarmBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", AutoFarmBtn).CornerRadius = UDim.new(0, 6)
+
+-- 2. ປັບໄລຍະຄວາມກວ້າງ (Range Input)
+local RangeLabel = Instance.new("TextLabel", ContentContainer)
+RangeLabel.Size = UDim2.new(0, 220, 0, 20)
+RangeLabel.Position = UDim2.new(0, 15, 0, 60)
+RangeLabel.Text = "🗺️ Range (ຄວາມກວ້າງ): 100 ແມັດ"
+RangeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+RangeLabel.TextSize, RangeLabel.Font = 10, Enum.Font.SourceSansBold
+RangeLabel.BackgroundTransparency = 1
+RangeLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local RangeBox = Instance.new("TextBox", ContentContainer)
+RangeBox.Size = UDim2.new(0, 220, 0, 32)
+RangeBox.Position = UDim2.new(0, 15, 0, 85)
+RangeBox.Text = "100"
+RangeBox.PlaceholderText = "ใส่ตัวเลขระยะ (เช่น 150, 300)"
+RangeBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+RangeBox.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+RangeBox.TextSize = 12
+Instance.new("UICorner", RangeBox).CornerRadius = UDim.new(0, 6)
+
+-- 3. ປັບຄວາມໄວການຄິກ (Speed Delay Input)
+local SpeedLabel = Instance.new("TextLabel", ContentContainer)
+SpeedLabel.Size = UDim2.new(0, 220, 0, 20)
+SpeedLabel.Position = UDim2.new(0, 15, 0, 125)
+SpeedLabel.Text = "⚡ Speed Delay (ຄ່າໜ້ອຍ = ໄວຫຼາຍ):"
+SpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpeedLabel.TextSize, SpeedLabel.Font = 10, Enum.Font.SourceSansBold
+SpeedLabel.BackgroundTransparency = 1
+SpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local SpeedBox = Instance.new("TextBox", ContentContainer)
+SpeedBox.Size = UDim2.new(0, 220, 0, 32)
+SpeedBox.Position = UDim2.new(0, 15, 0, 150)
+SpeedBox.Text = "0.01"
+SpeedBox.PlaceholderText = "0.01 (ໄວສຸດ)"
+SpeedBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+SpeedBox.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+SpeedBox.TextSize = 12
+Instance.new("UICorner", SpeedBox).CornerRadius = UDim.new(0, 6)
+
+-- 4. ປຸ່ມດຶງຂອງ (Collect Drops)
+local CollectBtn = Instance.new("TextButton", ContentContainer)
+CollectBtn.Size = UDim2.new(0, 220, 0, 38)
+CollectBtn.Position = UDim2.new(0, 15, 0, 195)
+CollectBtn.Text = "📦 Collect Chests / Drops"
+CollectBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+CollectBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CollectBtn.TextSize, CollectBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", CollectBtn).CornerRadius = UDim.new(0, 6)
+
+-- 5. ປຸ່ມປິດສະຄິບ (Destroy)
+local DestroyBtn = Instance.new("TextButton", ContentContainer)
+DestroyBtn.Size = UDim2.new(0, 220, 0, 35)
+DestroyBtn.Position = UDim2.new(0, 15, 0, 245)
+DestroyBtn.Text = "❌ Unload Script"
+DestroyBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+DestroyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+DestroyBtn.TextSize, DestroyBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", DestroyBtn).CornerRadius = UDim.new(0, 6)
+
+-- Logic: Ultra Auto Farm
+local autoFarmActive = false
+AutoFarmBtn.MouseButton1Click:Connect(function()
+    autoFarmActive = not autoFarmActive
+    if autoFarmActive then
+        AutoFarmBtn.Text = "⚡ Ultra Auto Farm: ON"
+        AutoFarmBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        AutoFarmBtn.Text = "⚡ Ultra Auto Farm: OFF"
+        AutoFarmBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+task.spawn(function()
+    while true do
+        local delayTime = tonumber(SpeedBox.Text) or 0.01
+        task.wait(delayTime)
+        
+        if autoFarmActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            pcall(function()
+                local myPos = LP.Character.HumanoidRootPart.Position
+                local maxRange = tonumber(RangeBox.Text) or 100
+                
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if obj:IsA("BasePart") and (obj.Name:find("Block") or obj.Name:find("Part") or obj.Name:find("Wood") or obj.Name:find("Log")) then
+                        if (obj.Position - myPos).Magnitude <= maxRange then
+                            local tool = LP.Character:FindFirstChildOfClass("Tool") or LP.Backpack:FindFirstChildOfClass("Tool")
+                            if tool then
+                                for _, remote in ipairs(tool:GetDescendants()) do
+                                    if remote:IsA("RemoteEvent") then
+                                        remote:FireServer(obj)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- Logic: Collect Drops
+CollectBtn.MouseButton1Click:Connect(function()
+    pcall(function()
+        if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            local myPos = LP.Character.HumanoidRootPart.Position
+            for _, obj in ipairs(workspace:GetDescendants()) do
+                if obj:IsA("BasePart") and (obj.Name:find("Chest") or obj.Name:find("Coin") or obj.Name:find("Gem") or obj.Name:find("Drop")) then
+                    obj.CFrame = CFrame.new(myPos + Vector3.new(0, 2, 0))
+                end
+            end
+        end
+    end)
+end)
+
+-- Logic: Destroy Hub
+DestroyBtn.MouseButton1Click:Connect(function()
+    SG:Destroy()
+end)
