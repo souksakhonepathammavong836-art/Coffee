@@ -1,0 +1,103 @@
+-- [[ BLOCKS / WOOD CUTTER - WIDE AREA FARM ]] --
+local LP = game:GetService("Players").LocalPlayer
+local SG = Instance.new("ScreenGui", game:GetService("CoreGui"))
+SG.Name = "WideChopHub"
+
+local MainFrame = Instance.new("Frame", SG)
+MainFrame.Size = UDim2.new(0, 240, 0, 260)
+MainFrame.Position = UDim2.new(0, 40, 0, 120)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(138, 43, 226) -- ມ່ວນສີມ່ວງຕາມຕີມເກມ
+MainStroke.Thickness = 2
+
+local MainTitle = Instance.new("TextLabel", MainFrame)
+MainTitle.Size = UDim2.new(0, 240, 0, 35)
+MainTitle.Text = "🪓 WIDE AREA AUTO FARM 🪓"
+MainTitle.TextColor3 = Color3.fromRGB(186, 85, 211)
+MainTitle.TextSize, MainTitle.Font = 11, Enum.Font.SourceSansBold
+MainTitle.BackgroundTransparency = 1
+
+local ContentContainer = Instance.new("ScrollingFrame", MainFrame)
+ContentContainer.Size = UDim2.new(1, 0, 1, -45)
+ContentContainer.Position = UDim2.new(0, 0, 0, 40)
+ContentContainer.BackgroundTransparency = 1
+ContentContainer.CanvasSize = UDim2.new(0, 0, 0, 400)
+ContentContainer.ScrollBarThickness = 4
+
+-- 1. Wide Area Farm Button
+local WideChopBtn = Instance.new("TextButton", ContentContainer)
+WideChopBtn.Size = UDim2.new(0, 210, 0, 40)
+WideChopBtn.Position = UDim2.new(0, 15, 0, 15)
+WideChopBtn.Text = "⚡ Wide Area Chop: OFF"
+WideChopBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+WideChopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+WideChopBtn.TextSize, WideChopBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", WideChopBtn).CornerRadius = UDim.new(0, 6)
+
+-- 2. Teleport to Blocks Button
+local TpBlocksBtn = Instance.new("TextButton", ContentContainer)
+TpBlocksBtn.Size = UDim2.new(0, 210, 0, 40)
+TpBlocksBtn.Position = UDim2.new(0, 15, 0, 65)
+TpBlocksBtn.Text = "🌀 Teleport to Blocks"
+TpBlocksBtn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
+TpBlocksBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+TpBlocksBtn.TextSize, TpBlocksBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", TpBlocksBtn).CornerRadius = UDim.new(0, 6)
+
+-- 3. Close Button
+local CloseBtn = Instance.new("TextButton", ContentContainer)
+CloseBtn.Size = UDim2.new(0, 210, 0, 35)
+CloseBtn.Position = UDim2.new(0, 15, 0, 115)
+CloseBtn.Text = "❌ Close Hub"
+CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.TextSize, CloseBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
+
+-- Logic: Wide Area Chop (ກວາດຕັດບລັອກຮອບຕົວແບບວົງກວ້າງ)
+local wideChopActive = false
+WideChopBtn.MouseButton1Click:Connect(function()
+    wideChopActive = not wideChopActive
+    if wideChopActive then
+        WideChopBtn.Text = "⚡ Wide Area Chop: ON"
+        WideChopBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        WideChopBtn.Text = "⚡ Wide Area Chop: OFF"
+        WideChopBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.1) do
+        if wideChopActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            pcall(function()
+                local myPos = LP.Character.HumanoidRootPart.Position
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if obj:IsA("BasePart") and (obj.Name == "Block" or obj.Name:find("Part") or obj.Name:find("Ore") or obj.Name:find("Wood")) then
+                        if (obj.Position - myPos).Magnitude <= 50 then -- រັດສະມີການກວາດ 50 ແມັດຮອບຕົວ
+                            local tool = LP.Character:FindFirstChildOfClass("Tool") or LP.Backpack:FindFirstChildOfClass("Tool")
+                            if tool then
+                                for _, remote in ipairs(tool:GetDescendants()) do
+                                    if remote:IsA("RemoteEvent") then
+                                        remote:FireServer(obj)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- Logic: Close Hub
+CloseBtn.MouseButton1Click:Connect(function()
+    SG:Destroy()
+end)
