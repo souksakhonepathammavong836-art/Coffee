@@ -1,0 +1,174 @@
+-- [[ PUNCH SIMULATOR / WALL BREAKER HUB ]] --
+local LP = game:GetService("Players").LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+
+if CoreGui:FindFirstChild("PunchSimHub") then
+    CoreGui.PunchSimHub:Destroy()
+end
+
+local SG = Instance.new("ScreenGui", CoreGui)
+SG.Name = "PunchSimHub"
+SG.ResetOnSpawn = false
+
+-- ປຸ່ມວົງມົນເປີດ/ປິດ GUI
+local ToggleBtn = Instance.new("TextButton", SG)
+ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
+ToggleBtn.Position = UDim2.new(0, 20, 0, 120)
+ToggleBtn.Text = "🥊"
+ToggleBtn.TextSize = 24
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.Active = true
+ToggleBtn.Draggable = true
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
+
+local ToggleStroke = Instance.new("UIStroke", ToggleBtn)
+ToggleStroke.Color = Color3.fromRGB(255, 200, 0)
+ToggleStroke.Thickness = 2
+
+-- ໜ້າຕ່າງຫຼັກ
+local MainFrame = Instance.new("Frame", SG)
+MainFrame.Size = UDim2.new(0, 250, 0, 320)
+MainFrame.Position = UDim2.new(0, 80, 0, 120)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(255, 200, 0)
+MainStroke.Thickness = 2
+
+local MainTitle = Instance.new("TextLabel", MainFrame)
+MainTitle.Size = UDim2.new(0, 250, 0, 35)
+MainTitle.Text = "💥 AUTO PUNCH / WALL FARM 💥"
+MainTitle.TextColor3 = Color3.fromRGB(255, 220, 0)
+MainTitle.TextSize, MainTitle.Font = 11, Enum.Font.SourceSansBold
+MainTitle.BackgroundTransparency = 1
+
+local CloseTopBtn = Instance.new("TextButton", MainFrame)
+CloseTopBtn.Size = UDim2.new(0, 30, 0, 30)
+CloseTopBtn.Position = UDim2.new(1, -35, 0, 3)
+CloseTopBtn.Text = "X"
+CloseTopBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseTopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseTopBtn.TextSize, CloseTopBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", CloseTopBtn).CornerRadius = UDim.new(0, 6)
+
+local ContentContainer = Instance.new("ScrollingFrame", MainFrame)
+ContentContainer.Size = UDim2.new(1, 0, 1, -45)
+ContentContainer.Position = UDim2.new(0, 0, 0, 40)
+ContentContainer.BackgroundTransparency = 1
+ContentContainer.CanvasSize = UDim2.new(0, 0, 0, 350)
+ContentContainer.ScrollBarThickness = 4
+
+ToggleBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+CloseTopBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+end)
+
+-- 1. Auto Punch Button
+local AutoPunchBtn = Instance.new("TextButton", ContentContainer)
+AutoPunchBtn.Size = UDim2.new(0, 220, 0, 40)
+AutoPunchBtn.Position = UDim2.new(0, 15, 0, 15)
+AutoPunchBtn.Text = "🥊 Auto Punch / Click: OFF"
+AutoPunchBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+AutoPunchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoPunchBtn.TextSize, AutoPunchBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", AutoPunchBtn).CornerRadius = UDim.new(0, 6)
+
+-- 2. Speed / Delay Input
+local SpeedLabel = Instance.new("TextLabel", ContentContainer)
+SpeedLabel.Size = UDim2.new(0, 220, 0, 20)
+SpeedLabel.Position = UDim2.new(0, 15, 0, 65)
+SpeedLabel.Text = "⚡ Punch Delay (ຄ່າໜ້ອຍ = ໄວຫຼາຍ):"
+SpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpeedLabel.TextSize, SpeedLabel.Font = 10, Enum.Font.SourceSansBold
+SpeedLabel.BackgroundTransparency = 1
+SpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local SpeedBox = Instance.new("TextBox", ContentContainer)
+SpeedBox.Size = UDim2.new(0, 220, 0, 32)
+SpeedBox.Position = UDim2.new(0, 15, 0, 90)
+SpeedBox.Text = "0.01"
+SpeedBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+SpeedBox.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+SpeedBox.TextSize = 12
+Instance.new("UICorner", SpeedBox).CornerRadius = UDim.new(0, 6)
+
+-- 3. Claim Rewards / Collect
+local ClaimBtn = Instance.new("TextButton", ContentContainer)
+ClaimBtn.Size = UDim2.new(0, 220, 0, 38)
+ClaimBtn.Position = UDim2.new(0, 15, 0, 135)
+ClaimBtn.Text = "🎁 Claim All / Collect Drops"
+ClaimBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+ClaimBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ClaimBtn.TextSize, ClaimBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", ClaimBtn).CornerRadius = UDim.new(0, 6)
+
+-- 4. Destroy Hub
+local DestroyBtn = Instance.new("TextButton", ContentContainer)
+DestroyBtn.Size = UDim2.new(0, 220, 0, 35)
+DestroyBtn.Position = UDim2.new(0, 15, 0, 185)
+DestroyBtn.Text = "❌ Unload Script"
+DestroyBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+DestroyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+DestroyBtn.TextSize, DestroyBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", DestroyBtn).CornerRadius = UDim.new(0, 6)
+
+-- Logic: Auto Punch
+local autoPunchActive = false
+AutoPunchBtn.MouseButton1Click:Connect(function()
+    autoPunchActive = not autoPunchActive
+    if autoPunchActive then
+        AutoPunchBtn.Text = "🥊 Auto Punch / Click: ON"
+        AutoPunchBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        AutoPunchBtn.Text = "🥊 Auto Punch / Click: OFF"
+        AutoPunchBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+task.spawn(function()
+    while true do
+        local delayTime = tonumber(SpeedBox.Text) or 0.01
+        task.wait(delayTime)
+        
+        if autoPunchActive and LP.Character then
+            pcall(function()
+                local tool = LP.Character:FindFirstChildOfClass("Tool") or LP.Backpack:FindFirstChildOfClass("Tool")
+                if tool then
+                    tool:Activate()
+                end
+                for _, remote in ipairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+                    if remote:IsA("RemoteEvent") and (remote.Name:lower():find("punch") or remote.Name:lower():find("click") or remote.Name:lower():find("train")) then
+                        remote:FireServer()
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- Logic: Claim Drops
+ClaimBtn.MouseButton1Click:Connect(function()
+    pcall(function()
+        if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            local myPos = LP.Character.HumanoidRootPart.Position
+            for _, obj in ipairs(workspace:GetDescendants()) do
+                if obj:IsA("BasePart") and (obj.Name:find("Key") or obj.Name:find("Chest") or obj.Name:find("Coin") or obj.Name:find("Gift")) then
+                    obj.CFrame = CFrame.new(myPos + Vector3.new(0, 2, 0))
+                end
+            end
+        end
+    end)
+end)
+
+-- Logic: Destroy
+DestroyBtn.MouseButton1Click:Connect(function()
+    SG:Destroy()
+end)
