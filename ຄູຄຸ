@@ -1,0 +1,271 @@
+-- [[ PUNCH SIMULATOR - 999,999 LUCK & GOD MODE HUB ]] --
+local LP = game:GetService("Players").LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+
+if CoreGui:FindFirstChild("PunchSimMegaLuck") then
+    CoreGui.PunchSimMegaLuck:Destroy()
+end
+
+local SG = Instance.new("ScreenGui", CoreGui)
+SG.Name = "PunchSimMegaLuck"
+SG.ResetOnSpawn = false
+
+-- ປຸ່ມວົງມົນລອຍເປີດ/ປິດ GUI
+local ToggleBtn = Instance.new("TextButton", SG)
+ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
+ToggleBtn.Position = UDim2.new(0, 20, 0, 120)
+ToggleBtn.Text = "💎"
+ToggleBtn.TextSize = 24
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 255)
+ToggleBtn.Active = true
+ToggleBtn.Draggable = true
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
+
+local ToggleStroke = Instance.new("UIStroke", ToggleBtn)
+ToggleStroke.Color = Color3.fromRGB(0, 255, 255)
+ToggleStroke.Thickness = 2
+
+-- ໜ້າຕ່າງຫຼັກ
+local MainFrame = Instance.new("Frame", SG)
+MainFrame.Size = UDim2.new(0, 260, 0, 430)
+MainFrame.Position = UDim2.new(0, 80, 0, 120)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(0, 255, 255)
+MainStroke.Thickness = 2
+
+local MainTitle = Instance.new("TextLabel", MainFrame)
+MainTitle.Size = UDim2.new(0, 260, 0, 35)
+MainTitle.Text = "💎 999,999 LUCK & GOD HUB 💎"
+MainTitle.TextColor3 = Color3.fromRGB(0, 255, 255)
+MainTitle.TextSize, MainTitle.Font = 10, Enum.Font.SourceSansBold
+MainTitle.BackgroundTransparency = 1
+
+local CloseTopBtn = Instance.new("TextButton", MainFrame)
+CloseTopBtn.Size = UDim2.new(0, 30, 0, 30)
+CloseTopBtn.Position = UDim2.new(1, -35, 0, 3)
+CloseTopBtn.Text = "X"
+CloseTopBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseTopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseTopBtn.TextSize, CloseTopBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", CloseTopBtn).CornerRadius = UDim.new(0, 6)
+
+local ContentContainer = Instance.new("ScrollingFrame", MainFrame)
+ContentContainer.Size = UDim2.new(1, 0, 1, -45)
+ContentContainer.Position = UDim2.new(0, 0, 0, 40)
+ContentContainer.BackgroundTransparency = 1
+ContentContainer.CanvasSize = UDim2.new(0, 0, 0, 480)
+ContentContainer.ScrollBarThickness = 4
+
+ToggleBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+CloseTopBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+end)
+
+-- 1. Ultra Auto Punch
+local AutoPunchBtn = Instance.new("TextButton", ContentContainer)
+AutoPunchBtn.Size = UDim2.new(0, 230, 0, 40)
+AutoPunchBtn.Position = UDim2.new(0, 15, 0, 15)
+AutoPunchBtn.Text = "🥊 Ultra Auto Punch: OFF"
+AutoPunchBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+AutoPunchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoPunchBtn.TextSize, AutoPunchBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", AutoPunchBtn).CornerRadius = UDim.new(0, 6)
+
+-- 2. Instant Destroy Walls
+local WallDestroyBtn = Instance.new("TextButton", ContentContainer)
+WallDestroyBtn.Size = UDim2.new(0, 230, 0, 40)
+WallDestroyBtn.Position = UDim2.new(0, 15, 0, 65)
+WallDestroyBtn.Text = "💥 Instant Break Walls: OFF"
+WallDestroyBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+WallDestroyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+WallDestroyBtn.TextSize, WallDestroyBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", WallDestroyBtn).CornerRadius = UDim.new(0, 6)
+
+-- 3. Bring All Objects to Me
+local BringAllBtn = Instance.new("TextButton", ContentContainer)
+BringAllBtn.Size = UDim2.new(0, 230, 0, 40)
+BringAllBtn.Position = UDim2.new(0, 15, 0, 115)
+BringAllBtn.Text = "🧲 Bring All Objects to Me: OFF"
+BringAllBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+BringAllBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+BringAllBtn.TextSize, BringAllBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", BringAllBtn).CornerRadius = UDim.new(0, 6)
+
+-- 4. 999,999 Mega Luck Booster
+local LuckBtn = Instance.new("TextButton", ContentContainer)
+LuckBtn.Size = UDim2.new(0, 230, 0, 40)
+LuckBtn.Position = UDim2.new(0, 15, 0, 165)
+LuckBtn.Text = "🍀 Luck 999,999: OFF"
+LuckBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+LuckBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+LuckBtn.TextSize, LuckBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", LuckBtn).CornerRadius = UDim.new(0, 6)
+
+-- 5. Speed / Delay Input
+local SpeedLabel = Instance.new("TextLabel", ContentContainer)
+SpeedLabel.Size = UDim2.new(0, 230, 0, 20)
+SpeedLabel.Position = UDim2.new(0, 15, 0, 215)
+SpeedLabel.Text = "⚡ Attack Speed (0.005 = ໄວສຸດ):"
+SpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpeedLabel.TextSize, SpeedLabel.Font = 10, Enum.Font.SourceSansBold
+SpeedLabel.BackgroundTransparency = 1
+SpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local SpeedBox = Instance.new("TextBox", ContentContainer)
+SpeedBox.Size = UDim2.new(0, 230, 0, 32)
+SpeedBox.Position = UDim2.new(0, 15, 0, 240)
+SpeedBox.Text = "0.005"
+SpeedBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+SpeedBox.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+SpeedBox.TextSize = 12
+Instance.new("UICorner", SpeedBox).CornerRadius = UDim.new(0, 6)
+
+-- 6. Unload Script Button
+local DestroyBtn = Instance.new("TextButton", ContentContainer)
+DestroyBtn.Size = UDim2.new(0, 230, 0, 35)
+DestroyBtn.Position = UDim2.new(0, 15, 0, 285)
+DestroyBtn.Text = "❌ Unload Script"
+DestroyBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+DestroyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+DestroyBtn.TextSize, DestroyBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", DestroyBtn).CornerRadius = UDim.new(0, 6)
+
+-- Logic: Ultra Auto Punch
+local autoPunchActive = false
+AutoPunchBtn.MouseButton1Click:Connect(function()
+    autoPunchActive = not autoPunchActive
+    if autoPunchActive then
+        AutoPunchBtn.Text = "🥊 Ultra Auto Punch: ON"
+        AutoPunchBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        AutoPunchBtn.Text = "🥊 Ultra Auto Punch: OFF"
+        AutoPunchBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+task.spawn(function()
+    while true do
+        local delayTime = tonumber(SpeedBox.Text) or 0.005
+        task.wait(delayTime)
+        
+        if autoPunchActive and LP.Character then
+            pcall(function()
+                local tool = LP.Character:FindFirstChildOfClass("Tool") or LP.Backpack:FindFirstChildOfClass("Tool")
+                if tool then
+                    tool:Activate()
+                end
+                for _, remote in ipairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+                    if remote:IsA("RemoteEvent") and (remote.Name:lower():find("punch") or remote.Name:lower():find("click") or remote.Name:lower():find("train") or remote.Name:lower():find("hit")) then
+                        remote:FireServer()
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- Logic: Instant Break Walls
+local wallDestroyActive = false
+WallDestroyBtn.MouseButton1Click:Connect(function()
+    wallDestroyActive = not wallDestroyActive
+    if wallDestroyActive then
+        WallDestroyBtn.Text = "💥 Instant Break Walls: ON"
+        WallDestroyBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        WallDestroyBtn.Text = "💥 Instant Break Walls: OFF"
+        WallDestroyBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.2) do
+        if wallDestroyActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            pcall(function()
+                local myPos = LP.Character.HumanoidRootPart.Position
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if obj:IsA("BasePart") and (obj.Name:lower():find("wall") or obj.Name:lower():find("block") or obj.Name:lower():find("door")) then
+                        if (obj.Position - myPos).Magnitude <= 30 then
+                            obj.CanCollide = false
+                            obj.Transparency = 0.8
+                            for _, remote in ipairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+                                if remote:IsA("RemoteEvent") then
+                                    remote:FireServer(obj)
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- Logic: Bring All Objects to Me
+local bringAllActive = false
+BringAllBtn.MouseButton1Click:Connect(function()
+    bringAllActive = not bringAllActive
+    if bringAllActive then
+        BringAllBtn.Text = "🧲 Bring All Objects to Me: ON"
+        BringAllBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        BringAllBtn.Text = "🧲 Bring All Objects to Me: OFF"
+        BringAllBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.3) do
+        if bringAllActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            pcall(function()
+                local myPos = LP.Character.HumanoidRootPart.Position
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if obj:IsA("BasePart") and (obj.Name:find("Key") or obj.Name:find("Chest") or obj.Name:find("Coin") or obj.Name:find("Gift") or obj.Name:find("Drop") or obj.Name:find("Gem")) then
+                        obj.CFrame = CFrame.new(myPos + Vector3.new(math.random(-3,3), 2, math.random(-3,3)))
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- Logic: 999,999 Luck Spammer
+local luckActive = false
+LuckBtn.MouseButton1Click:Connect(function()
+    luckActive = not luckActive
+    if luckActive then
+        LuckBtn.Text = "🍀 Luck 999,999: ON"
+        LuckBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        LuckBtn.Text = "🍀 Luck 999,999: OFF"
+        LuckBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.5) do
+        if luckActive then
+            pcall(function()
+                for _, remote in ipairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+                    if remote:IsA("RemoteEvent") and (remote.Name:lower():find("luck") or remote.Name:lower():find("boost") or remote.Name:lower():find("egg") or remote.Name:lower():find("open")) then
+                        remote:FireServer(999999)
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- Logic: Unload Script
+DestroyBtn.MouseButton1Click:Connect(function()
+    SG:Destroy()
+end)
