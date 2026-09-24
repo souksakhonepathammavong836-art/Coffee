@@ -1,0 +1,228 @@
+-- Pro Damage & God Farm Hub for Mobile Executors
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+if playerGui:FindFirstChild("ProDamageHub") then
+    playerGui.ProDamageHub:Destroy()
+end
+
+-- 1. ສ້າງ ScreenGui ຫຼັກ
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "ProDamageHub"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+-- 2. ສ້າງກອບໜ້າຕ່າງ Hub ທີ່ສາມາດລາກໄດ້
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 240, 0, 380)
+mainFrame.Position = UDim2.new(0, 50, 0, 50)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 10)
+
+-- 3. ຫົວຂໍ້ Menu
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, 0, 0, 40)
+titleLabel.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextSize = 15
+titleLabel.Font = Enum.Font.SourceSansBold
+titleLabel.Text = "🔥 PRO DAMAGE HUB 🔥"
+titleLabel.Parent = mainFrame
+
+Instance.new("UICorner", titleLabel).CornerRadius = UDim.new(0, 10)
+
+-- 4. ປຸ່ມທີ 1: God Damage & Fast Farm (ຕີມອນຕາຍທັນທີ 0.01s)
+local dmgBtn = Instance.new("TextButton")
+dmgBtn.Size = UDim2.new(0, 200, 0, 45)
+dmgBtn.Position = UDim2.new(0, 20, 0, 55)
+dmgBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+dmgBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+dmgBtn.TextSize = 14
+dmgBtn.Font = Enum.Font.SourceSansBold
+dmgBtn.Text = "1. GOD DAMAGE: OFF"
+dmgBtn.Parent = mainFrame
+Instance.new("UICorner", dmgBtn).CornerRadius = UDim.new(0, 6)
+
+-- 5. ປຸ່ມທີ 2: Auto-Collect (ດຶງເງິນ/ຂອງລາງວັນ)
+local collectBtn = Instance.new("TextButton")
+collectBtn.Size = UDim2.new(0, 200, 0, 45)
+collectBtn.Position = UDim2.new(0, 20, 0, 110)
+collectBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+collectBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+collectBtn.TextSize = 14
+collectBtn.Font = Enum.Font.SourceSansBold
+collectBtn.Text = "2. AUTO-COLLECT: OFF"
+collectBtn.Parent = mainFrame
+Instance.new("UICorner", collectBtn).CornerRadius = UDim.new(0, 6)
+
+-- 6. ປຸ່ມທີ 3: Speed Boost (ແລ່ນໄວ)
+local speedBtn = Instance.new("TextButton")
+speedBtn.Size = UDim2.new(0, 200, 0, 45)
+speedBtn.Position = UDim2.new(0, 20, 0, 165)
+speedBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+speedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+speedBtn.TextSize = 14
+speedBtn.Font = Enum.Font.SourceSansBold
+speedBtn.Text = "3. SPEED BOOST: OFF"
+speedBtn.Parent = mainFrame
+Instance.new("UICorner", speedBtn).CornerRadius = UDim.new(0, 6)
+
+-- 7. ປຸ່ມທີ 4: Teleport to Sell Area (ວາບໄປຂາຍຂອງ)
+local tpBtn = Instance.new("TextButton")
+tpBtn.Size = UDim2.new(0, 200, 0, 45)
+tpBtn.Position = UDim2.new(0, 20, 0, 220)
+tpBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 255)
+tpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+tpBtn.TextSize = 14
+tpBtn.Font = Enum.Font.SourceSansBold
+tpBtn.Text = "4. TP TO SELL"
+tpBtn.Parent = mainFrame
+Instance.new("UICorner", tpBtn).CornerRadius = UDim.new(0, 6)
+
+-- 8. ປຸ່ມທີ 5: Close Hub
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 200, 0, 40)
+closeBtn.Position = UDim2.new(0, 20, 0, 285)
+closeBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.TextSize = 14
+closeBtn.Font = Enum.Font.SourceSansBold
+closeBtn.Text = "CLOSE HUB"
+closeBtn.Parent = mainFrame
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 6)
+
+-- ==================== ລະບົບການເຮັດວຽກຂອງຟັງຊັ່ນໂກງ ====================
+
+-- 1. God Damage & Fast Attack (ຕີມອນຕາຍທັນທີ 0.01s ໄລຍະກວ້າງ)
+local isDmgActive = false
+dmgBtn.MouseButton1Click:Connect(function()
+    isDmgActive = not isDmgActive
+    if isDmgActive then
+        dmgBtn.Text = "1. GOD DAMAGE: ON"
+        dmgBtn.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
+    else
+        dmgBtn.Text = "1. GOD DAMAGE: OFF"
+        dmgBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    end
+end)
+
+task.spawn(function()
+    while true do
+        task.wait(0.01) -- ຄວາມໄວສູງສຸດ 100 ຮິດ/ວິນາທີ
+        if isDmgActive then
+            pcall(function()
+                local char = player.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPos = char.HumanoidRootPart.Position
+                    
+                    -- ພະຍາຍາມເພີ່ມຄ່າ Power / Leaderstats ຖ້າມີ (ເພື່ອດັນດາເມດຝັ່ງ Client)
+                    local leaderstats = player:FindFirstChild("leaderstats")
+                    if leaderstats then
+                        local power = leaderstats:FindFirstChild("Power") or leaderstats:FindFirstChild("Damage")
+                        if power then
+                            power.Value = 999999999
+                        end
+                    end
+
+                    -- ກວາດລ້າງມອນສະເຕີໃນ Map ໃຫ້ເລືອດເປັນ 0 ທັນທີ
+                    for _, obj in pairs(workspace:GetChildren()) do
+                        if obj:FindFirstChild("Humanoid") and obj ~= char then
+                            local enemyRoot = obj:FindFirstChild("HumanoidRootPart")
+                            if enemyRoot then
+                                if (rootPos - enemyRoot.Position).Magnitude <= 180 then
+                                    obj.Humanoid.Health = 0
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- 2. Auto-Collect
+local isCollectActive = false
+collectBtn.MouseButton1Click:Connect(function()
+    isCollectActive = not isCollectActive
+    if isCollectActive then
+        collectBtn.Text = "2. AUTO-COLLECT: ON"
+        collectBtn.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
+    else
+        collectBtn.Text = "2. AUTO-COLLECT: OFF"
+        collectBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    end
+end)
+
+task.spawn(function()
+    while true do
+        task.wait(0.2)
+        if isCollectActive then
+            pcall(function()
+                local char = player.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPos = char.HumanoidRootPart.Position
+                    for _, obj in pairs(workspace:GetChildren()) do
+                        if obj:IsA("BasePart") and (obj.Name == "Coin" or obj.Name == "Gem" or obj.Name == "Drop") then
+                            if (obj.Position - rootPos).Magnitude <= 80 then
+                                obj.Position = rootPos
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- 3. Speed Boost
+local isSpeedActive = false
+speedBtn.MouseButton1Click:Connect(function()
+    isSpeedActive = not isSpeedActive
+    if isSpeedActive then
+        speedBtn.Text = "3. SPEED BOOST: ON"
+        speedBtn.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
+    else
+        speedBtn.Text = "3. SPEED BOOST: OFF"
+        speedBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    end
+end)
+
+task.spawn(function()
+    while true do
+        task.wait(0.5)
+        pcall(function()
+            local char = player.Character
+            if char and char:FindFirstChild("Humanoid") then
+                if isSpeedActive then
+                    char.Humanoid.WalkSpeed = 50
+                else
+                    char.Humanoid.WalkSpeed = 16
+                end
+            end
+        end)
+    end
+end)
+
+-- 4. Teleport to Sell Area
+tpBtn.MouseButton1Click:Connect(function()
+    pcall(function()
+        local sellPart = workspace:FindFirstChild("SellPart")
+        if sellPart and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = sellPart.CFrame + Vector3.new(0, 3, 0)
+        end
+    end)
+end)
+
+-- 5. Close Hub
+closeBtn.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+print("Pro Damage Hub Loaded Successfully!")
