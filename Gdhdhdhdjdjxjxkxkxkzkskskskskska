@@ -1,0 +1,111 @@
+-- Simple & Clean Fast Farm Script for Mobile Executors (Delta, Arceus X, etc.)
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- 1. Create Toggle GUI
+local playerGui = player:WaitForChild("PlayerGui")
+if playerGui:FindFirstChild("SimpleFarmGui") then
+    playerGui.SimpleFarmGui:Destroy()
+end
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "SimpleFarmGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.Name = "ToggleBtn"
+toggleBtn.Size = UDim2.new(0, 180, 0, 50)
+toggleBtn.Position = UDim2.new(0, 20, 0, 50)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleBtn.TextSize = 18
+toggleBtn.Font = Enum.Font.SourceSansBold
+toggleBtn.Text = "FAST FARM: OFF"
+toggleBtn.Parent = screenGui
+
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0, 8)
+uiCorner.Parent = toggleBtn
+
+local isFarmActive = false
+
+toggleBtn.MouseButton1Click:Connect(function()
+    isFarmActive = not isFarmActive
+    if isFarmActive then
+        toggleBtn.Text = "FAST FARM: ON"
+        toggleBtn.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
+    else
+        toggleBtn.Text = "FAST FARM: OFF"
+        toggleBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    end
+end)
+
+-- 2. One-Hit Kill / Auto Attack Loop
+task.spawn(function()
+    while true do
+        task.wait(0.1)
+        if isFarmActive then
+            pcall(function()
+                local char = player.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPos = char.HumanoidRootPart.Position
+                    for _, obj in pairs(workspace:GetChildren()) do
+                        if obj:FindFirstChild("Humanoid") and obj ~= char then
+                            local enemyRoot = obj:FindFirstChild("HumanoidRootPart")
+                            if enemyRoot then
+                                local dist = (rootPos - enemyRoot.Position).Magnitude
+                                if dist <= 35 then
+                                    obj.Humanoid.Health = 0
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- 3. Auto Collect Items / Coins
+task.spawn(function()
+    while true do
+        task.wait(0.2)
+        if isFarmActive then
+            pcall(function()
+                local char = player.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPos = char.HumanoidRootPart.Position
+                    for _, obj in pairs(workspace:GetChildren()) do
+                        if obj:IsA("BasePart") and (obj.Name == "Coin" or obj.Name == "Gem" or obj.Name == "Drop") then
+                            local dist = (obj.Position - rootPos).Magnitude
+                            if dist <= 50 then
+                                obj.Position = rootPos
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- 4. WalkSpeed Boost
+task.spawn(function()
+    while true do
+        task.wait(0.5)
+        pcall(function()
+            local char = player.Character
+            if char and char:FindFirstChild("Humanoid") then
+                if isFarmActive then
+                    char.Humanoid.WalkSpeed = 40
+                else
+                    char.Humanoid.WalkSpeed = 16
+                end
+            end
+        end)
+    end
+end)
+
+print("Script Loaded Successfully!")
