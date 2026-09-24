@@ -1,0 +1,194 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+-- 1. สร้าง RemoteEvent สำหรับเชื่อมต่อ Client และ Server
+local fastFarmEvent = ReplicatedStorage:FindFirstChild("UltraFastFarmEvent")
+if not fastFarmEvent then
+	fastFarmEvent = Instance.new("RemoteEvent")
+	fastFarmEvent.Name = "UltraFastFarmEvent"
+	fastFarmEvent.Parent = ReplicatedStorage
+end
+
+-- 2. ตั้งค่า Leaderstats และดาบ/พลังโจมตีมหาศาล (ฝั่ง Server)
+Players.PlayerAdded:Connect(function(player)
+	local leaderstats = player:FindFirstChild("leaderstats")
+	if not leaderstats then
+		leaderstats = Instance.new("Folder")
+		leaderstats.Name = "leaderstats"
+		leaderstats.Parent = player
+	end
+
+	local coins = leaderstats:FindFirstChild("Coins")
+	if not coins then
+		coins = Instance.new("IntValue")
+		coins.Name = "Coins"
+		coins.Value = 0
+		coins.Parent = leaderstats
+	end
+
+	local power = leaderstats:FindFirstChild("Power")
+	if not power then
+		power = Instance.new("IntValue")
+		power.Name = "Power"
+		power.Value = 999999999
+		power.Parent = leaderstats
+	end
+end)
+
+-- ระบบ One-Hit Kill (ตีมอนสเตอร์ตายในนัดเดียว ระยะ 100 บล็อก)
+fastFarmEvent.OnServerEvent:Connect(function(player, isEnabled)
+	if not isEnabled then return end
+	
+	local character = player.Character
+	if not character then return end
+	
+	local rootPart = character:FindFirstChild("HumanoidRootPart")
+	if not rootPart then return end
+	
+	for _, obj in pairs(workspace:GetChildren()) do
+		if obj:FindFirstChild("Humanoid") and obj ~= character then
+			local enemyRoot = obj:FindFirstChild("HumanoidRootPart")
+			if enemyRoot then
+				local distance = (rootPart.Position - enemyRoot.Position).Magnitude
+				if distance <= 100 then
+					obj.Humanoid.Health = 0 -- ทำให้มอนสเตอร์ตายทันที
+					
+					local leaderstats = player:FindFirstChild("leaderstats")
+					if leaderstats then
+						local coins = leaderstats:FindFirstChild("Coins")
+						if coins then
+							coins.Value = coins.Value + 5000 -- ได้รับเงินมหาศาล
+						end
+					end
+				end
+			end
+		end
+	end
+end)
+
+-- 3. สร้างปุ่ม GUI เปิด-ปิด, ระบบโจมตีออโต้รัวๆ และดูดไอเทม
+Players.PlayerAdded:Connect(function(player)
+	player.CharacterAdded:Connect(function(character)
+		local playerGui = player:FindFirstChild("PlayerGui")
+		if playerGui and not playerGui:FindFirstChild("UltraFarmGui") then
+			local screenGui = Instance.new("ScreenGui")
+			screenGui.Name = "UltraFarmGui"
+			screenGui.ResetOnSpawn = false
+			screenGui.Parent = playerGui
+
+			local toggleBtn = Instance.new("TextButton")
+			toggleBtn.Name = "ToggleBtn"
+			toggleBtn.Size = UDim2.new(0, 180, 0, 50)
+			toggleBtn.Position = UDim2.new(0, 20, 0, 20)
+			toggleBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+			toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+			toggleBtn.TextSize = 18
+			toggleBtn.Font = Enum.Font.SourceSansBold
+			toggleBtn.Text = "ULTRA FARM: OFF"
+			toggleBtn.Parent = screenGui
+
+			local uiCorner = Instance.new("UICorner")
+			uiCorner.CornerRadius = UDim.new(0, 8)
+			uiCorner.Parent = toggleBtn
+
+			local localScript = Instance.new("LocalScript")
+			localScript.Source = [[
+				local ReplicatedStorage = game:GetService("ReplicatedStorage")
+				local Players = game:GetService("Players")
+				local player = Players.LocalPlayer
+				local fastFarmEvent = ReplicatedStorage:WaitForChild("UltraFastFarmEvent")
+				
+				local button = script.Parent:WaitForChild("ToggleBtn")
+				local isFarmActive = false
+
+				button.MouseButton1Click:Connect(function()
+					isFarmActive = not isFarmActive
+					if isFarmActive then
+						button.Text = "ULTRA FARM: ON"
+						button.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
+					else
+						button.Text = "ULTRA FARM: OFF"
+						button.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+					end
+				end)
+
+				-- โจมตีออโต้รัวๆ ทุกๆ 0.05 วินาที
+				task.spawn(function()
+					while true do
+						if isFarmActive then
+							pcall(function()
+								fastFarmEvent:FireServer(true)
+							end)
+						end
+						task.wait(0.05)
+					end
+				end)
+
+				-- ระบบดูดเงิน/ไอเทมรอบตัว (รัศมี 50 บล็อก)
+				task.spawn(function()
+					while true do
+						task.wait(0.2)
+						if isFarmActive then
+							local char = player.Character
+							if char and char:FindFirstChild("HumanoidRootPart") then
+								local rootPos = char.HumanoidRootPart.Position
+								for _, obj in pairs(workspace:GetChildren()) do
+									if obj:IsA("BasePart") and (obj.Name == "Coin" or obj.Name == "Gem" or obj.Name == "Drop") then
+										local dist = (obj.Position - rootPos).Magnitude
+										if dist <= 50 then
+											obj.Position = rootPos
+										end
+									end
+								end
+							end
+						end
+					end
+				end)
+
+				-- วิ่งเร็วขึ้น
+				task.spawn(function()
+					while true do
+						task.wait(1)
+						local char = player.Character
+						if char then
+							local hum = char:FindFirstChild("Humanoid")
+							if hum then
+								if isFarmActive then
+									hum.WalkSpeed = 50
+								else
+									hum.WalkSpeed = 16
+								end
+							end
+						end
+					end
+				end)
+			]]
+			localScript.Parent = screenGui
+		end
+	end)
+end)
+
+-- 4. ระบบขายของอัตโนมัติ (SellPart)
+local sellPart = workspace:FindFirstChild("SellPart")
+if not sellPart then
+	sellPart = Instance.new("Part")
+	sellPart.Name = "SellPart"
+	sellPart.Size = Vector3.new(15, 1, 15)
+	sellPart.Position = Vector3.new(0, 0, 0)
+	sellPart.Anchored = true
+	sellPart.Parent = workspace
+end
+
+sellPart.Touched:Connect(function(hit)
+	local player = Players:GetPlayerFromCharacter(hit.Parent)
+	if player and player:FindFirstChild("leaderstats") then
+		local coins = player.leaderstats:FindFirstChild("Coins")
+		
+		if coins and not sellPart:GetAttribute("Cooldown") then
+			sellPart:SetAttribute("Cooldown", true)
+			coins.Value = coins.Value + 50000
+			task.wait(0.5)
+			sellPart:SetAttribute("Cooldown", false)
+		end
+	end
+end)
