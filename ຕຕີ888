@@ -1,0 +1,106 @@
+-- Freeze Mobs / Stop Enemies Script
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+if playerGui:FindFirstChild("FreezeMobHub") then
+    playerGui.FreezeMobHub:Destroy()
+end
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "FreezeMobHub"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 220, 0, 200)
+mainFrame.Position = UDim2.new(0, 50, 0, 50)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 10)
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, 0, 0, 40)
+titleLabel.BackgroundColor3 = Color3.fromRGB(50, 150, 255)
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextSize = 14
+titleLabel.Font = Enum.Font.SourceSansBold
+titleLabel.Text = "🧊 FREEZE MOBS HUB 🧊"
+titleLabel.Parent = mainFrame
+
+Instance.new("UICorner", titleLabel).CornerRadius = UDim.new(0, 10)
+
+-- ປຸ່ມເປີດ/ປິດ ໃຫ້ມອນຢຸດນິ້ງ
+local freezeBtn = Instance.new("TextButton")
+freezeBtn.Size = UDim2.new(0, 180, 0, 45)
+freezeBtn.Position = UDim2.new(0, 20, 0, 60)
+freezeBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+freezeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+freezeBtn.TextSize, freezeBtn.Font = 14, Enum.Font.SourceSansBold
+freezeBtn.Text = "FREEZE MOBS: OFF"
+freezeBtn.Parent = mainFrame
+Instance.new("UICorner", freezeBtn).CornerRadius = UDim.new(0, 6)
+
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 180, 0, 35)
+closeBtn.Position = UDim2.new(0, 20, 0, 125)
+closeBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.TextSize, closeBtn.Font = 14, Enum.Font.SourceSansBold
+closeBtn.Text = "CLOSE"
+closeBtn.Parent = mainFrame
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 6)
+
+-- ລະບົບເຮັດໃຫ້ມອນຢຸດນິ້ງ
+local isFreezeActive = false
+freezeBtn.MouseButton1Click:Connect(function()
+    isFreezeActive = not isFreezeActive
+    if isFreezeActive then
+        freezeBtn.Text = "FREEZE MOBS: ON"
+        freezeBtn.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
+    else
+        freezeBtn.Text = "FREEZE MOBS: OFF"
+        freezeBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    end
+end)
+
+task.spawn(function()
+    while true do
+        task.wait(0.2)
+        if isFreezeActive then
+            pcall(function()
+                local char = player.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPos = char.HumanoidRootPart.Position
+                    
+                    -- ຊອກຫາມອນທັງໝົດໃນ Workspace ແລະ ໂຟນເດີຕ່າງໆ
+                    for _, obj in pairs(workspace:GetDescendants()) do
+                        if obj:IsA("Humanoid") and obj.Parent ~= char then
+                            local enemyRoot = obj.Parent:FindFirstChild("HumanoidRootPart") or obj.Parent:FindFirstChild("Torso")
+                            if enemyRoot then
+                                -- ถ້າມອນຢູ່ໃນລัศມີ 150 ບລັອກ ໃຫ້ຢຸດການເຄື່ອນໄຫວ ແລະ ລັອກຕຳແໜ່ງໄວ້
+                                if (rootPos - enemyRoot.Position).Magnitude <= 150 then
+                                    obj.WalkSpeed = 0
+                                    obj.JumpPower = 0
+                                    -- ດຶງມອນໃຫ້ມາຢູ່ໃກ້ໆ ເພື່ອງ່າຍຕໍ່ການຕີ
+                                    enemyRoot.CFrame = CFrame.new(rootPos + (char.HumanoidRootPart.CFrame.LookVector * 5) + Vector3.new(0, 0, 0))
+                                    enemyRoot.Anchored = true
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+print("Freeze Mobs Loaded!")
