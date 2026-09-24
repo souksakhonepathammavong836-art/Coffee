@@ -1,0 +1,139 @@
+-- Advanced God Damage & Multi-Folder Farm Script
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+if playerGui:FindFirstChild("AdvancedGodHub") then
+    playerGui.AdvancedGodHub:Destroy()
+end
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "AdvancedGodHub"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 240, 0, 320)
+mainFrame.Position = UDim2.new(0, 50, 0, 50)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 10)
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, 0, 0, 40)
+titleLabel.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextSize = 15
+titleLabel.Font = Enum.Font.SourceSansBold
+titleLabel.Text = "🔥 ADVANCED GOD FARM 🔥"
+titleLabel.Parent = mainFrame
+
+Instance.new("UICorner", titleLabel).CornerRadius = UDim.new(0, 10)
+
+-- ປຸ່ມເປີດ/ປິດ God Farm
+local farmBtn = Instance.new("TextButton")
+farmBtn.Size = UDim2.new(0, 200, 0, 50)
+farmBtn.Position = UDim2.new(0, 20, 0, 60)
+farmBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+farmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+farmBtn.TextSize = 15
+farmBtn.Font = Enum.Font.SourceSansBold
+farmBtn.Text = "GOD FARM: OFF"
+farmBtn.Parent = mainFrame
+Instance.new("UICorner", farmBtn).CornerRadius = UDim.new(0, 6)
+
+-- ປຸ່ມວາບໄປຂາຍຂອງ
+local tpBtn = Instance.new("TextButton")
+tpBtn.Size = UDim2.new(0, 200, 0, 45)
+tpBtn.Position = UDim2.new(0, 20, 0, 125)
+tpBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 255)
+tpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+tpBtn.TextSize = 14
+tpBtn.Font = Enum.Font.SourceSansBold
+tpBtn.Text = "TP TO SELL"
+tpBtn.Parent = mainFrame
+Instance.new("UICorner", tpBtn).CornerRadius = UDim.new(0, 6)
+
+-- ປຸ່ມປິດ Menu
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 200, 0, 40)
+closeBtn.Position = UDim2.new(0, 20, 0, 185)
+closeBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.TextSize = 14
+closeBtn.Font = Enum.Font.SourceSansBold
+closeBtn.Text = "CLOSE HUB"
+mainFrame.Parent = screenGui
+closeBtn.Parent = mainFrame
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 6)
+
+-- ລະບົບການເຮັດວຽກ
+local isFarmActive = false
+farmBtn.MouseButton1Click:Connect(function()
+    isFarmActive = not isFarmActive
+    if isFarmActive then
+        farmBtn.Text = "GOD FARM: ON"
+        farmBtn.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
+    else
+        farmBtn.Text = "GOD FARM: OFF"
+        farmBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    end
+end)
+
+-- ຟັງຊັ່ນກວາດລ້າງມອນສະເຕີແບບລະອຽດ
+task.spawn(function()
+    while true do
+        task.wait(0.05)
+        if isFarmActive then
+            pcall(function()
+                local char = player.Character
+                if char and char:FindFirstChild("HumanoidRootPart") then
+                    local rootPos = char.HumanoidRootPart.Position
+                    
+                    -- 1. ບັງຄັບເປີດໃຊ້ Tool (ອາວຸດ) ໃນມືໃຫ້ຕີອັດຕະໂນມັດ
+                    local tool = char:FindFirstChildOfClass("Tool")
+                    if tool then
+                        tool:Activate()
+                    end
+
+                    -- 2. ຊອກົກຫາໃນ Workspace ທົ່ວໄປ ແລະ ໂຟນເດີມອນ ( Enemies / Mobs / Monsters )
+                    local searchFolders = {workspace, workspace:FindFirstChild("Mobs"), workspace:FindFirstChild("Enemies"), workspace:FindFirstChild("Monsters")}
+                    
+                    for _, folder in pairs(searchFolders) do
+                        if folder then
+                            for _, obj in pairs(folder:GetDescendants()) do
+                                if obj:IsA("Humanoid") and obj.Parent ~= char then
+                                    local enemyRoot = obj.Parent:FindFirstChild("HumanoidRootPart") or obj.Parent:FindFirstChild("Torso") or obj.Parent:FindFirstChild("Head")
+                                    if enemyRoot then
+                                        if (rootPos - enemyRoot.Position).Magnitude <= 200 then
+                                            obj.Health = 0 -- ຕັດເລືອດໃຫ້ເຫຼືອ 0
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+tpBtn.MouseButton1Click:Connect(function()
+    pcall(function()
+        local sellPart = workspace:FindFirstChild("SellPart") or workspace:FindFirstChild("Shop")
+        if sellPart and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = sellPart.CFrame + Vector3.new(0, 3, 0)
+        end
+    end)
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+print("Advanced God Farm Loaded!")
