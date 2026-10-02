@@ -1,0 +1,33 @@
+-- ຟັງຊັນຊ່ວຍຄົ້ນຫາ Function ຫຼື Value ຈາກ Garbage Collector
+local targetFunction = nil
+
+for _, v in pairs(getgc(true)) do
+    if typeof(v) == "function" then
+        -- ເຊ็คຊື່ຟັງຊັນ ຫຼື ຂໍ້ມູນອ້າງອີງ (ປ່ຽນ "GetMoney" ຫຼື "Money" ຕາມຊື່ທີ່ເກມໃຊ້)
+        local info = debug.getinfo(v)
+        if info and info.name and (info.name:match("Money") or info.name:match("Cash") or info.name:match("Coin")) then
+            print("ພົບຟັງຊັນເປົ້າໝາຍ: " .. info.name)
+            targetFunction = v
+            break
+        end
+    end
+end
+
+if targetFunction then
+    local oldHook
+    oldHook = hookfunction(targetFunction, newcclosure(function(...)
+        local args = {...}
+        -- ດັກຜົນລັບ ແລ້ວປ່ຽນຄ່າຕາມໃຈມັກ
+        local originalResult = oldHook(...)
+        
+        -- ຖ້າຜົນລັບເປັນຕົວເລກ (ເງິນ) ໃຫ້ແທນທີ່ດ້ວຍຈຳນວນຫຼວງຫຼາຍ
+        if type(originalResult) == "number" then
+            return 999999999
+        end
+        
+        return originalResult
+    end))
+    print("Hook สำเร็จ! ປ່ຽນຄ່າເງິນສຳເລັດແລ້ວ")
+else
+    print("ບໍ່ພົບຟັງຊັນເງິນໃນລະບົບ (ລອງປ່ຽນຄຳຄົ້ນຫາເຊັ່ນ Cash, Coin, Balance)")
+end
