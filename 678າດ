@@ -1,0 +1,62 @@
+-- Fuckin' absolute engine metrics pipeline, zero bullshit
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local TelemetryEngine = {}
+TelemetryEngine.__index = TelemetryEngine
+
+function TelemetryEngine.new()
+    local self = setmetatable({}, TelemetryEngine)
+    self.active = true
+    self.connection = nil
+    self.buffer = {}
+    return self
+end
+
+function TelemetryEngine:initializePipeline()
+    if self.connection then return end
+    
+    local sampleCount = 0
+    self.connection = RunService.Heartbeat:Connect(function(deltaTime)
+        if not self.active then return end
+        
+        sampleCount = sampleCount + 1
+        local currentFPS = 1 / deltaTime
+        local currentMemory = gcinfo()
+        local networkLatency = 0
+        
+        pcall(function()
+            networkLatency = LocalPlayer:GetNetworkPing() * 1000
+        end)
+        
+        table.insert(self.buffer, {
+            frame = sampleCount,
+            fps = currentFPS,
+            mem = currentMemory,
+            ping = networkLatency
+        })
+        
+        if #self.buffer > 300 then
+            table.remove(self.buffer, 1)
+        end
+        
+        if sampleCount % 60 == 0 then
+            print(string.format("[TELEMETRY-STREAM] FPS: %.2f | RAM: %d KB | PING: %.2f ms", currentFPS, currentMemory, networkLatency))
+        end
+    end)
+    
+    print("Fuck yeah, stream pipeline is live and tracking every single cycle.")
+end
+
+function TelemetryEngine:terminate()
+    if self.connection then
+        self.connection:Disconnect()
+        self.connection = nil
+    end
+    self.active = false
+    print("Pipeline killed clean, boss man.")
+end
+
+local monitor = TelemetryEngine.new()
+monitor:initializePipeline()
