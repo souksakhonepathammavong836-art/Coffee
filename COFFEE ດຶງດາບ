@@ -1,0 +1,354 @@
+-- [[ COFFEE VIP HUB - PRO UI EDITION (MINIMIZE & CUSTOM FEATURES) ]] --
+local LP = game:GetService("Players").LocalPlayer
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local SG = Instance.new("ScreenGui", game:GetService("CoreGui"))
+SG.Name = "CoffeeVIPHubPro"
+SG.ResetOnSpawn = false
+
+-- Main Menu Frame
+local MainFrame = Instance.new("Frame", SG)
+MainFrame.Size = UDim2.new(0, 260, 0, 400)
+MainFrame.Position = UDim2.new(0, 50, 0, 100)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(255, 170, 0)
+MainStroke.Thickness = 2
+
+-- Top Bar Header
+local Header = Instance.new("Frame", MainFrame)
+Header.Size = UDim2.new(1, 0, 0, 40)
+Header.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 12)
+
+local MainTitle = Instance.new("TextLabel", Header)
+MainTitle.Size = UDim2.new(1, -80, 1, 0)
+MainTitle.Position = UDim2.new(0, 10, 0, 0)
+MainTitle.Text = "☕ COFFEE VIP HUB PRO"
+MainTitle.TextColor3 = Color3.fromRGB(255, 200, 0)
+MainTitle.TextSize = 13
+MainTitle.Font = Enum.Font.SourceSansBold
+MainTitle.BackgroundTransparency = 1
+MainTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Minimize / Collapse Button (-)
+local MinimizeBtn = Instance.new("TextButton", Header)
+MinimizeBtn.Size = UDim2.new(0, 30, 0, 30)
+MinimizeBtn.Position = UDim2.new(1, -70, 0, 5)
+MinimizeBtn.Text = "-"
+MinimizeBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+MinimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeBtn.TextSize = 16
+MinimizeBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", MinimizeBtn).CornerRadius = UDim.new(0, 6)
+
+-- Close Button (X)
+local CloseBtn = Instance.new("TextButton", Header)
+CloseBtn.Size = UDim2.new(0, 30, 0, 30)
+CloseBtn.Position = UDim2.new(1, -35, 0, 5)
+CloseBtn.Text = "X"
+CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.TextSize, CloseBtn.Font = 12, Enum.Font.SourceSansBold
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
+
+-- Floating Open Button (ເມື່ອຫຍໍ້ໜ້າຕ່າງລົງ ຈະເຫັນປຸ່ມນີ້ລອຍຢູ່)
+local OpenBtn = Instance.new("TextButton", SG)
+OpenBtn.Size = UDim2.new(0, 50, 0, 50)
+OpenBtn.Position = UDim2.new(0, 50, 0, 100)
+OpenBtn.Text = "☕"
+OpenBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+OpenBtn.TextColor3 = Color3.fromRGB(255, 170, 0)
+OpenBtn.TextSize = 22
+OpenBtn.Font = Enum.Font.SourceSansBold
+OpenBtn.Visible = false
+OpenBtn.Active = true
+OpenBtn.Draggable = true
+Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(1, 0)
+
+local OpenStroke = Instance.new("UIStroke", OpenBtn)
+OpenStroke.Color = Color3.fromRGB(255, 170, 0)
+OpenStroke.Thickness = 2
+
+-- Scrolling Content Container
+local ContentContainer = Instance.new("ScrollingFrame", MainFrame)
+ContentContainer.Size = UDim2.new(1, 0, 1, -45)
+ContentContainer.Position = UDim2.new(0, 0, 0, 45)
+ContentContainer.BackgroundTransparency = 1
+ContentContainer.CanvasSize = UDim2.new(0, 0, 0, 1500)
+ContentContainer.ScrollBarThickness = 4
+
+-- ຟັງຊັນສ້າງປຸ່ມແບບງ່າຍ (Helper function)
+local function createButton(name, text, yPos, color)
+    local btn = Instance.new("TextButton", ContentContainer)
+    btn.Name = name
+    btn.Size = UDim2.new(0, 230, 0, 32)
+    btn.Position = UDim2.new(0, 15, 0, yPos)
+    btn.Text = text
+    btn.BackgroundColor3 = color or Color3.fromRGB(80, 80, 80)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize, btn.Font = 11, Enum.Font.SourceSansBold
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    return btn
+end
+
+-- ຕạoປຸ່ມຟັງຊັນຕ່າງໆໃນ Menu
+local GodBtn = createButton("GodBtn", "🛡️ God Mode: OFF", 10, Color3.fromRGB(100, 100, 100))
+local FastAtkBtn = createButton("FastAtkBtn", "⚡ Fast Attack (9999999): OFF", 50, Color3.fromRGB(100, 100, 100))
+local CustomToolBtn = createButton("CustomToolBtn", "🔥 Custom AOE Melee (Radius 15): OFF", 90, Color3.fromRGB(100, 100, 100))
+local KillBossBtn = createButton("KillBossBtn", "🎯 Auto Kill Specific Bosses (Trooper/Aegis): OFF", 130, Color3.fromRGB(100, 100, 100))
+local KillAuraBtn = createButton("KillAuraBtn", "🔪 Kill Aura (Auto Slash): OFF", 170, Color3.fromRGB(100, 100, 100))
+local AimbotBtn = createButton("AimbotBtn", "🎯 Lock Head (Aimbot): OFF", 210, Color3.fromRGB(100, 100, 100))
+local EspBtn = createButton("EspBtn", "👀 ESP Wallhack: OFF", 250, Color3.fromRGB(100, 100, 100))
+local InfJumpBtn = createButton("InfJumpBtn", "🦘 Infinite Jump: ON", 290, Color3.fromRGB(0, 170, 80))
+local NoclipBtn = createButton("NoclipBtn", "🚶 Noclip (Walk Through): OFF", 330, Color3.fromRGB(100, 100, 100))
+local FlyBtn = createButton("FlyBtn", "🕊️ Fly ON / Land OFF", 370, Color3.fromRGB(0, 170, 80))
+local WinBtn = createButton("WinBtn", "👑 Instant Win / Objective TP", 410, Color3.fromRGB(255, 140, 0))
+local ResetBtn = createButton("ResetBtn", "💀 Reset / Kill Self", 450, Color3.fromRGB(150, 0, 0))
+
+-- Minimize & Close Logic
+MinimizeBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+    OpenBtn.Position = MainFrame.Position
+    OpenBtn.Visible = true
+end)
+
+OpenBtn.MouseButton1Click:Connect(function()
+    MainFrame.Position = OpenBtn.Position
+    OpenBtn.Visible = false
+    MainFrame.Visible = true
+end)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    SG:Destroy()
+end)
+
+-- 1. God Mode Logic
+local godActive = false
+GodBtn.MouseButton1Click:Connect(function()
+    godActive = not godActive
+    GodBtn.Text = godActive and "🛡️ God Mode: ON" or "🛡️ God Mode: OFF"
+    GodBtn.BackgroundColor3 = godActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+task.spawn(function()
+    while task.wait(0.1) do
+        if godActive and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+            LP.Character.Humanoid.Health = LP.Character.Humanoid.MaxHealth
+        end
+    end
+end)
+
+-- 2. Fast Attack Logic
+local fastAtkActive = false
+FastAtkBtn.MouseButton1Click:Connect(function()
+    fastAtkActive = not fastAtkActive
+    FastAtkBtn.Text = fastAtkActive and "⚡ Fast Attack (9999999): ON" or "⚡ Fast Attack (9999999): OFF"
+    FastAtkBtn.BackgroundColor3 = fastAtkActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+RunService.RenderStepped:Connect(function()
+    if fastAtkActive and LP.Character then
+        pcall(function()
+            local tool = LP.Character:FindFirstChildOfClass("Tool")
+            if tool then
+                tool:Activate()
+                for _, descendant in ipairs(tool:GetDescendants()) do
+                    if descendant:IsA("NumberValue") or descendant:IsA("IntValue") then
+                        local n = descendant.Name:lower()
+                        if n:find("cooldown") or n:find("cd") or n:find("delay") or n:find("speed") then
+                            descendant.Value = 0.0000001
+                        elseif n:find("damage") or n:find("dmg") then
+                            descendant.Value = 9999999
+                        end
+                    elseif descendant:IsA("RemoteEvent") then
+                        if descendant.Name:lower():find("attack") or descendant.Name:lower():find("hit") then
+                            descendant:FireServer(9999999)
+                        end
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+-- 3. Custom AOE Melee Logic (Radius 15 + ForceField Bypass)
+local customToolActive = false
+CustomToolBtn.MouseButton1Click:Connect(function()
+    customToolActive = not customToolActive
+    CustomToolBtn.Text = customToolActive and "🔥 Custom AOE Melee (Radius 15): ON" or "🔥 Custom AOE Melee (Radius 15): OFF"
+    CustomToolBtn.BackgroundColor3 = customToolActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+local customParams = OverlapParams.new()
+customParams.FilterType = Enum.RaycastFilterType.Exclude
+
+RunService.Heartbeat:Connect(function()
+    if not customToolActive then return end
+    pcall(function()
+        local char = LP.Character
+        local root = char and char:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+        customParams.FilterDescendantsInstances = {char}
+
+        local parts = workspace:GetPartBoundsInRadius(root.Position + root.CFrame.LookVector * 5, 15, customParams)
+        local done = {}
+        for _, part in ipairs(parts) do
+            local hum = part.Parent:FindFirstChildOfClass("Humanoid")
+            if hum and not done[hum] and hum.Health > 0 then
+                done[hum] = true
+                for _ = 1, 3 do hum:TakeDamage(math.huge) end
+                hum.Health = 0
+            end
+        end
+    end)
+end)
+
+-- 4. Auto Kill Specific Bosses/NPCs (Trooper, นักฆ่ากลวง, Aegis)[span_0](start_span)[span_0](end_span)[span_1](start_span)[span_1](end_span)[span_2](start_span)[span_2](end_span)
+local killBossActive = false
+local TARGET_NAMES = {
+    ["Trooper"] = true,
+    ["นักฆ่ากลวง"] = true,
+    ["Aegis"] = true
+}
+
+KillBossBtn.MouseButton1Click:Connect(function()
+    killBossActive = not killBossActive
+    KillBossBtn.Text = killBossActive and "🎯 Auto Kill Bosses (Trooper/Aegis): ON" or "🎯 Auto Kill Bosses (Trooper/Aegis): OFF"
+    KillBossBtn.BackgroundColor3 = killBossActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+RunService.Heartbeat:Connect(function()
+    if not killBossActive then return end
+    pcall(function()
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            if TARGET_NAMES[obj.Name] then
+                local hum = obj:FindFirstChildOfClass("Humanoid") or (obj.Parent and obj.Parent:FindFirstChildOfClass("Humanoid"))
+                if hum and hum.Health > 0 then
+                    hum.Health = 0
+                end
+            end
+        end
+    end)
+end)
+
+-- 5. Kill Aura Logic
+local killAuraActive = false
+KillAuraBtn.MouseButton1Click:Connect(function()
+    killAuraActive = not killAuraActive
+    KillAuraBtn.Text = killAuraActive and "🔪 Kill Aura: ON" or "🔪 Kill Aura: OFF"
+    KillAuraBtn.BackgroundColor3 = killAuraActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+task.spawn(function()
+    while task.wait(0.03) do
+        if killAuraActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            pcall(function()
+                local myPos = LP.Character.HumanoidRootPart.Position
+                for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+                    if player ~= LP and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                        if (player.Character.HumanoidRootPart.Position - myPos).Magnitude <= 35 then
+                            local tool = LP.Character:FindFirstChildOfClass("Tool")
+                            if tool then tool:Activate() end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- 6. ESP Wallhack Logic
+local espActive = false
+local espBoxFolder = Instance.new("Folder", SG)
+espBoxFolder.Name = "ESPFolder"
+
+EspBtn.MouseButton1Click:Connect(function()
+    espActive = not espActive
+    EspBtn.Text = espActive and "👀 ESP Wallhack: ON" or "👀 ESP Wallhack: OFF"
+    EspBtn.BackgroundColor3 = espActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+    if not espActive then espBoxFolder:ClearAllChildren() end
+end)
+
+RunService.RenderStepped:Connect(function()
+    if espActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+        local myPos = LP.Character.HumanoidRootPart.Position
+        for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+            if player ~= LP and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
+                local hrp = player.Character.HumanoidRootPart
+                local hum = player.Character.Humanoid
+                local box = espBoxFolder:FindFirstChild(player.Name)
+                if hum.Health > 0 and (hrp.Position - myPos).Magnitude <= 200 then
+                    if not box then
+                        box = Instance.new("Highlight", espBoxFolder)
+                        box.Name = player.Name
+                        box.FillColor = Color3.fromRGB(255, 0, 0)
+                        box.FillTransparency = 0.4
+                    end
+                    box.Adornee = player.Character
+                elseif box then
+                    box:Destroy()
+                end
+            end
+        end
+    else
+        espBoxFolder:ClearAllChildren()
+    end
+end)
+
+-- 7. Infinite Jump
+local infJumpEnabled = true
+InfJumpBtn.MouseButton1Click:Connect(function()
+    infJumpEnabled = not infJumpEnabled
+    InfJumpBtn.Text = infJumpEnabled and "🦘 Infinite Jump: ON" or "🦘 Infinite Jump: OFF"
+    InfJumpBtn.BackgroundColor3 = infJumpEnabled and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+UIS.JumpRequest:Connect(function()
+    if infJumpEnabled and LP.Character and LP.Character:FindFirstChildOfClass("Humanoid") then
+        LP.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
+
+-- 8. Noclip
+local noclipEnabled = false
+NoclipBtn.MouseButton1Click:Connect(function()
+    noclipEnabled = not noclipEnabled
+    NoclipBtn.Text = noclipEnabled and "🚶 Noclip: ON" or "🚶 Noclip: OFF"
+    NoclipBtn.BackgroundColor3 = noclipEnabled and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+RunService.Stepped:Connect(function()
+    if noclipEnabled and LP.Character then
+        for _, v in ipairs(LP.Character:GetDescendants()) do
+            if v:IsA("BasePart") then v.CanCollide = false end
+        end
+    end
+end)
+
+-- 9. Instant Win / TP
+WinBtn.MouseButton1Click:Connect(function()
+    pcall(function()
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            if obj:IsA("BasePart") and (obj.Name:lower():find("win") or obj.Name:lower():find("goal") or obj.Name:lower():find("finish")) then
+                if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+                    LP.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 5, 0)
+                    break
+                end
+            end
+        end
+    end)
+end)
+
+-- 10. Reset
+ResetBtn.MouseButton1Click:Connect(function()
+    if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+        LP.Character.Humanoid.Health = 0
+    end
+end)
