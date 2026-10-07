@@ -1,0 +1,128 @@
+-- Server Script (วางใน ServerScriptService)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+-- ดึง RemoteEvent ที่เราสร้างไว้
+local remoteEvent = ReplicatedStorage:WaitForChild("AdminCommandEvent")
+
+-- รายชื่อแอดมิน ใส่ UserId ของคุณ
+local ADMINS = {
+	[12345678] = true, -- <--- ⚠️ เปลี่ยนเป็น UserId ของคุณตรงนี้!
+}
+
+local function getParts(plr)
+	local c = plr.Character
+	return c, c and c:FindFirstChildOfClass("Humanoid"), c and c:FindFirstChild("HumanoidRootPart")
+end
+
+local commands = {
+	god = function(plr, hum)
+		hum.MaxHealth = math.huge
+		hum.Health = math.huge
+	end,
+	heal = function(plr, hum)
+		hum.Health = hum.MaxHealth
+	end,
+	speed = function(plr, hum, root, arg)
+		hum.WalkSpeed = tonumber(arg) or 100
+	end,
+	jump = function(plr, hum, root, arg)
+		hum.UseJumpPower = true
+		hum.JumpPower = tonumber(arg) or 150
+	end,
+	coffee = function(plr, hum, root, arg)
+		local c = plr:FindFirstChild("leaderstats") and plr.leaderstats:FindFirstChild("Coffee")
+		if c then c.Value += tonumber(arg) or 1000 end
+	end,
+	big = function(plr, hum)
+		for _, n in ipairs({"BodyHeightScale", "BodyWidthScale", "BodyDepthScale", "HeadScale"}) do
+			local v = hum:FindFirstChild(n)
+			if v then v.Value = 3 end
+		end
+	end,
+	small = function(plr, hum)
+		for _, n in ipairs({"BodyHeightScale", "BodyWidthScale", "BodyDepthScale", "HeadScale"}) do
+			local v = hum:FindFirstChild(n)
+			if v then v.Value = 0.5 end
+		end
+	end,
+	fire = function(plr, hum, root)
+		if not root:FindFirstChildOfClass("Fire") then
+			local f = Instance.new("Fire")
+			f.Size = 10
+			f.Parent = root
+		end
+	end,
+	invis = function(plr, hum, root, arg, char)
+		if not char then return end
+		for _, p in ipairs(char:GetDescendants()) do
+			if p:IsA("BasePart") or p:IsA("Decal") then
+				if p.Name ~= "HumanoidRootPart" then 
+					p.Transparency = (p.Transparency == 1) and 0 or 1 
+				end
+			end
+		end
+	end,
+	sword = function(plr)
+		local tool = Instance.new("Tool")
+		tool.Name = "ดาบสุดโกง"
+		local h = Instance.new("Part")
+		h.Name = "Handle"
+		h.Size = Vector3.new(1, 0.4, 6)
+		h.Material = Enum.Material.Neon
+		h.Color = Color3.fromRGB(255, 80, 0)
+		h.Parent = tool
+		
+		local swing = false
+		tool.Activated:Connect(function()
+			swing = true
+			task.delay(0.4, function() swing = false end)
+		end)
+		
+		h.Touched:Connect(function(o)
+			local th = o.Parent:FindFirstChildOfClass("Humanoid")
+			if swing and th and o.Parent ~= tool.Parent then
+				th.Health = 0
+			end
+		end)
+		tool.Parent = plr.Backpack
+	end,
+	nuke = function(plr, hum, root)
+		for _, o in ipairs(Players:GetPlayers()) do
+			local c, h, r = getParts(o)
+			if o ~= plr and h and r and (r.Position - root.Position).Magnitude < 60 then
+				h.Health = 0
+			end
+		end
+		local e = Instance.new("Explosion")
+		e.Position = root.Position
+		e.BlastRadius = 30
+		e.BlastPressure = 0
+		e.Parent = workspace
+	end,
+}
+
+-- รับคำสั่งจากปุ่ม GUI ฝั่งผู้เล่น
+remoteEvent.OnServerEvent:Connect(function(plr, cmdName, arg)
+	if not ADMINS[plr.UserId] then return end
+	local fn = commands[cmdName]
+	if not fn then return end
+	local char, hum, root = getParts(plr)
+	if char and hum and root then
+		fn(plr, hum, root, arg, char)
+	end
+end)
+
+-- รองรับการพิมพ์แชทควบคู่กันไป
+Players.PlayerAdded:Connect(function(plr)
+	plr.Chatted:Connect(function(msg)
+		if not ADMINS[plr.UserId] then return end
+		local cmd, arg = msg:match("^[/!:](%w+)%s*(.*)$")
+		local fn = cmd and commands[cmd:lower()]
+		if not fn then return end
+		local char, hum, root = getParts(plr)
+		if char and hum and root then
+			fn(plr, hum, root, arg ~= "" and arg or nil, char)
+		end
+	end)
+end)
