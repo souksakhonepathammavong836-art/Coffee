@@ -1,0 +1,154 @@
+-- Roblox GUI Remote Shop Script (Styled & Interactive)
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:FindFirstChild("PlayerGui")
+
+-- ປ້ອງກັນບໍ່ໃຫ້ GUI ซ້ຳກັນເວລາລັນສະຄິບໃໝ່
+if playerGui:FindFirstChild("RemoteShopGUI") then
+    playerGui.RemoteShopGUI:Destroy()
+end
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "RemoteShopGUI"
+screenGui.Parent = playerGui
+
+-- ຕາໜ່າງຫຼັກ (Main Frame)
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 320, 0, 380)
+mainFrame.Position = UDim2.new(0.5, -160, 0.5, -190)
+mainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true -- ເຮັດໃຫ້ລາກຍ້າຍໜ້າຈໍໄດ້
+mainFrame.Parent = screenGui
+
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0, 12)
+uiCorner.Parent = mainFrame
+
+-- ຫົວຂໍ້ ແລະ ປຸ່ມຄວບຄຸມ (Top Bar)
+local topBar = Instance.new("Frame")
+topBar.Size = UDim2.new(1, 0, 0, 45)
+topBar.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+topBar.BorderSizePixel = 0
+topBar.Parent = mainFrame
+
+local topCorner = Instance.new("UICorner")
+topCorner.CornerRadius = UDim.new(0, 12)
+topCorner.Parent = topBar
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -90, 1, 0)
+titleLabel.Position = UDim2.new(0, 15, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Remote Shops Menu"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextSize = 18
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = topBar
+
+-- ປຸ່ມຍໍ້/ຂະຫຍາຍ (Minimize Button)
+local minButton = Instance.new("TextButton")
+minButton.Size = UDim2.new(0, 35, 0, 35)
+minButton.Position = UDim2.new(1, -75, 0, 5)
+minButton.BackgroundColor3 = Color3.fromRGB(50, 50, 65)
+minButton.Text = "-"
+minButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+minButton.TextSize = 20
+minButton.Font = Enum.Font.GothamBold
+minButton.Parent = topBar
+
+local minCorner = Instance.new("UICorner")
+minCorner.CornerRadius = UDim.new(0, 8)
+minCorner.Parent = minButton
+
+-- ປຸ່ມປິດ (Close Button)
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 35, 0, 35)
+closeButton.Position = UDim2.new(1, -35, 0, 5)
+closeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.TextSize = 16
+closeButton.Font = Enum.Font.GothamBold
+closeButton.Parent = topBar
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 8)
+closeCorner.Parent = closeButton
+
+-- ພື້ນທີ່ບັນຈຸປຸ່ມຮ້ານຄ້າຕ່າງໆ (Content Container)
+local container = Instance.new("ScrollingFrame")
+container.Size = UDim2.new(1, -20, 1, -60)
+container.Position = UDim2.new(0, 10, 0, 55)
+container.BackgroundTransparency = 1
+container.BorderSizePixel = 0
+container.CanvasSize = UDim2.new(0, 0, 0, 260)
+container.ScrollBarThickness = 6
+container.Parent = mainFrame
+
+local uiListLayout = Instance.new("UIListLayout")
+uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+uiListLayout.Padding = UDim.new(0, 12)
+uiListLayout.Parent = container
+
+-- ฟັງຊັນສ້າງປຸ່ມຮ້ານຄ້າແຕ່ລະອັນ
+local function createShopButton(name, color)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, 0, 0, 45)
+    btn.BackgroundColor3 = color
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 16
+    btn.Font = Enum.Font.GothamSemibold
+    btn.Parent = container
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 8)
+    corner.Parent = btn
+    
+    return btn
+end
+
+-- ສ້າງປຸ່ມຕາມຊື່ຮ້ານໃນຮູບທີ່ເຈົ້າສົ່ງມາ
+local btnTier = createShopButton("Tier Upgrade", Color3.fromRGB(230, 90, 40))     -- ອ້າງອີງຈາກຮູບ 1[span_4](start_span)[span_4](end_span)
+local btnGuild = createShopButton("Guild", Color3.fromRGB(40, 160, 90))             -- ອ້າງອີງຈາກຮູບ 2[span_5](start_span)[span_5](end_span)
+local btnTrait = createShopButton("Trait Upgrade", Color3.fromRGB(150, 50, 200))   -- ອ້າງອີງຈາກຮູບ 3[span_6](start_span)[span_6](end_span)
+local btnGamepass = createShopButton("Gamepass", Color3.fromRGB(40, 120, 220))      -- ອ້າງອີງຈາກຮູບ 4[span_7](start_span)[span_7](end_span)
+
+-- ລະບົບກົດປຸ່ມຍໍ້/ຂະຫຍາຍ
+local isMinimized = false
+minButton.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    container.Visible = not isMinimized
+    if isMinimized then
+        mainFrame.Size = UDim2.new(0, 320, 0, 45)
+        minButton.Text = "+"
+    else
+        mainFrame.Size = UDim2.new(0, 320, 0, 380)
+        minButton.Text = "-"
+    end
+end)
+
+-- ລະບົບປິດ GUI
+closeButton.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+-- ฟັງຊັນເວລາຄລິກເປີດຮ້ານຄ້າແຕ່ລະອັນ (ສາມາດປ່ຽນໄປເຊື່ອມຕໍ່ກັບ UI/Remote ຕົວຈິງໃນເກມ)
+local function openShop(shopName)
+    local targetGui = playerGui:FindFirstChild(shopName)
+    if targetGui then
+        targetGui.Enabled = true
+        print("Opened: " .. shopName)
+    else
+        warn("Not found GUI: " .. shopName .. " in PlayerGui. Please check the exact name.")
+    end
+end
+
+btnTier.MouseButton1Click:Connect(function() openShop("Tier Upgrade") end)
+btnGuild.MouseButton1Click:Connect(function() openShop("Guild") end)
+btnTrait.MouseButton1Click:Connect(function() openShop("Trait Upgrade") end)
+btnGamepass.MouseButton1Click:Connect(function() openShop("Gamepass") end)
