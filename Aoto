@@ -1,0 +1,153 @@
+-- Roblox UI Script (English UI) with Toggle and Minimize features
+
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local TitleLabel = Instance.new("TextLabel")
+local ToggleButton = Instance.new("TextButton")
+local MinimizeButton = Instance.new("TextButton")
+local ContentFrame = Instance.new("Frame")
+local AutoRollBtn = Instance.new("TextButton")
+local AutoBuyBtn = Instance.new("TextButton")
+
+-- Main GUI Setup
+ScreenGui.Parent = game:GetService("CoreGui") or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+
+-- 1. Open/Close Toggle Button on screen
+ToggleButton.Name = "ToggleButton"
+ToggleButton.Parent = ScreenGui
+ToggleButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+ToggleButton.Position = UDim2.new(0, 10, 0.4, 0)
+ToggleButton.Size = UDim2.new(0, 80, 0, 35)
+ToggleButton.Font = Enum.Font.SourceSansBold
+ToggleButton.Text = "MENU"
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.TextSize = 16.000
+
+-- 2. Main Window Frame
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+MainFrame.Size = UDim2.new(0, 220, 0, 160)
+MainFrame.Active = true
+MainFrame.Draggable = true -- Allows dragging the window
+
+-- Title Label
+TitleLabel.Name = "TitleLabel"
+TitleLabel.Parent = MainFrame
+TitleLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+TitleLabel.Size = UDim2.new(1, -30, 0, 30)
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.Text = " Card RNG Script"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextSize = 16.000
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Minimize Button (-)
+MinimizeButton.Name = "MinimizeButton"
+MinimizeButton.Parent = MainFrame
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+MinimizeButton.Position = UDim2.new(1, -30, 0, 0)
+MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
+MinimizeButton.Font = Enum.Font.SourceSansBold
+MinimizeButton.Text = "-"
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.TextSize = 20.000
+
+-- Content Area Frame
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Parent = MainFrame
+ContentFrame.BackgroundTransparency = 1.000
+ContentFrame.Position = UDim2.new(0, 0, 0, 30)
+ContentFrame.Size = UDim2.new(1, 0, 1, -30)
+
+-- Auto Roll Button
+AutoRollBtn.Name = "AutoRollBtn"
+AutoRollBtn.Parent = ContentFrame
+AutoRollBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+AutoRollBtn.Position = UDim2.new(0.1, 0, 0.15, 0)
+AutoRollBtn.Size = UDim2.new(0.8, 0, 0, 35)
+AutoRollBtn.Font = Enum.Font.SourceSans
+AutoRollBtn.Text = "Auto Roll: OFF"
+AutoRollBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+AutoRollBtn.TextSize = 16.000
+
+-- Auto Buy Button
+AutoBuyBtn.Name = "AutoBuyBtn"
+AutoBuyBtn.Parent = ContentFrame
+AutoBuyBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+AutoBuyBtn.Position = UDim2.new(0.1, 0, 0.55, 0)
+AutoBuyBtn.Size = UDim2.new(0.8, 0, 0, 35)
+AutoBuyBtn.Font = Enum.Font.SourceSans
+AutoBuyBtn.Text = "Auto Buy: OFF"
+AutoBuyBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+AutoBuyBtn.TextSize = 16.000
+
+---------------------------------------------------------
+-- GUI Logic Script
+---------------------------------------------------------
+
+local autoRoll = false
+local autoBuy = false
+local isMinimized = false
+
+-- Toggle GUI Visibility
+ToggleButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+-- Minimize / Expand GUI
+MinimizeButton.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    if isMinimized then
+        ContentFrame.Visible = false
+        MainFrame.Size = UDim2.new(0, 220, 0, 30)
+        MinimizeButton.Text = "+"
+    else
+        ContentFrame.Visible = true
+        MainFrame.Size = UDim2.new(0, 220, 0, 160)
+        MinimizeButton.Text = "-"
+    end
+end)
+
+-- Toggle Auto Roll
+AutoRollBtn.MouseButton1Click:Connect(function()
+    autoRoll = not autoRoll
+    if autoRoll then
+        AutoRollBtn.Text = "Auto Roll: ON"
+        AutoRollBtn.TextColor3 = Color3.fromRGB(100, 255, 100)
+    else
+        AutoRollBtn.Text = "Auto Roll: OFF"
+        AutoRollBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+    end
+end)
+
+-- Toggle Auto Buy
+AutoBuyBtn.MouseButton1Click:Connect(function()
+    autoBuy = not autoBuy
+    if autoBuy then
+        AutoBuyBtn.Text = "Auto Buy: ON"
+        AutoBuyBtn.TextColor3 = Color3.fromRGB(100, 255, 100)
+    else
+        AutoBuyBtn.Text = "Auto Buy: OFF"
+        AutoBuyBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+    end
+end)
+
+-- Auto Roll & Auto Buy Loop Logic
+task.spawn(function()
+    while task.wait(0.5) do
+        if autoRoll then
+            pcall(function()
+                local rollRemote = game:GetService("ReplicatedStorage"):FindFirstChild("RollEvent", true) or game:GetService("ReplicatedStorage"):FindFirstChild("Roll", true)
+                if rollRemote then rollRemote:FireServer() end
+            end)
+        end
+        if autoBuy then
+            pcall(function()
+                local buyRemote = game:GetService("ReplicatedStorage"):FindFirstChild("BuyConveyor", true) or game:GetService("ReplicatedStorage"):FindFirstChild("BuyUpgrade", true)
+                if buyRemote then buyRemote:FireServer() end
+            end)
+        end
+    end
+end)
