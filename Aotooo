@@ -1,0 +1,117 @@
+-- Card RNG Auto Farm Script (ClickDetector / ProximityPrompt Version)
+
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local TitleLabel = Instance.new("TextLabel")
+local ToggleButton = Instance.new("TextButton")
+local MinimizeButton = Instance.new("TextButton")
+local ContentFrame = Instance.new("Frame")
+local AutoFarmBtn = Instance.new("TextButton")
+
+ScreenGui.Parent = game:GetService("CoreGui") or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+
+-- ປຸ່ມ MENU ເປີດ/ປິດ
+ToggleButton.Name = "ToggleButton"
+ToggleButton.Parent = ScreenGui
+ToggleButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+ToggleButton.Position = UDim2.new(0, 10, 0.4, 0)
+ToggleButton.Size = UDim2.new(0, 80, 0, 35)
+ToggleButton.Font = Enum.Font.SourceSansBold
+ToggleButton.Text = "MENU"
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.TextSize = 16.000
+
+-- ໜ້າຕ່າງ GUI ຫຼັກ
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+MainFrame.Size = UDim2.new(0, 220, 0, 140)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+TitleLabel.Name = "TitleLabel"
+TitleLabel.Parent = MainFrame
+TitleLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+TitleLabel.Size = UDim2.new(1, -30, 0, 30)
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.Text = " Card RNG Auto Farm"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextSize = 16.000
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+MinimizeButton.Name = "MinimizeButton"
+MinimizeButton.Parent = MainFrame
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+MinimizeButton.Position = UDim2.new(1, -30, 0, 0)
+MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
+MinimizeButton.Font = Enum.Font.SourceSansBold
+MinimizeButton.Text = "-"
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.TextSize = 20.000
+
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Parent = MainFrame
+ContentFrame.BackgroundTransparency = 1.000
+ContentFrame.Position = UDim2.new(0, 0, 0, 30)
+ContentFrame.Size = UDim2.new(1, 0, 1, -30)
+
+-- ປຸ່ມ Auto Farm (ເປີດ/ປິດ)
+AutoFarmBtn.Name = "AutoFarmBtn"
+AutoFarmBtn.Parent = ContentFrame
+AutoFarmBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+AutoFarmBtn.Position = UDim2.new(0.1, 0, 0.2, 0)
+AutoFarmBtn.Size = UDim2.new(0.8, 0, 0, 40)
+AutoFarmBtn.Font = Enum.Font.SourceSansBold
+AutoFarmBtn.Text = "Auto Farm: OFF"
+AutoFarmBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+AutoFarmBtn.TextSize = 16.000
+
+local autoFarm = false
+
+ToggleButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+MinimizeButton.MouseButton1Click:Connect(function()
+    if ContentFrame.Visible then
+        ContentFrame.Visible = false
+        MainFrame.Size = UDim2.new(0, 220, 0, 30)
+        MinimizeButton.Text = "+"
+    else
+        ContentFrame.Visible = true
+        MainFrame.Size = UDim2.new(0, 220, 0, 140)
+        MinimizeButton.Text = "-"
+    end
+end)
+
+AutoFarmBtn.MouseButton1Click:Connect(function()
+    autoFarm = not autoFarm
+    if autoFarm then
+        AutoFarmBtn.Text = "Auto Farm: ON"
+        AutoFarmBtn.TextColor3 = Color3.fromRGB(100, 255, 100)
+    else
+        AutoFarmBtn.Text = "Auto Farm: OFF"
+        AutoFarmBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+    end
+end)
+
+-- ຟັງຊັນຊອກຫາ ແລະ ກົດ ClickDetector ທີ່ປຸ່ມ Spawn Pack ຫລື ຕู้ຊື້ຂອງໃນ Workspace
+task.spawn(function()
+    while task.wait(0.5) do
+        if autoFarm then
+            pcall(function()
+                -- วົນຫາ ClickDetector ທັງໝົດໃນ Workspace ທີ່ຢູ່ໃກ້ຕົວละคร
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if obj:IsA("ClickDetector") then
+                        -- ตรวจสอบຊື່ parent ວ່າແມ່ນປຸ່ມ Spawn Pack ຫລື ຕູ້ຊື້ຂອງບໍ່
+                        local parentName = string.lower(obj.Parent.Name)
+                        if string.find(parentName, "spawn") or string.find(parentName, "pack") or string.find(parentName, "buy") or string.find(parentName, "conveyor") then
+                            fireclickdetector(obj)
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
