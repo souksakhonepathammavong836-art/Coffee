@@ -1,0 +1,213 @@
+-- [[ COFFEE VIP HUB - ULTIMATE EXPLOIT EDITION (PRO VERSION - FIXED NO COOLDOWN) ]] --
+local LP = game:GetService("Players").LocalPlayer
+local SG = Instance.new("ScreenGui", game:GetService("CoreGui"))
+SG.Name = "CoffeeVIPHubCustomImage"
+
+-- Main Menu Frame
+local MainFrame = Instance.new("Frame", SG)
+MainFrame.Size = UDim2.new(0, 240, 0, 380)
+MainFrame.Position = UDim2.new(0, 40, 0, 120)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(255, 170, 0)
+MainStroke.Thickness = 2
+
+local MainTitle = Instance.new("TextLabel", MainFrame)
+MainTitle.Size = UDim2.new(0, 240, 0, 35)
+MainTitle.Text = "☕ COFFEE VIP HUB PRO ☕"
+MainTitle.TextColor3 = Color3.fromRGB(255, 200, 0)
+MainTitle.TextSize = 14
+MainTitle.Font = Enum.Font.SourceSansBold
+MainTitle.BackgroundTransparency = 1
+
+local OwnerMain = Instance.new("TextLabel", MainFrame)
+OwnerMain.Size = UDim2.new(0, 240, 0, 20)
+OwnerMain.Position = UDim2.new(0, 0, 0, 28)
+OwnerMain.Text = "Owner: Souksakhone | Pro"
+OwnerMain.TextColor3 = Color3.fromRGB(150, 150, 150)
+OwnerMain.TextSize = 11
+OwnerMain.Font = Enum.Font.SourceSansItalic
+OwnerMain.BackgroundTransparency = 1
+
+local ToggleBtn = Instance.new("TextButton", MainFrame)
+ToggleBtn.Size = UDim2.new(0, 32, 0, 26)
+ToggleBtn.Position = UDim2.new(0, 198, 0, 5)
+ToggleBtn.Text = "☕"
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 50, 20)
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.TextSize = 14
+ToggleBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 4)
+
+local RoundIconBtn = Instance.new("ImageButton", SG)
+RoundIconBtn.Size = UDim2.new(0, 50, 0, 50)
+RoundIconBtn.Position = UDim2.new(0, 40, 0, 120)
+RoundIconBtn.Image = "rbxassetid://1392880262"
+RoundIconBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+RoundIconBtn.Visible = false
+RoundIconBtn.Active = true
+RoundIconBtn.Draggable = true
+Instance.new("UICorner", RoundIconBtn).CornerRadius = UDim.new(1, 0)
+
+local RoundIconStroke = Instance.new("UIStroke", RoundIconBtn)
+RoundIconStroke.Color = Color3.fromRGB(255, 170, 0)
+RoundIconStroke.Thickness = 2
+
+-- ScrollingFrame
+local ContentContainer = Instance.new("ScrollingFrame", MainFrame)
+ContentContainer.Size = UDim2.new(1, 0, 1, -55)
+ContentContainer.Position = UDim2.new(0, 0, 0, 50)
+ContentContainer.BackgroundTransparency = 1
+ContentContainer.CanvasSize = UDim2.new(0, 0, 0, 550)
+ContentContainer.ScrollBarThickness = 4
+
+-- Helper function to create standard toggle buttons
+local function createToggleButton(text, posY)
+    local btn = Instance.new("TextButton", ContentContainer)
+    btn.Size = UDim2.new(0, 210, 0, 32)
+    btn.Position = UDim2.new(0, 15, 0, posY)
+    btn.Text = text .. ": OFF"
+    btn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 11
+    btn.Font = Enum.Font.SourceSansBold
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    return btn
+end
+
+-- 1. No Cooldown Button
+local NoCDBtn = createToggleButton("⚡ No Cooldown / Skill", 10)
+
+-- 2. Fast Attack Button
+local FastAtkBtn = createToggleButton("⚡ Fast Attack (ตีไวโคตร)", 50)
+
+-- 3. Damage Booster Button
+local DmgBtn = createToggleButton("⚔️ Damage Booster (9999999)", 90)
+
+-- 4. God Mode Button
+local GodBtn = createToggleButton("🛡️ God Mode", 130)
+
+-- 5. Hitbox Extender Button
+local HitboxBtn = createToggleButton("🎯 Hitbox Extender", 170)
+
+-- 6. Custom AOE Melee Button
+local CustomToolBtn = createToggleButton("🔥 Custom AOE Melee (Radius 15)", 210)
+
+-- 7. Kill Aura Button
+local KillAuraBtn = createToggleButton("🔪 Kill Aura (Auto Slash)", 250)
+
+-- 8. Lock Head (Aimbot) Button
+local AimbotBtn = createToggleButton("🎯 Lock Head (Aimbot)", 290)
+
+-- 9. ESP Wallhack Button
+local EspBtn = createToggleButton("👀 ESP Wallhack", 330)
+
+-- 10. Exit Hub Button
+local ExitHubBtn = Instance.new("TextButton", ContentContainer)
+ExitHubBtn.Size = UDim2.new(0, 210, 0, 35)
+ExitHubBtn.Position = UDim2.new(0, 15, 0, 380)
+ExitHubBtn.Text = "❌ Close Hub"
+ExitHubBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+ExitHubBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ExitHubBtn.TextSize, ExitHubBtn.Font = 12, Enum.Font.SourceSansBold
+Instance.new("UICorner", ExitHubBtn).CornerRadius = UDim.new(0, 6)
+
+
+-- Services
+local RunService = game:GetService("RunService")
+
+-- Toggle States
+local state = {
+    noCD = false,
+    fastAtk = false,
+    dmg = false,
+    god = false,
+    hitbox = false,
+    customTool = false,
+    killAura = false,
+    aimbot = false,
+    esp = false
+}
+
+-- Toggle Click Events
+local function bindToggle(btn, stateKey, text)
+    btn.MouseButton1Click:Connect(function()
+        state[stateKey] = not state[stateKey]
+        if state[stateKey] then
+            btn.Text = text .. ": ON"
+            btn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+        else
+            btn.Text = text .. ": OFF"
+            btn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        end
+    end)
+end
+
+bindToggle(NoCDBtn, "noCD", "⚡ No Cooldown / Skill")
+bindToggle(FastAtkBtn, "fastAtk", "⚡ Fast Attack (ตีไวโคตร)")
+bindToggle(DmgBtn, "dmg", "⚔️ Damage Booster (9999999)")
+bindToggle(GodBtn, "god", "🛡️ God Mode")
+bindToggle(HitboxBtn, "hitbox", "🎯 Hitbox Extender")
+bindToggle(CustomToolBtn, "customTool", "🔥 Custom AOE Melee (Radius 15)")
+bindToggle(KillAuraBtn, "killAura", "🔪 Kill Aura (Auto Slash)")
+bindToggle(AimbotBtn, "aimbot", "🎯 Lock Head (Aimbot)")
+bindToggle(EspBtn, "esp", "👀 ESP Wallhack")
+
+
+-- Loop Functions & Improved No Cooldown Bypass
+RunService.RenderStepped:Connect(function()
+    -- 1. Enhanced No Cooldown Logic (Bypasses tool delays and remote timers)
+    if state.noCD then
+        pcall(function()
+            local char = LP.Character
+            local backpack = LP:FindFirstChild("Backpack")
+            
+            local function processContainer(container)
+                if not container then return end
+                for _, tool in ipairs(container:GetChildren()) do
+                    if tool:IsA("Tool") then
+                        -- Activate tool automatically or clear attributes/values
+                        for _, v in ipairs(tool:GetDescendants()) do
+                            if v:IsA("NumberValue") or v:IsA("IntValue") then
+                                local name = v.Name:lower()
+                                if name:find("cooldown") or name:find("cd") or name:find("delay") or name:find("reload") or name:find("wait") or name:find("time") then
+                                    v.Value = 0
+                                end
+                            elseif v:IsA("LocalScript") or v:IsA("Script") then
+                                -- Disable check bounds if possible, or bypass values
+                            end
+                        end
+                    end
+                end
+            end
+
+            if char then processContainer(char) end
+            if backpack then processContainer(backpack) end
+        end)
+    end
+
+    -- 2. God Mode Logic
+    if state.god and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+        LP.Character.Humanoid.Health = LP.Character.Humanoid.MaxHealth
+    end
+end)
+
+-- Main Menu Minimise Logic
+ToggleBtn.MouseButton1Click:Connect(function()
+    RoundIconBtn.Position = MainFrame.Position
+    MainFrame.Visible = false
+    RoundIconBtn.Visible = true
+end)
+
+RoundIconBtn.MouseButton1Click:Connect(function()
+    MainFrame.Position = RoundIconBtn.Position
+    RoundIconBtn.Visible = false
+    MainFrame.Visible = true
+end)
+
+ExitHubBtn.MouseButton1Click:Connect(function() SG:Destroy() end)
