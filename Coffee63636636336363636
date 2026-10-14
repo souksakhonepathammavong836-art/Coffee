@@ -1,0 +1,134 @@
+local Players = game:GetService("Players")
+
+-- Settings
+local TOOL_NAME = "DigTool"
+local NORMAL = { dig = 0.8, hit = 0.6 }
+local FAST   = { dig = 0.3, hit = 0.25 }
+local HIT_DAMAGE = 10
+local DIG_RANGE = 8
+local MIN_ZOOM, MAX_ZOOM, ZOOM_STEP = 5, 50, 5
+
+local state = {} -- per-player data
+
+local function applyZoom(player)
+	local s = state[player]
+	s.zoom = math.clamp(s.zoom, MIN_ZOOM, MAX_ZOOM)
+	player.CameraMinZoomDistance = s.zoom
+	player.CameraMaxZoomDistance = s.zoom
+end
+
+-- Tool logic (runs on the server, so cooldowns can't be skipped)
+local function setupTool(player, tool)
+	if not tool:IsA("Tool") or tool.Name ~= TOOL_NAME then return end
+	if tool:GetAttribute("Setup") then return end
+	tool:SetAttribute("Setup", true)
+
+	tool.Activated:Connect(function()
+		local s = state[player]
+		local char = player.Character
+		local root = char and char:FindFirstChild("HumanoidRootPart")
+		if not s or not root then return end
+
+		local speed = s.fast and FAST or NORMAL
+		local now = os.clock()
+
+		local params = RaycastParams.new()
+		params.FilterDescendantsInstances = { char }
+		local result = workspace:Raycast(root.Position, root.CFrame.LookVector * DIG_RANGE, params)
+		if not result then return end
+		local target = result.Instance
+
+		-- Hit an enemy
+		local enemyHum = target.Parent:FindFirstChildOfClass("Humanoid")
+		if enemyHum then
+			if now - s.lastHit < speed.hit then return end
+			s.lastHit = now
+			enemyHum:TakeDamage(HIT_DAMAGE)
+			return
+		end
+
+		-- Dig (block needs the "Diggable" tag)
+		if target:HasTag("Diggable") then
+			if now - s.lastDig < speed.dig then return end
+			s.lastDig = now
+			target:Destroy()
+		end
+	end)
+end
+
+local function hookContainer(player, container)
+	for _, child in ipairs(container:GetChildren()) do
+		setupTool(player, child)
+	end
+	container.ChildAdded:Connect(function(child)
+		setupTool(player, child)
+	end)
+end
+
+-- GUI
+local function makeButton(parent, text, size, position)
+	local btn = Instance.new("TextButton")
+	btn.Size = size
+	btn.Position = position
+	btn.Text = text
+	btn.TextScaled = true
+	btn.Font = Enum.Font.GothamBold
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	btn.BackgroundTransparency = 0.2
+	btn.Parent = parent
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+	return btn
+end
+
+local function buildGui(player)
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "ToolGui"
+	gui.ResetOnSpawn = false
+	gui.Parent = player:WaitForChild("PlayerGui")
+
+	local fastBtn = makeButton(gui, "FAST: OFF", UDim2.fromOffset(110, 50), UDim2.new(1, -130, 0.5, -130))
+	local zoomIn  = makeButton(gui, "+", UDim2.fromOffset(50, 50), UDim2.new(1, -100, 0.5, -60))
+	local zoomOut = makeButton(gui, "−", UDim2.fromOffset(50, 50), UDim2.new(1, -100, 0.5, 10))
+
+	fastBtn.Activated:Connect(function()
+		local s = state[player]
+		s.fast = not s.fast
+		fastBtn.Text = s.fast and "FAST: ON" or "FAST: OFF"
+		fastBtn.BackgroundColor3 = s.fast and Color3.fromRGB(40, 160, 70) or Color3.fromRGB(40, 40, 40)
+	end)
+
+	zoomIn.Activated:Connect(function()
+		state[player].zoom -= ZOOM_STEP -- smaller distance = closer
+		applyZoom(player)
+	end)
+
+	zoomOut.Activated:Connect(function()
+		state[player].zoom += ZOOM_STEP
+		applyZoom(player)
+	end)
+end
+
+-- Player setup
+local function onPlayerAdded(player)
+	state[player] = { fast = false, zoom = 12, lastDig = 0, lastHit = 0 }
+	buildGui(player)
+	applyZoom(player)
+
+	local function onCharacter(char)
+		hookContainer(player, char)
+		hookContainer(player, player:WaitForChild("Backpack"))
+	end
+
+	player.CharacterAdded:Connect(onCharacter)
+	if player.Character then onCharacter(player.Character) end
+end
+
+Players.PlayerAdded:Connect(onPlayerAdded)
+for _, p in ipairs(Players:GetPlayers()) do
+	task.spawn(onPlayerAdded, p)
+end
+
+Players.PlayerRemoving:Connect(function(player)
+	state[player] = nil
+end)
