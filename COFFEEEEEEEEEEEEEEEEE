@@ -1,0 +1,371 @@
+local Players = game:GetService("Players")
+
+-- Settings
+local TOOL_NAME = "DigTool"
+local NORMAL = { dig = 0.8, hit = 0.6 }
+local FAST   = { dig = 0.3, hit = 0.25 }
+local BASE_DAMAGE = 10
+local DAMAGE_STEP = 5
+local DAMAGE_UPGRADE_COST = 100 -- multiplied by current level
+local DIG_RANGE = 8
+local MIN_ZOOM, MAX_ZOOM, ZOOM_STEP = 5, 50, 5
+local COFFEE_PER_BLOCK = 5
+local COFFEE_PER_KILL = 20
+local FAST_COST = 50
+local FAST_DURATION = 60 -- seconds
+local BLOCK_RESPAWN = 10 -- seconds
+
+local state = {}
+
+-- Coffee helpers (replace getCoffee if you already have a Coffee value)
+local function getCoffee(player)
+	local stats = player:FindFirstChild("leaderstats")
+	if not stats then
+		stats = Instance.new("Folder")
+		stats.Name = "leaderstats"
+		stats.Parent = player
+	end
+	local coffee = stats:FindFirstChild("Coffee")
+	if not coffee then
+		coffee = Instance.new("IntValue")
+		coffee.Name = "Coffee"
+		coffee.Parent = stats
+	end
+	return coffee
+end
+
+local function addCoffee(player, amount)
+	getCoffee(player).Value += amount
+end
+
+local function spend(player, amount)
+	local coffee = getCoffee(player)
+	if coffee.Value >= amount then
+		coffee.Value -= amount
+		return true
+	end
+	return false
+end
+
+-- State helpers
+local function isFast(s) return os.clock() < s.fastUntil end
+local function damageOf(s) return BASE_DAMAGE + (s.level - 1) * DAMAGE_STEP end
+local function upgradeCost(s) return DAMAGE_UPGRADE_COST * s.level end
+
+local function notify(player, text)
+	local s = state[player]
+	if not s then return end
+	s.msg = text
+	s.msgUntil = os.clock() + 2
+end
+
+local function applyZoom(player)
+	local s = state[player]
+	s.zoom = math.clamp(s.zoom, MIN_ZOOM, MAX_ZOOM)
+	player.CameraMinZoomDistance = s.zoom
+	player.CameraMaxZoomDistance = s.zoom
+end
+
+-- Dug blocks disappear, then come back
+local function removeBlock(part)
+	local t, c, q = part.Transparency, part.CanCollide, part.CanQuery
+	part.Transparency = 1
+	part.CanCollide = false
+	part.CanQuery = false
+	task.delay(BLOCK_RESPAWN, function()
+		if part.Parent then
+			part.Transparency = t
+			part.CanCollide = c
+			part.CanQuery = q
+		end
+	end)
+end
+
+-- Tool logic
+local function setupTool(player, tool)
+	if not tool:IsA("Tool") or tool.Name ~= TOOL_NAME then return end
+	if tool:GetAttribute("Setup") then return end
+	tool:SetAttribute("Setup", true)
+
+	tool.Activated:Connect(function()
+		local s = state[player]
+		local char = player.Character
+		local root = char and char:FindFirstChild("HumanoidRootPart")
+		if not s or not root then return end
+
+		local speed = isFast(s) and FAST or NORMAL
+		local now = os.clock()
+
+		local params = RaycastParams.new()
+		params.FilterDescendantsInstances = { char }
+		local result = workspace:Raycast(root.Position, root.CFrame.LookVector * DIG_RANGE, params)
+		if not result then return end
+		local target = result.Instance
+
+		-- Hit an enemy
+		local enemyHum = target.Parent:FindFirstChildOfClass("Humanoid")
+		if enemyHum then
+			if now - s.lastHit < speed.hit then return end
+			s.lastHit = now
+			enemyHum:TakeDamage(damageOf(s))
+			if enemyHum.Health <= 0 and not enemyHum:GetAttribute("Rewarded") then
+				enemyHum:SetAttribute("Rewarded", true)
+				addCoffee(player, COFFEE_PER_KILL)
+			end
+			return
+		end
+
+		-- Dig (block needs the "Diggable" tag)
+		if target:HasTag("Diggable") then
+			if now - s.lastDig < speed.dig then return end
+			s.lastDig = now
+			removeBlock(target)
+			addCoffee(player, COFFEE_PER_BLOCK)
+		end
+	end)
+end
+
+local function hookContainer(player, container)
+	for _, child in ipairs(container:GetChildren()) do
+		setupTool(player, child)
+	end
+	container.ChildAdded:Connect(function(child)
+		setupTool(player, child)
+	end)
+end
+
+-- GUI helpers
+local COLORS = {
+	window = Color3.fromRGB(28, 28, 32),
+	title  = Color3.fromRGB(42, 42, 50),
+	button = Color3.fromRGB(55, 55, 65),
+	on     = Color3.fromRGB(40, 160, 70),
+	close  = Color3.fromRGB(200, 60, 60),
+	text   = Color3.fromRGB(240, 240, 240),
+	dim    = Color3.fromRGB(160, 160, 170),
+}
+
+local function round(obj, radius)
+	local c = Instance.new("UICorner")
+	c.CornerRadius = UDim.new(0, radius)
+	c.Parent = obj
+end
+
+local function newButton(parent, text, size, position, color)
+	local b = Instance.new("TextButton")
+	b.Size = size
+	b.Position = position or UDim2.new()
+	b.Text = text
+	b.TextSize = 18
+	b.Font = Enum.Font.GothamBold
+	b.TextColor3 = COLORS.text
+	b.BackgroundColor3 = color or COLORS.button
+	b.Parent = parent
+	round(b, 8)
+	return b
+end
+
+local function newLabel(parent, text, size, position, color, textSize)
+	local l = Instance.new("TextLabel")
+	l.Size = size
+	l.Position = position or UDim2.new()
+	l.BackgroundTransparency = 1
+	l.Text = text
+	l.TextSize = textSize or 16
+	l.Font = Enum.Font.GothamMedium
+	l.TextColor3 = color or COLORS.text
+	l.Parent = parent
+	return l
+end
+
+local WIN_W, WIN_H, TITLE_H = 240, 250, 36
+
+local function buildGui(player)
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "ToolGui"
+	gui.ResetOnSpawn = false
+	gui.Parent = player:WaitForChild("PlayerGui")
+
+	local openBtn = newButton(gui, "⚙", UDim2.fromOffset(44, 44), UDim2.new(1, -60, 0.5, -22), COLORS.window)
+	openBtn.TextSize = 24
+	openBtn.Visible = false
+
+	local window = Instance.new("Frame")
+	window.Size = UDim2.fromOffset(WIN_W, WIN_H)
+	window.Position = UDim2.new(1, -WIN_W - 16, 0.5, -WIN_H / 2)
+	window.BackgroundColor3 = COLORS.window
+	window.ClipsDescendants = true
+	window.Parent = gui
+	round(window, 12)
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = Color3.fromRGB(70, 70, 80)
+	stroke.Thickness = 1.5
+	stroke.Parent = window
+
+	local titleBar = Instance.new("Frame")
+	titleBar.Size = UDim2.new(1, 0, 0, TITLE_H)
+	titleBar.BackgroundColor3 = COLORS.title
+	titleBar.BorderSizePixel = 0
+	titleBar.Parent = window
+
+	local title = newLabel(titleBar, "⛏  Dig Tool", UDim2.new(1, -80, 1, 0), UDim2.fromOffset(12, 0), COLORS.text, 17)
+	title.TextXAlignment = Enum.TextXAlignment.Left
+	title.Font = Enum.Font.GothamBold
+
+	local minBtn = newButton(titleBar, "–", UDim2.fromOffset(28, 28), UDim2.new(1, -68, 0, 4))
+	local closeBtn = newButton(titleBar, "✕", UDim2.fromOffset(28, 28), UDim2.new(1, -36, 0, 4), COLORS.close)
+
+	local content = Instance.new("Frame")
+	content.Position = UDim2.fromOffset(0, TITLE_H)
+	content.Size = UDim2.new(1, 0, 1, -TITLE_H)
+	content.BackgroundTransparency = 1
+	content.Parent = window
+
+	local pad = Instance.new("UIPadding")
+	pad.PaddingTop, pad.PaddingBottom = UDim.new(0, 10), UDim.new(0, 10)
+	pad.PaddingLeft, pad.PaddingRight = UDim.new(0, 10), UDim.new(0, 10)
+	pad.Parent = content
+
+	local list = Instance.new("UIListLayout")
+	list.Padding = UDim.new(0, 8)
+	list.SortOrder = Enum.SortOrder.LayoutOrder
+	list.Parent = content
+
+	local fastBtn = newButton(content, "", UDim2.new(1, 0, 0, 40))
+	fastBtn.TextSize = 15
+	fastBtn.LayoutOrder = 1
+
+	local upgradeBtn = newButton(content, "", UDim2.new(1, 0, 0, 40))
+	upgradeBtn.TextSize = 15
+	upgradeBtn.LayoutOrder = 2
+
+	local zoomRow = Instance.new("Frame")
+	zoomRow.Size = UDim2.new(1, 0, 0, 40)
+	zoomRow.BackgroundTransparency = 1
+	zoomRow.LayoutOrder = 3
+	zoomRow.Parent = content
+
+	local zoomOut = newButton(zoomRow, "−", UDim2.fromOffset(50, 40))
+	local zoomIn  = newButton(zoomRow, "+", UDim2.fromOffset(50, 40), UDim2.new(1, -50, 0, 0))
+	local zoomLabel = newLabel(zoomRow, "", UDim2.new(1, -110, 1, 0), UDim2.fromOffset(55, 0))
+
+	local status = newLabel(content, "", UDim2.new(1, 0, 0, 20), nil, COLORS.dim, 13)
+	status.LayoutOrder = 4
+	local status2 = newLabel(content, "", UDim2.new(1, 0, 0, 20), nil, COLORS.text, 14)
+	status2.LayoutOrder = 5
+
+	local function refresh()
+		local s = state[player]
+		if not s then return end
+		local now = os.clock()
+
+		if isFast(s) then
+			fastBtn.Text = ("FAST: ON (%ds)"):format(math.ceil(s.fastUntil - now))
+			fastBtn.BackgroundColor3 = COLORS.on
+		else
+			fastBtn.Text = ("Buy FAST: %d Coffee / %ds"):format(FAST_COST, FAST_DURATION)
+			fastBtn.BackgroundColor3 = COLORS.button
+		end
+
+		upgradeBtn.Text = ("Damage Lv.%d  (upgrade: %d Coffee)"):format(s.level, upgradeCost(s))
+		zoomLabel.Text = "Zoom: " .. s.zoom
+
+		local speed = isFast(s) and FAST or NORMAL
+		status.Text = ("Dig %.2fs  •  Hit %.2fs  •  Dmg %d"):format(speed.dig, speed.hit, damageOf(s))
+
+		if now < s.msgUntil then
+			status2.Text = s.msg
+		else
+			status2.Text = "Coffee: " .. getCoffee(player).Value
+		end
+	end
+
+	fastBtn.Activated:Connect(function()
+		local s = state[player]
+		if isFast(s) then
+			notify(player, "Already active")
+		elseif spend(player, FAST_COST) then
+			s.fastUntil = os.clock() + FAST_DURATION
+		else
+			notify(player, "Not enough Coffee")
+		end
+		refresh()
+	end)
+
+	upgradeBtn.Activated:Connect(function()
+		local s = state[player]
+		if spend(player, upgradeCost(s)) then
+			s.level += 1
+			notify(player, "Damage upgraded!")
+		else
+			notify(player, "Not enough Coffee")
+		end
+		refresh()
+	end)
+
+	zoomIn.Activated:Connect(function()
+		state[player].zoom -= ZOOM_STEP
+		applyZoom(player)
+		refresh()
+	end)
+
+	zoomOut.Activated:Connect(function()
+		state[player].zoom += ZOOM_STEP
+		applyZoom(player)
+		refresh()
+	end)
+
+	local collapsed = false
+	minBtn.Activated:Connect(function()
+		collapsed = not collapsed
+		content.Visible = not collapsed
+		window.Size = collapsed and UDim2.fromOffset(WIN_W, TITLE_H) or UDim2.fromOffset(WIN_W, WIN_H)
+		minBtn.Text = collapsed and "+" or "–"
+	end)
+
+	closeBtn.Activated:Connect(function()
+		window.Visible = false
+		openBtn.Visible = true
+	end)
+
+	openBtn.Activated:Connect(function()
+		window.Visible = true
+		openBtn.Visible = false
+	end)
+
+	-- Keeps the timer and Coffee count up to date
+	task.spawn(function()
+		while state[player] do
+			refresh()
+			task.wait(0.25)
+		end
+	end)
+end
+
+-- Player setup
+local function onPlayerAdded(player)
+	state[player] = {
+		fastUntil = 0, level = 1, zoom = 12,
+		lastDig = 0, lastHit = 0, msg = "", msgUntil = 0,
+	}
+	getCoffee(player)
+	buildGui(player)
+	applyZoom(player)
+
+	local function onCharacter(char)
+		hookContainer(player, char)
+		hookContainer(player, player:WaitForChild("Backpack"))
+	end
+
+	player.CharacterAdded:Connect(onCharacter)
+	if player.Character then onCharacter(player.Character) end
+end
+
+Players.PlayerAdded:Connect(onPlayerAdded)
+for _, p in ipairs(Players:GetPlayers()) do
+	task.spawn(onPlayerAdded, p)
+end
+
+Players.PlayerRemoving:Connect(function(player)
+	state[player] = nil
+end)
