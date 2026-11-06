@@ -1,0 +1,483 @@
+-- [[ COFFEE VIP HUB - ULTIMATE EXPLOIT EDITION (PRO VERSION + UNIVERSAL SPEED BOOST) ]] --
+local LP = game:GetService("Players").LocalPlayer
+local SG = Instance.new("ScreenGui", game:GetService("CoreGui"))
+SG.Name = "CoffeeVIPHubCustomImage"
+
+-- Main Menu Frame
+local MainFrame = Instance.new("Frame", SG)
+MainFrame.Size = UDim2.new(0, 240, 0, 420)
+MainFrame.Position = UDim2.new(0, 40, 0, 120)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(255, 170, 0)
+MainStroke.Thickness = 2
+
+local MainTitle = Instance.new("TextLabel", MainFrame)
+MainTitle.Size = UDim2.new(0, 240, 0, 35)
+MainTitle.Text = "☕ COFFEE VIP HUB PRO ☕"
+MainTitle.TextColor3 = Color3.fromRGB(255, 200, 0)
+MainTitle.TextSize = 14
+MainTitle.Font = Enum.Font.SourceSansBold
+MainTitle.BackgroundTransparency = 1
+
+local OwnerMain = Instance.new("TextLabel", MainFrame)
+OwnerMain.Size = UDim2.new(0, 240, 0, 20)
+OwnerMain.Position = UDim2.new(0, 0, 0, 28)
+OwnerMain.Text = "Owner: Coffee | Pro"
+OwnerMain.TextColor3 = Color3.fromRGB(150, 150, 150)
+OwnerMain.TextSize = 11
+OwnerMain.Font = Enum.Font.SourceSansItalic
+OwnerMain.BackgroundTransparency = 1
+
+local ToggleBtn = Instance.new("TextButton", MainFrame)
+ToggleBtn.Size = UDim2.new(0, 32, 0, 26)
+ToggleBtn.Position = UDim2.new(0, 198, 0, 5)
+ToggleBtn.Text = "☕"
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 50, 20)
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.TextSize = 14
+ToggleBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 4)
+
+local RoundIconBtn = Instance.new("ImageButton", SG)
+RoundIconBtn.Size = UDim2.new(0, 50, 0, 50)
+RoundIconBtn.Position = UDim2.new(0, 40, 0, 120)
+RoundIconBtn.Image = "rbxassetid://1392880262"
+RoundIconBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+RoundIconBtn.Visible = false
+RoundIconBtn.Active = true
+RoundIconBtn.Draggable = true
+Instance.new("UICorner", RoundIconBtn).CornerRadius = UDim.new(1, 0)
+
+local RoundIconStroke = Instance.new("UIStroke", RoundIconBtn)
+RoundIconStroke.Color = Color3.fromRGB(255, 170, 0)
+RoundIconStroke.Thickness = 2
+
+-- ScrollingFrame
+local ContentContainer = Instance.new("ScrollingFrame", MainFrame)
+ContentContainer.Size = UDim2.new(1, 0, 1, -55)
+ContentContainer.Position = UDim2.new(0, 0, 0, 50)
+ContentContainer.BackgroundTransparency = 1
+ContentContainer.CanvasSize = UDim2.new(0, 0, 0, 2100)
+ContentContainer.ScrollBarThickness = 4
+
+-- 1. WalkSpeed Section
+local WalkSpeedToggleBtn = Instance.new("TextButton", ContentContainer)
+WalkSpeedToggleBtn.Size = UDim2.new(0, 210, 0, 30)
+WalkSpeedToggleBtn.Position = UDim2.new(0, 15, 0, 5)
+WalkSpeedToggleBtn.Text = "⚡ WalkSpeed Boost: OFF"
+WalkSpeedToggleBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+WalkSpeedToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+WalkSpeedToggleBtn.TextSize = 11
+WalkSpeedToggleBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", WalkSpeedToggleBtn).CornerRadius = UDim.new(0, 6)
+
+local SliderBg = Instance.new("Frame", ContentContainer)
+SliderBg.Size = UDim2.new(0, 210, 0, 26)
+SliderBg.Position = UDim2.new(0, 15, 0, 40)
+SliderBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Instance.new("UICorner", SliderBg).CornerRadius = UDim.new(0, 6)
+
+local SliderFill = Instance.new("Frame", SliderBg)
+SliderFill.Size = UDim2.new(0.5, 0, 1, 0)
+SliderFill.BackgroundColor3 = Color3.fromRGB(255, 140, 0)
+Instance.new("UICorner", SliderFill).CornerRadius = UDim.new(0, 6)
+
+local SliderText = Instance.new("TextLabel", SliderBg)
+SliderText.Size = UDim2.new(1, 0, 1, 0)
+SliderText.Text = "Walk Speed: 500"
+SliderText.TextColor3 = Color3.fromRGB(255, 255, 255)
+SliderText.TextSize = 11
+SliderText.Font = Enum.Font.SourceSansBold
+SliderText.BackgroundTransparency = 1
+
+local SliderButton = Instance.new("TextButton", SliderBg)
+SliderButton.Size = UDim2.new(1, 0, 1, 0)
+SliderButton.Text = ""
+SliderButton.BackgroundTransparency = 1
+
+-- 2. NEW: Universal Instant Action (ขຸດไว, ตัดไม้ไว, ຕີໄວ, ເກັບຂອງໄວ)
+local UniversalFastBtn = Instance.new("TextButton", ContentContainer)
+UniversalFastBtn.Size = UDim2.new(0, 210, 0, 35)
+UniversalFastBtn.Position = UDim2.new(0, 15, 0, 75)
+UniversalFastBtn.Text = "🚀 ທຳທຸກຢ່າງໄວ (Instant/Fast All): OFF"
+UniversalFastBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+UniversalFastBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+UniversalFastBtn.TextSize, UniversalFastBtn.Font = 10, Enum.Font.SourceSansBold
+Instance.new("UICorner", UniversalFastBtn).CornerRadius = UDim.new(0, 6)
+
+-- 3. Fly Control Buttons
+local FlyBtn = Instance.new("TextButton", ContentContainer)
+FlyBtn.Size = UDim2.new(0, 100, 0, 30)
+FlyBtn.Position = UDim2.new(0, 15, 0, 115)
+FlyBtn.Text = "🕊️ Fly ON"
+FlyBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FlyBtn.TextSize = 11
+FlyBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", FlyBtn).CornerRadius = UDim.new(0, 6)
+
+local LandBtn = Instance.new("TextButton", ContentContainer)
+LandBtn.Size = UDim2.new(0, 100, 0, 30)
+LandBtn.Position = UDim2.new(0, 125, 0, 115)
+LandBtn.Text = "🛬 Land OFF"
+LandBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+LandBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+LandBtn.TextSize = 11
+LandBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", LandBtn).CornerRadius = UDim.new(0, 6)
+
+local FlyUpBtn = Instance.new("TextButton", ContentContainer)
+FlyUpBtn.Size = UDim2.new(0, 100, 0, 30)
+FlyUpBtn.Position = UDim2.new(0, 15, 0, 151)
+FlyUpBtn.Text = "⬆️ Fly Up"
+FlyUpBtn.BackgroundColor3 = Color3.fromRGB(150, 100, 0)
+FlyUpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FlyUpBtn.TextSize = 11
+FlyUpBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", FlyUpBtn).CornerRadius = UDim.new(0, 6)
+
+local FlyDownBtn = Instance.new("TextButton", ContentContainer)
+FlyDownBtn.Size = UDim2.new(0, 100, 0, 30)
+FlyDownBtn.Position = UDim2.new(0, 125, 0, 151)
+FlyDownBtn.Text = "⬇️ Fly Down"
+FlyDownBtn.BackgroundColor3 = Color3.fromRGB(100, 50, 150)
+FlyDownBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FlyDownBtn.TextSize = 11
+FlyDownBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", FlyDownBtn).CornerRadius = UDim.new(0, 6)
+
+-- 4. Fly Speed Slider
+local FlySliderBg = Instance.new("Frame", ContentContainer)
+FlySliderBg.Size = UDim2.new(0, 210, 0, 26)
+FlySliderBg.Position = UDim2.new(0, 15, 0, 188)
+FlySliderBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Instance.new("UICorner", FlySliderBg).CornerRadius = UDim.new(0, 6)
+
+local FlySliderFill = Instance.new("Frame", FlySliderBg)
+FlySliderFill.Size = UDim2.new(0.5, 0, 1, 0)
+FlySliderFill.BackgroundColor3 = Color3.fromRGB(0, 180, 255)
+Instance.new("UICorner", FlySliderFill).CornerRadius = UDim.new(0, 6)
+
+local FlySliderText = Instance.new("TextLabel", FlySliderBg)
+FlySliderText.Size = UDim2.new(1, 0, 1, 0)
+FlySliderText.Text = "Fly Speed: 500"
+FlySliderText.TextColor3 = Color3.fromRGB(255, 255, 255)
+FlySliderText.TextSize = 11
+FlySliderText.Font = Enum.Font.SourceSansBold
+FlySliderText.BackgroundTransparency = 1
+
+local FlySliderButton = Instance.new("TextButton", FlySliderBg)
+FlySliderButton.Size = UDim2.new(1, 0, 1, 0)
+FlySliderButton.Text = ""
+FlySliderButton.BackgroundTransparency = 1
+
+-- 5. Hitbox Extender Button
+local HitboxBtn = Instance.new("TextButton", ContentContainer)
+HitboxBtn.Size = UDim2.new(0, 210, 0, 30)
+HitboxBtn.Position = UDim2.new(0, 15, 0, 222)
+HitboxBtn.Text = "🎯 Hitbox Extender: OFF"
+HitboxBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+HitboxBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+HitboxBtn.TextSize = 11
+HitboxBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", HitboxBtn).CornerRadius = UDim.new(0, 6)
+
+-- 6. God Mode Button
+local GodBtn = Instance.new("TextButton", ContentContainer)
+GodBtn.Size = UDim2.new(0, 210, 0, 30)
+GodBtn.Position = UDim2.new(0, 15, 0, 258)
+GodBtn.Text = "🛡️ God Mode: OFF"
+GodBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+GodBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+GodBtn.TextSize = 11
+GodBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", GodBtn).CornerRadius = UDim.new(0, 6)
+
+-- 7. Fast Attack Button
+local FastAtkBtn = Instance.new("TextButton", ContentContainer)
+FastAtkBtn.Size = UDim2.new(0, 210, 0, 30)
+FastAtkBtn.Position = UDim2.new(0, 15, 0, 294)
+FastAtkBtn.Text = "⚡ Fast Attack (9999999 ຕີໄວ): OFF"
+FastAtkBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+FastAtkBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FastAtkBtn.TextSize, FastAtkBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", FastAtkBtn).CornerRadius = UDim.new(0, 6)
+
+-- 8. Custom AOE Melee Button
+local CustomToolBtn = Instance.new("TextButton", ContentContainer)
+CustomToolBtn.Size = UDim2.new(0, 210, 0, 30)
+CustomToolBtn.Position = UDim2.new(0, 15, 0, 330)
+CustomToolBtn.Text = "🔥 Custom AOE Melee (Radius 15): OFF"
+CustomToolBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+CustomToolBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CustomToolBtn.TextSize, CustomToolBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", CustomToolBtn).CornerRadius = UDim.new(0, 6)
+
+-- 9. Kill Aura Button
+local KillAuraBtn = Instance.new("TextButton", ContentContainer)
+KillAuraBtn.Size = UDim2.new(0, 210, 0, 30)
+KillAuraBtn.Position = UDim2.new(0, 15, 0, 366)
+KillAuraBtn.Text = "🔪 Kill Aura (Auto Slash): OFF"
+KillAuraBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+KillAuraBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+KillAuraBtn.TextSize, KillAuraBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", KillAuraBtn).CornerRadius = UDim.new(0, 6)
+
+-- 10. Lock Head (Aimbot) Button
+local AimbotBtn = Instance.new("TextButton", ContentContainer)
+AimbotBtn.Size = UDim2.new(0, 210, 0, 30)
+AimbotBtn.Position = UDim2.new(0, 15, 0, 402)
+AimbotBtn.Text = "🎯 Lock Head (Aimbot): OFF"
+AimbotBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+AimbotBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AimbotBtn.TextSize, AimbotBtn.Font = 11, Enum.Font.SourceSansBold
+Instance.new("UICorner", AimbotBtn).CornerRadius = UDim.new(0, 6)
+
+-- Logic Variables & Handlers
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local dragging = false
+SliderButton.MouseButton1Down:Connect(function() dragging = true end)
+
+local flyDragging = false
+local currentFlySpeed = 500
+FlySliderButton.MouseButton1Down:Connect(function() flyDragging = true end)
+
+UIS.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+        flyDragging = false
+    end
+end)
+
+-- WalkSpeed Logic (Default 500)
+local walkSpeedActive = false
+local currentWalkSpeed = 500
+
+WalkSpeedToggleBtn.MouseButton1Click:Connect(function()
+    walkSpeedActive = not walkSpeedActive
+    if walkSpeedActive then
+        WalkSpeedToggleBtn.Text = "⚡ WalkSpeed Boost: ON (500)"
+        WalkSpeedToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+        if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+            LP.Character.Humanoid.WalkSpeed = currentWalkSpeed
+        end
+    else
+        WalkSpeedToggleBtn.Text = "⚡ WalkSpeed Boost: OFF"
+        WalkSpeedToggleBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+            LP.Character.Humanoid.WalkSpeed = 16
+        end
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if (dragging or flyDragging) and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local mousePos = UIS:GetMouseLocation()
+        if dragging then
+            local absPos = SliderBg.AbsolutePosition
+            local absSize = SliderBg.AbsoluteSize
+            local relX = math.clamp((mousePos.X - absPos.X) / absSize.X, 0, 1)
+            currentWalkSpeed = math.floor(1 + relX * (1000 - 1))
+            SliderFill.Size = UDim2.new(relX, 0, 1, 0)
+            SliderText.Text = "Walk Speed: " .. currentWalkSpeed
+            if walkSpeedActive and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+                LP.Character.Humanoid.WalkSpeed = currentWalkSpeed
+            end
+        elseif flyDragging then
+            local absPos = FlySliderBg.AbsolutePosition
+            local absSize = FlySliderBg.AbsoluteSize
+            local relX = math.clamp((mousePos.X - absPos.X) / absSize.X, 0, 1)
+            currentFlySpeed = math.floor(1 + relX * (2000 - 1))
+            FlySliderFill.Size = UDim2.new(relX, 0, 1, 0)
+            FlySliderText.Text = "Fly Speed: " .. currentFlySpeed
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.5) do
+        if walkSpeedActive and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+            if LP.Character.Humanoid.WalkSpeed ~= currentWalkSpeed then
+                LP.Character.Humanoid.WalkSpeed = currentWalkSpeed
+            end
+        end
+    end
+end)
+
+-- NEW: Universal Fast / Instant Action Logic (ขຸດไว, ตัดไม้ไว, ຕີໄວ, ເກັບຂອງไว)
+local universalFastActive = false
+UniversalFastBtn.MouseButton1Click:Connect(function()
+    universalFastActive = not universalFastActive
+    if universalFastActive then
+        UniversalFastBtn.Text = "🚀 ທຳທຸກຢ່າງໄວ (Instant/Fast All): ON"
+        UniversalFastBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        UniversalFastBtn.Text = "🚀 ທຳທຸກຢ່າງໄວ (Instant/Fast All): OFF"
+        UniversalFastBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+RunService.Heartbeat:Connect(function()
+    if not universalFastActive then return end
+    pcall(function()
+        -- 1. ເລັ່ງຄວາມໄວ ແລະ ລຶບ Cooldown ໃນ Tool ທີ່ຖືຢູ່ (ຂຸດແຮ່, ຕັດໄມ້, ຕີ)
+        if LP.Character then
+            local tool = LP.Character:FindFirstChildOfClass("Tool")
+            if tool then
+                tool:Activate()
+                for _, descendant in ipairs(tool:GetDescendants()) do
+                    if descendant:IsA("NumberValue") or descendant:IsA("IntValue") then
+                        local n = descendant.Name:lower()
+                        if n:find("cooldown") or n:find("cd") or n:find("delay") or n:find("speed") or n:find("rate") or n:find("time") then
+                            descendant.Value = 0.00001
+                        elseif n:find("damage") or n:find("dmg") or n:find("power") or n:find("strength") then
+                            descendant.Value = 9999999
+                        end
+                    elseif descendant:IsA("RemoteEvent") then
+                        local n = descendant.Name:lower()
+                        if n:find("hit") or n:find("mine") or n:find("chop") or n:find("gather") or n:find("break") or n:find("tool") then
+                            descendant:FireServer()
+                        end
+                    end
+                end
+            end
+        end
+
+        -- 2. ເລັ່ງ ProximityPrompt (ກົດເກັບຂອງ / ເປີດປະຕູ / ວຽກຕ່າງໆ ໃຫ້ຕິດທັນທີ)
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("ProximityPrompt") then
+                v.HoldDuration = 0
+                v.MaxActivationDistance = math.max(v.MaxActivationDistance, 30)
+            end
+        end
+    end)
+end)
+
+-- Hitbox Extender Logic
+local hitboxActive = false
+HitboxBtn.MouseButton1Click:Connect(function()
+    hitboxActive = not hitboxActive
+    if hitboxActive then
+        HitboxBtn.Text = "🎯 Hitbox Extender: ON"
+        HitboxBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        HitboxBtn.Text = "🎯 Hitbox Extender: OFF"
+        HitboxBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+task.spawn(function()
+    while task.wait(1) do
+        if hitboxActive then
+            for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+                if player ~= LP and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                    local hrp = player.Character.HumanoidRootPart
+                    hrp.Size = Vector3.new(25, 25, 25)
+                    hrp.Transparency = 0.4
+                    hrp.CanCollide = false
+                end
+            end
+        end
+    end
+end)
+
+-- God Mode
+local godActive = false
+GodBtn.MouseButton1Click:Connect(function()
+    godActive = not godActive
+    if godActive then
+        GodBtn.Text = "🛡️ God Mode: ON"
+        GodBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        GodBtn.Text = "🛡️ God Mode: OFF"
+        GodBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.1) do
+        if godActive and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+            LP.Character.Humanoid.Health = LP.Character.Humanoid.MaxHealth
+        end
+    end
+end)
+
+-- Fast Attack
+local fastAtkActive = false
+FastAtkBtn.MouseButton1Click:Connect(function()
+    fastAtkActive = not fastAtkActive
+    if fastAtkActive then
+        FastAtkBtn.Text = "⚡ Fast Attack (9999999 ຕີໄວ): ON"
+        FastAtkBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+    else
+        FastAtkBtn.Text = "⚡ Fast Attack (9999999 ຕີໄວ): OFF"
+        FastAtkBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end
+end)
+
+RunService.RenderStepped:Connect(function()
+    if fastAtkActive and LP.Character then
+        pcall(function()
+            local tool = LP.Character:FindFirstChildOfClass("Tool")
+            if tool then
+                tool:Activate()
+            end
+        end)
+    end
+end)
+
+-- Fly Logic
+local flying = false
+local verticalDir = 0
+local cam = workspace.CurrentCamera
+
+FlyBtn.MouseButton1Click:Connect(function() flying = true end)
+LandBtn.MouseButton1Click:Connect(function() 
+    flying = false 
+    verticalDir = 0
+    if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+        LP.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+    end
+end)
+
+FlyUpBtn.MouseButton1Down:Connect(function() verticalDir = 1 end)
+FlyUpBtn.TouchTap:Connect(function() verticalDir = (verticalDir == 1) and 0 or 1 end)
+FlyDownBtn.MouseButton1Down:Connect(function() verticalDir = -1 end)
+FlyDownBtn.TouchTap:Connect(function() verticalDir = (verticalDir == -1) and 0 or -1 end)
+
+RunService.RenderStepped:Connect(function()
+    if flying and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") and LP.Character:FindFirstChild("Humanoid") then
+        local hrp = LP.Character.HumanoidRootPart
+        local hum = LP.Character.Humanoid
+        hrp.Velocity = Vector3.new(0, 1, 0)
+        local moveDir = hum.MoveDirection
+        local speedMultiplier = currentFlySpeed / 100
+        local upward = Vector3.new(0, verticalDir * speedMultiplier * 5, 0)
+        if moveDir.Magnitude > 0 then
+            hrp.CFrame = hrp.CFrame + (cam.CFrame.LookVector * Vector3.new(1,0,1)).Unit * moveDir.Magnitude * (speedMultiplier / 2) + upward
+        elseif verticalDir ~= 0 then
+            hrp.CFrame = hrp.CFrame + upward
+        end
+    end
+end)
+
+-- Minimize & Exit UI
+ToggleBtn.MouseButton1Click:Connect(function()
+    RoundIconBtn.Position = MainFrame.Position
+    MainFrame.Visible = false
+    RoundIconBtn.Visible = true
+end)
+
+RoundIconBtn.MouseButton1Click:Connect(function()
+    MainFrame.Position = RoundIconBtn.Position
+    RoundIconBtn.Visible = false
+    MainFrame.Visible = true
+end)
