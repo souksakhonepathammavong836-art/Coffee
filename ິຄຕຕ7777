@@ -1,0 +1,45 @@
+local function oneShotBurst(targetMob)
+	if not targetMob or not targetMob.root or not targetMob.hum then return end
+	local char = LP.Character
+	local root = char and char:FindFirstChild("HumanoidRootPart")
+	if not root then return end
+
+	-- ย้ายตัวไปชิดมอนสเตอร์ด้านหลังเล็กน้อย
+	root.AssemblyLinearVelocity = Vector3.zero
+	root.CFrame = targetMob.root.CFrame * CFrame.new(0, 0, 2.5)
+
+	local tool = ensureEquippedTool()
+	if tool then
+		pcall(function()
+			tool:Activate()
+		end)
+		-- ปรับค่าตัวเลขดาเมจใน Tool และยิง RemoteEvent ของเป้าหมาย
+		for _, v in ipairs(tool:GetDescendants()) do
+			if v:IsA("NumberValue") or v:IsA("IntValue") then
+				local n = v.Name:lower()
+				if n:find("dmg") or n:find("damage") or n:find("power") or n:find("atk") then
+					v.Value = 999999999
+				end
+			elseif v:IsA("RemoteEvent") then
+				local n = v.Name:lower()
+				if n:find("hit") or n:find("attack") or n:find("slash") or n:find("damage") then
+					for _ = 1, 5 do
+						pcall(function()
+							v:FireServer(targetMob.model, targetMob.root.Position)
+						end)
+					end
+				end
+			end
+		end
+	end
+
+	-- กรณีเกมที่ยอมรับการลดเลือดฝั่ง Client หรือ Network Ownership
+	pcall(function()
+		if targetMob.hum.Health > 0 then
+			targetMob.hum:TakeDamage(targetMob.hum.MaxHealth)
+			if targetMob.hum.Health > 0 then
+				targetMob.hum.Health = 0
+			end
+		end
+	end)
+end
