@@ -1,0 +1,910 @@
+-- [[ COFFEE VIP HUB - ULTIMATE EXPLOIT EDITION (PRO VERSION + DUNGEON MOB) ]] --
+local LP = game:GetService("Players").LocalPlayer
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local cam = workspace.CurrentCamera
+
+local SG = Instance.new("ScreenGui")
+SG.Name = "CoffeeVIPHubCustomImage"
+SG.ResetOnSpawn = false
+SG.Parent = game:GetService("CoreGui")
+
+-- Main Menu Frame (Bypassed Login - Opens Directly)
+local MainFrame = Instance.new("Frame", SG)
+MainFrame.Size = UDim2.new(0, 240, 0, 380)
+MainFrame.Position = UDim2.new(0, 40, 0, 120)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(255, 170, 0)
+MainStroke.Thickness = 2
+
+local MainTitle = Instance.new("TextLabel", MainFrame)
+MainTitle.Size = UDim2.new(0, 240, 0, 35)
+MainTitle.Text = "☕ COFFEE VIP HUB PRO ☕"
+MainTitle.TextColor3 = Color3.fromRGB(255, 200, 0)
+MainTitle.TextSize = 14
+MainTitle.Font = Enum.Font.SourceSansBold
+MainTitle.BackgroundTransparency = 1
+
+local OwnerMain = Instance.new("TextLabel", MainFrame)
+OwnerMain.Size = UDim2.new(0, 240, 0, 20)
+OwnerMain.Position = UDim2.new(0, 0, 0, 28)
+OwnerMain.Text = "Owner: Coffee | Pro"
+OwnerMain.TextColor3 = Color3.fromRGB(150, 150, 150)
+OwnerMain.TextSize = 11
+OwnerMain.Font = Enum.Font.SourceSansItalic
+OwnerMain.BackgroundTransparency = 1
+
+local ToggleBtn = Instance.new("TextButton", MainFrame)
+ToggleBtn.Size = UDim2.new(0, 32, 0, 26)
+ToggleBtn.Position = UDim2.new(0, 198, 0, 5)
+ToggleBtn.Text = "☕"
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 50, 20)
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.TextSize = 14
+ToggleBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 4)
+
+local RoundIconBtn = Instance.new("ImageButton", SG)
+RoundIconBtn.Size = UDim2.new(0, 50, 0, 50)
+RoundIconBtn.Position = UDim2.new(0, 40, 0, 120)
+RoundIconBtn.Image = "rbxassetid://1392880262"
+RoundIconBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+RoundIconBtn.Visible = false
+RoundIconBtn.Active = true
+RoundIconBtn.Draggable = true
+Instance.new("UICorner", RoundIconBtn).CornerRadius = UDim.new(1, 0)
+
+local RoundIconStroke = Instance.new("UIStroke", RoundIconBtn)
+RoundIconStroke.Color = Color3.fromRGB(255, 170, 0)
+RoundIconStroke.Thickness = 2
+
+-- ScrollingFrame
+local ContentContainer = Instance.new("ScrollingFrame", MainFrame)
+ContentContainer.Size = UDim2.new(1, 0, 1, -55)
+ContentContainer.Position = UDim2.new(0, 0, 0, 50)
+ContentContainer.BackgroundTransparency = 1
+ContentContainer.CanvasSize = UDim2.new(0, 0, 0, 1160)
+ContentContainer.ScrollBarThickness = 4
+
+local function makeButton(text, yPos, height, bgColor, textSize)
+	local btn = Instance.new("TextButton", ContentContainer)
+	btn.Size = UDim2.new(0, 210, 0, height or 30)
+	btn.Position = UDim2.new(0, 15, 0, yPos)
+	btn.Text = text
+	btn.BackgroundColor3 = bgColor or Color3.fromRGB(100, 100, 100)
+	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	btn.TextSize = textSize or 11
+	btn.Font = Enum.Font.SourceSansBold
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+	return btn
+end
+
+local function makeSlider(yPos, labelText, fillColor, initialRatio)
+	local bg = Instance.new("Frame", ContentContainer)
+	bg.Size = UDim2.new(0, 210, 0, 26)
+	bg.Position = UDim2.new(0, 15, 0, yPos)
+	bg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	Instance.new("UICorner", bg).CornerRadius = UDim.new(0, 6)
+
+	local fill = Instance.new("Frame", bg)
+	fill.Size = UDim2.new(initialRatio or 0, 0, 1, 0)
+	fill.BackgroundColor3 = fillColor
+	Instance.new("UICorner", fill).CornerRadius = UDim.new(0, 6)
+
+	local txt = Instance.new("TextLabel", bg)
+	txt.Size = UDim2.new(1, 0, 1, 0)
+	txt.Text = labelText
+	txt.TextColor3 = Color3.fromRGB(255, 255, 255)
+	txt.TextSize = 11
+	txt.Font = Enum.Font.SourceSansBold
+	txt.BackgroundTransparency = 1
+
+	local trigger = Instance.new("TextButton", bg)
+	trigger.Size = UDim2.new(1, 0, 1, 0)
+	trigger.Text = ""
+	trigger.BackgroundTransparency = 1
+
+	return bg, fill, txt, trigger
+end
+
+-- 1. WalkSpeed Section
+local WalkSpeedToggleBtn = makeButton("⚡ WalkSpeed Boost: OFF", 5)
+local SliderBg, SliderFill, SliderText, SliderButton = makeSlider(40, "Walk Speed: 50", Color3.fromRGB(255, 140, 0), 0)
+
+-- 2. Fly Control Buttons
+local FlyBtn = makeButton("🕊️ Fly ON", 75, 30, Color3.fromRGB(0, 170, 80))
+FlyBtn.Size = UDim2.new(0, 100, 0, 30)
+
+local LandBtn = makeButton("🛬 Land OFF", 75, 30, Color3.fromRGB(200, 50, 50))
+LandBtn.Size = UDim2.new(0, 100, 0, 30)
+LandBtn.Position = UDim2.new(0, 125, 0, 75)
+
+local FlyUpBtn = makeButton("⬆️ Fly Up", 111, 30, Color3.fromRGB(150, 100, 0))
+FlyUpBtn.Size = UDim2.new(0, 100, 0, 30)
+
+local FlyDownBtn = makeButton("⬇️ Fly Down", 111, 30, Color3.fromRGB(100, 50, 150))
+FlyDownBtn.Size = UDim2.new(0, 100, 0, 30)
+FlyDownBtn.Position = UDim2.new(0, 125, 0, 111)
+
+-- 3. Fly Speed Slider
+local FlySliderBg, FlySliderFill, FlySliderText, FlySliderButton = makeSlider(148, "Fly Speed: 50", Color3.fromRGB(0, 180, 255), 0)
+
+-- 4-20. Combat & Movement
+local HitboxBtn = makeButton("🎯 Hitbox Extender: OFF", 182)
+local GodBtn = makeButton("🛡️ God Mode: OFF", 218)
+local DmgBtn = makeButton("⚔️ Damage Booster (9999999): OFF", 254)
+local FastAtkBtn = makeButton("⚡ Fast Attack (9999999 ตีไวโคตร): OFF", 290)
+local CustomToolBtn = makeButton("🔥 Custom AOE Melee (Radius 15): OFF", 326)
+local KillAuraBtn = makeButton("🔪 Kill Aura (Auto Slash): OFF", 362)
+local AimbotBtn = makeButton("🎯 Lock Head (Aimbot): OFF", 398)
+local AimbotSliderBg, AimbotSliderFill, AimbotSliderText, AimbotSliderButton = makeSlider(434, "Aimbot Dist: 85", Color3.fromRGB(170, 0, 255), 0.28)
+local SmoothSliderBg, SmoothSliderFill, SmoothSliderText, SmoothSliderButton = makeSlider(467, "Lock Strength: 0.25", Color3.fromRGB(0, 200, 150), 0.25)
+local EspBtn = makeButton("👀 ESP Wallhack: OFF", 500)
+local AntiRagdollBtn = makeButton("🛡️ Anti-Ragdoll: OFF", 536)
+local InvisBtn = makeButton("👻 Invisibility: OFF", 572)
+local SpinBtn = makeButton("🌀 Spin Bot: OFF", 608)
+local InfJumpBtn = makeButton("🦘 Infinite Jump: ON", 644, 30, Color3.fromRGB(0, 170, 80))
+local NoclipBtn = makeButton("🚶 Noclip (Walk Through): OFF", 680)
+local NoFallBtn = makeButton("🪂 No Fall Damage: ON", 716, 30, Color3.fromRGB(0, 170, 80))
+local FullbrightBtn = makeButton("💡 Fullbright (Bright Map): OFF", 752)
+local ZoomBtn = makeButton("🔍 Max Camera Zoom: ON", 788, 30, Color3.fromRGB(0, 170, 80))
+
+-- Dungeon & Monster Farm Section
+local AutoDungeonMobBtn = makeButton("🐉 Auto Farm Dungeon Mob: OFF", 829)
+local MobAuraBtn = makeButton("🧲 Dungeon Mob Pull Aura: OFF", 865)
+local MobDistSliderBg, MobDistSliderFill, MobDistSliderText, MobDistSliderButton = makeSlider(901, "Dungeon Mob Dist: 120", Color3.fromRGB(220, 90, 20), 0.35)
+local TpDungeonBtn = makeButton("🚪 TP Dungeon Portal / Next Room", 934, 30, Color3.fromRGB(40, 130, 210))
+
+-- Utility & Exit
+local DeleteMapBtn = makeButton("🗑️ Delete All Map Parts", 972, 30, Color3.fromRGB(180, 0, 0))
+local WinBtn = makeButton("👑 Instant Win / Objective TP", 1008, 30, Color3.fromRGB(255, 140, 0))
+local BringAllBtn = makeButton("👥 Bring All Players to Me", 1044, 30, Color3.fromRGB(150, 0, 150))
+local ResetBtn = makeButton("💀 Reset / Kill Self", 1080, 30, Color3.fromRGB(150, 0, 0))
+local ExitHubBtn = makeButton("❌ Close Hub", 1118, 35, Color3.fromRGB(200, 50, 50), 12)
+
+-- State Variables
+local activeSlider = nil
+local walkSpeedActive, currentWalkSpeed = false, 50
+local currentFlySpeed = 50
+local currentAimbotDist = 85
+local currentLockStrength = 0.25
+local currentMobDist = 120
+local hitboxActive = false
+local godActive = false
+local dmgActive = false
+local fastAtkActive = false
+local customToolActive = false
+local killAuraActive = false
+local aimbotActive = false
+local espActive = false
+local antiRagdollActive = false
+local invisActive = false
+local savedTransparencies = {}
+local spinActive = false
+local infJumpEnabled = true
+local noclipEnabled = false
+local noFallEnabled = true
+local fullbrightActive = false
+local zoomEnabled = true
+local autoDungeonMobActive = false
+local mobAuraActive = false
+local flying = false
+local verticalDir = 0
+
+SliderButton.MouseButton1Down:Connect(function() activeSlider = "walk" end)
+FlySliderButton.MouseButton1Down:Connect(function() activeSlider = "fly" end)
+AimbotSliderButton.MouseButton1Down:Connect(function() activeSlider = "aimbot" end)
+SmoothSliderButton.MouseButton1Down:Connect(function() activeSlider = "smooth" end)
+MobDistSliderButton.MouseButton1Down:Connect(function() activeSlider = "mobdist" end)
+
+UIS.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		activeSlider = nil
+	end
+end)
+
+local function updateSliderFromX(bg, mouseX)
+	return math.clamp((mouseX - bg.AbsolutePosition.X) / math.max(bg.AbsoluteSize.X, 1), 0, 1)
+end
+
+RunService.RenderStepped:Connect(function()
+	if not activeSlider then return end
+	local mouseX = UIS:GetMouseLocation().X
+	if activeSlider == "walk" then
+		local relX = updateSliderFromX(SliderBg, mouseX)
+		currentWalkSpeed = math.floor(1 + relX * (99999 - 1))
+		SliderFill.Size = UDim2.new(relX, 0, 1, 0)
+		SliderText.Text = "Walk Speed: " .. currentWalkSpeed
+		if walkSpeedActive and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+			LP.Character.Humanoid.WalkSpeed = currentWalkSpeed
+		end
+	elseif activeSlider == "fly" then
+		local relX = updateSliderFromX(FlySliderBg, mouseX)
+		currentFlySpeed = math.floor(1 + relX * (999999 - 1))
+		FlySliderFill.Size = UDim2.new(relX, 0, 1, 0)
+		FlySliderText.Text = "Fly Speed: " .. currentFlySpeed
+	elseif activeSlider == "aimbot" then
+		local relX = updateSliderFromX(AimbotSliderBg, mouseX)
+		currentAimbotDist = math.floor(10 + relX * (300 - 10))
+		AimbotSliderFill.Size = UDim2.new(relX, 0, 1, 0)
+		AimbotSliderText.Text = "Aimbot Dist: " .. currentAimbotDist
+	elseif activeSlider == "smooth" then
+		local relX = updateSliderFromX(SmoothSliderBg, mouseX)
+		currentLockStrength = math.floor((0.05 + relX * 0.95) * 100) / 100
+		SmoothSliderFill.Size = UDim2.new(relX, 0, 1, 0)
+		SmoothSliderText.Text = "Lock Strength: " .. currentLockStrength
+	elseif activeSlider == "mobdist" then
+		local relX = updateSliderFromX(MobDistSliderBg, mouseX)
+		currentMobDist = math.floor(20 + relX * (400 - 20))
+		MobDistSliderFill.Size = UDim2.new(relX, 0, 1, 0)
+		MobDistSliderText.Text = "Dungeon Mob Dist: " .. currentMobDist
+	end
+end)
+
+-- WalkSpeed Toggle & Respawn Sync
+WalkSpeedToggleBtn.MouseButton1Click:Connect(function()
+	walkSpeedActive = not walkSpeedActive
+	if walkSpeedActive then
+		WalkSpeedToggleBtn.Text = "⚡ WalkSpeed Boost: ON (" .. currentWalkSpeed .. ")"
+		WalkSpeedToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 80)
+		if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+			LP.Character.Humanoid.WalkSpeed = currentWalkSpeed
+		end
+	else
+		WalkSpeedToggleBtn.Text = "⚡ WalkSpeed Boost: OFF"
+		WalkSpeedToggleBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+		if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+			LP.Character.Humanoid.WalkSpeed = 16
+		end
+	end
+end)
+
+task.spawn(function()
+	while task.wait(0.5) do
+		if walkSpeedActive and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+			if LP.Character.Humanoid.WalkSpeed ~= currentWalkSpeed then
+				LP.Character.Humanoid.WalkSpeed = currentWalkSpeed
+			end
+		end
+	end
+end)
+
+-- Hitbox Extender
+HitboxBtn.MouseButton1Click:Connect(function()
+	hitboxActive = not hitboxActive
+	HitboxBtn.Text = hitboxActive and "🎯 Hitbox Extender: ON" or "🎯 Hitbox Extender: OFF"
+	HitboxBtn.BackgroundColor3 = hitboxActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+task.spawn(function()
+	while task.wait(1) do
+		if hitboxActive then
+			for _, player in ipairs(Players:GetPlayers()) do
+				if player ~= LP and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+					local hrp = player.Character.HumanoidRootPart
+					hrp.Size = Vector3.new(25, 25, 25)
+					hrp.Transparency = 0.4
+					hrp.CanCollide = false
+					if not hrp:FindFirstChild("RedHitboxSelection") then
+						local selectionBox = Instance.new("SelectionBox", hrp)
+						selectionBox.Name = "RedHitboxSelection"
+						selectionBox.Adornee = hrp
+						selectionBox.Color3 = Color3.fromRGB(255, 0, 0)
+						selectionBox.LineThickness = 0.08
+					end
+				end
+			end
+		end
+	end
+end)
+
+-- God Mode
+GodBtn.MouseButton1Click:Connect(function()
+	godActive = not godActive
+	GodBtn.Text = godActive and "🛡️ God Mode: ON" or "🛡️ God Mode: OFF"
+	GodBtn.BackgroundColor3 = godActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+task.spawn(function()
+	while task.wait(0.1) do
+		if godActive and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+			local hum = LP.Character.Humanoid
+			hum.Health = hum.MaxHealth
+		end
+	end
+end)
+
+-- Damage Booster
+DmgBtn.MouseButton1Click:Connect(function()
+	dmgActive = not dmgActive
+	DmgBtn.Text = dmgActive and "⚔️ Damage Booster (9999999): ON" or "⚔️ Damage Booster (9999999): OFF"
+	DmgBtn.BackgroundColor3 = dmgActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+task.spawn(function()
+	while task.wait(0.2) do
+		if dmgActive and LP.Character then
+			local function boostItem(container)
+				if not container then return end
+				for _, item in ipairs(container:GetChildren()) do
+					if item:IsA("Tool") then
+						for _, v in ipairs(item:GetDescendants()) do
+							if v:IsA("NumberValue") or v:IsA("IntValue") then
+								local n = v.Name:lower()
+								if n:find("damage") or n:find("dmg") or n:find("power") or n:find("atk") then
+									v.Value = 9999999
+								end
+							end
+						end
+					end
+				end
+			end
+			boostItem(LP.Character)
+			boostItem(LP.Backpack)
+		end
+	end
+end)
+
+-- Fast Attack
+FastAtkBtn.MouseButton1Click:Connect(function()
+	fastAtkActive = not fastAtkActive
+	FastAtkBtn.Text = fastAtkActive and "⚡ Fast Attack (9999999 ตีไวโคตร): ON" or "⚡ Fast Attack (9999999 ตีไวโคตร): OFF"
+	FastAtkBtn.BackgroundColor3 = fastAtkActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+RunService.RenderStepped:Connect(function()
+	if fastAtkActive and LP.Character then
+		pcall(function()
+			local tool = LP.Character:FindFirstChildOfClass("Tool")
+			if tool then
+				tool:Activate()
+				for _, descendant in ipairs(tool:GetDescendants()) do
+					if descendant:IsA("NumberValue") or descendant:IsA("IntValue") then
+						local n = descendant.Name:lower()
+						if n:find("cooldown") or n:find("cd") or n:find("delay") or n:find("speed") or n:find("rate") then
+							descendant.Value = 0.0000001
+						elseif n:find("damage") or n:find("dmg") or n:find("power") then
+							descendant.Value = 9999999
+						end
+					elseif descendant:IsA("RemoteEvent") then
+						local n = descendant.Name:lower()
+						if n:find("attack") or n:find("hit") or n:find("slash") or n:find("skill") or n:find("combat") or n:find("damage") then
+							for _ = 1, 5 do
+								descendant:FireServer(9999999)
+							end
+						end
+					elseif descendant:IsA("RemoteFunction") then
+						local n = descendant.Name:lower()
+						if n:find("attack") or n:find("hit") or n:find("slash") or n:find("skill") then
+							pcall(function()
+								descendant:InvokeServer(9999999)
+							end)
+						end
+					end
+				end
+			end
+		end)
+	end
+end)
+
+-- Custom AOE Melee
+CustomToolBtn.MouseButton1Click:Connect(function()
+	customToolActive = not customToolActive
+	CustomToolBtn.Text = customToolActive and "🔥 Custom AOE Melee (Radius 15): ON" or "🔥 Custom AOE Melee (Radius 15): OFF"
+	CustomToolBtn.BackgroundColor3 = customToolActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+local RANGE = 15
+local HITS_PER_FRAME = 3
+local customParams = OverlapParams.new()
+customParams.FilterType = Enum.RaycastFilterType.Exclude
+
+RunService.Heartbeat:Connect(function()
+	if not customToolActive then return end
+	pcall(function()
+		local char = LP.Character
+		local root = char and char:FindFirstChild("HumanoidRootPart")
+		if not root then return end
+		customParams.FilterDescendantsInstances = {char}
+		local parts = workspace:GetPartBoundsInRadius(root.Position + root.CFrame.LookVector * 5, RANGE, customParams)
+		local done = {}
+		for _, part in ipairs(parts) do
+			local hum = part.Parent and part.Parent:FindFirstChildOfClass("Humanoid")
+			if hum and not done[hum] and hum.Health > 0 then
+				done[hum] = true
+				for _ = 1, HITS_PER_FRAME do
+					hum:TakeDamage(math.huge)
+				end
+				hum.Health = 0
+			end
+		end
+	end)
+end)
+
+-- Kill Aura
+KillAuraBtn.MouseButton1Click:Connect(function()
+	killAuraActive = not killAuraActive
+	KillAuraBtn.Text = killAuraActive and "🔪 Kill Aura: ON" or "🔪 Kill Aura: OFF"
+	KillAuraBtn.BackgroundColor3 = killAuraActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+task.spawn(function()
+	while task.wait(0.03) do
+		if killAuraActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+			pcall(function()
+				local myPos = LP.Character.HumanoidRootPart.Position
+				for _, player in ipairs(Players:GetPlayers()) do
+					if player ~= LP and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+						if (player.Character.HumanoidRootPart.Position - myPos).Magnitude <= 35 then
+							local tool = LP.Character:FindFirstChildOfClass("Tool")
+							if tool then
+								tool:Activate()
+							end
+						end
+					end
+				end
+			end)
+		end
+	end
+end)
+
+-- Aimbot / Lock Head
+AimbotBtn.MouseButton1Click:Connect(function()
+	aimbotActive = not aimbotActive
+	AimbotBtn.Text = aimbotActive and "🎯 Lock Head (Aimbot): ON" or "🎯 Lock Head (Aimbot): OFF"
+	AimbotBtn.BackgroundColor3 = aimbotActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+RunService.RenderStepped:Connect(function()
+	if aimbotActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+		pcall(function()
+			local closestTarget = nil
+			local shortestDist = math.huge
+			local myPos = LP.Character.HumanoidRootPart.Position
+			local mousePos = UIS:GetMouseLocation()
+			for _, player in ipairs(Players:GetPlayers()) do
+				if player ~= LP and player.Character and player.Character:FindFirstChild("Head") and player.Character:FindFirstChild("Humanoid") then
+					local hum = player.Character.Humanoid
+					local head = player.Character.Head
+					if hum.Health > 0 and (head.Position - myPos).Magnitude <= currentAimbotDist then
+						local screenPoint, onScreen = cam:WorldToViewportPoint(head.Position)
+						if onScreen then
+							local dist = (Vector2.new(screenPoint.X, screenPoint.Y) - mousePos).Magnitude
+							if dist < shortestDist then
+								shortestDist = dist
+								closestTarget = head
+							end
+						end
+					end
+				end
+			end
+			if closestTarget then
+				local targetCFrame = CFrame.new(cam.CFrame.Position, closestTarget.Position)
+				cam.CFrame = cam.CFrame:Lerp(targetCFrame, currentLockStrength)
+			end
+		end)
+	end
+end)
+
+-- ESP Wallhack
+local espBoxFolder = Instance.new("Folder", SG)
+espBoxFolder.Name = "ESPFolder"
+local ESP_MAX_DIST = 200
+
+EspBtn.MouseButton1Click:Connect(function()
+	espActive = not espActive
+	EspBtn.Text = espActive and "👀 ESP Wallhack: ON" or "👀 ESP Wallhack: OFF"
+	EspBtn.BackgroundColor3 = espActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+	if not espActive then
+		espBoxFolder:ClearAllChildren()
+	end
+end)
+
+RunService.RenderStepped:Connect(function()
+	if espActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+		local myPos = LP.Character.HumanoidRootPart.Position
+		for _, player in ipairs(Players:GetPlayers()) do
+			if player ~= LP and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
+				local hrp = player.Character.HumanoidRootPart
+				local hum = player.Character.Humanoid
+				local dist = (hrp.Position - myPos).Magnitude
+				local box = espBoxFolder:FindFirstChild(player.Name)
+				if hum.Health > 0 and dist <= ESP_MAX_DIST then
+					if not box then
+						box = Instance.new("Highlight", espBoxFolder)
+						box.Name = player.Name
+						box.FillColor = Color3.fromRGB(255, 0, 0)
+						box.OutlineColor = Color3.fromRGB(255, 255, 255)
+						box.FillTransparency = 0.4
+						box.OutlineTransparency = 0
+					end
+					box.Adornee = player.Character
+				elseif box then
+					box:Destroy()
+				end
+			end
+		end
+	end
+end)
+
+-- Anti-Ragdoll
+AntiRagdollBtn.MouseButton1Click:Connect(function()
+	antiRagdollActive = not antiRagdollActive
+	AntiRagdollBtn.Text = antiRagdollActive and "🛡️ Anti-Ragdoll: ON" or "🛡️ Anti-Ragdoll: OFF"
+	AntiRagdollBtn.BackgroundColor3 = antiRagdollActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+RunService.RenderStepped:Connect(function()
+	if antiRagdollActive and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+		pcall(function()
+			LP.Character.Humanoid.PlatformStand = false
+			for _, v in ipairs(LP.Character:GetDescendants()) do
+				if v:IsA("BallSocketConstraint") or v:IsA("HingeConstraint") then
+					v.Enabled = false
+				end
+			end
+		end)
+	end
+end)
+
+-- Invisibility
+InvisBtn.MouseButton1Click:Connect(function()
+	invisActive = not invisActive
+	InvisBtn.Text = invisActive and "👻 Invisibility: ON" or "👻 Invisibility: OFF"
+	InvisBtn.BackgroundColor3 = invisActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+	if not LP.Character then return end
+	if invisActive then
+		table.clear(savedTransparencies)
+		for _, v in ipairs(LP.Character:GetDescendants()) do
+			if v:IsA("BasePart") or v:IsA("Decal") then
+				savedTransparencies[v] = v.Transparency
+				v.Transparency = 1
+			end
+		end
+	else
+		for v, oldT in pairs(savedTransparencies) do
+			if v and v.Parent then
+				v.Transparency = oldT
+			end
+		end
+		table.clear(savedTransparencies)
+	end
+end)
+
+-- Spin Bot
+SpinBtn.MouseButton1Click:Connect(function()
+	spinActive = not spinActive
+	SpinBtn.Text = spinActive and "🌀 Spin Bot: ON" or "🌀 Spin Bot: OFF"
+	SpinBtn.BackgroundColor3 = spinActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+RunService.RenderStepped:Connect(function()
+	if spinActive and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+		local hrp = LP.Character.HumanoidRootPart
+		hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(60), 0)
+	end
+end)
+
+-- Infinite Jump
+InfJumpBtn.MouseButton1Click:Connect(function()
+	infJumpEnabled = not infJumpEnabled
+	InfJumpBtn.Text = infJumpEnabled and "🦘 Infinite Jump: ON" or "🦘 Infinite Jump: OFF"
+	InfJumpBtn.BackgroundColor3 = infJumpEnabled and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+UIS.JumpRequest:Connect(function()
+	if infJumpEnabled and LP.Character and LP.Character:FindFirstChildOfClass("Humanoid") then
+		LP.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+	end
+end)
+
+-- Noclip
+NoclipBtn.MouseButton1Click:Connect(function()
+	noclipEnabled = not noclipEnabled
+	NoclipBtn.Text = noclipEnabled and "🚶 Noclip (Walk Through): ON" or "🚶 Noclip (Walk Through): OFF"
+	NoclipBtn.BackgroundColor3 = noclipEnabled and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+	if not noclipEnabled and LP.Character then
+		for _, v in ipairs(LP.Character:GetDescendants()) do
+			if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then
+				v.CanCollide = true
+			end
+		end
+	end
+end)
+
+RunService.Stepped:Connect(function()
+	if noclipEnabled and LP.Character then
+		for _, v in ipairs(LP.Character:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.CanCollide = false
+			end
+		end
+	end
+end)
+
+-- No Fall Damage
+NoFallBtn.MouseButton1Click:Connect(function()
+	noFallEnabled = not noFallEnabled
+	NoFallBtn.Text = noFallEnabled and "🪂 No Fall Damage: ON" or "🪂 No Fall Damage: OFF"
+	NoFallBtn.BackgroundColor3 = noFallEnabled and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+RunService.Stepped:Connect(function()
+	if noFallEnabled then
+		pcall(function()
+			if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+				LP.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+				LP.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+			end
+		end)
+	end
+end)
+
+-- Fullbright
+FullbrightBtn.MouseButton1Click:Connect(function()
+	fullbrightActive = not fullbrightActive
+	FullbrightBtn.Text = fullbrightActive and "💡 Fullbright (Bright Map): ON" or "💡 Fullbright (Bright Map): OFF"
+	FullbrightBtn.BackgroundColor3 = fullbrightActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+	if fullbrightActive then
+		Lighting.Brightness = 2
+		Lighting.ClockTime = 14
+		Lighting.FogEnd = 100000
+		Lighting.GlobalShadows = false
+	else
+		Lighting.Brightness = 1
+		Lighting.ClockTime = 12
+		Lighting.GlobalShadows = true
+	end
+end)
+
+-- Zoom Extender
+ZoomBtn.MouseButton1Click:Connect(function()
+	zoomEnabled = not zoomEnabled
+	ZoomBtn.Text = zoomEnabled and "🔍 Max Camera Zoom: ON" or "🔍 Max Camera Zoom: OFF"
+	ZoomBtn.BackgroundColor3 = zoomEnabled and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+	LP.CameraMaxZoomDistance = zoomEnabled and 99999 or 400
+end)
+LP.CameraMaxZoomDistance = 99999
+
+-- Dungeon Mob Helpers
+local function isPlayerModel(model)
+	for _, plr in ipairs(Players:GetPlayers()) do
+		if plr.Character and (model == plr.Character or model:IsDescendantOf(plr.Character)) then
+			return true
+		end
+	end
+	return false
+end
+
+local function getNearestMonster(maxDist)
+	local char = LP.Character
+	local root = char and char:FindFirstChild("HumanoidRootPart")
+	if not root then return nil, nil end
+
+	local bestHum, bestRoot = nil, nil
+	local bestDist = maxDist or math.huge
+
+	for _, desc in ipairs(workspace:GetDescendants()) do
+		if desc:IsA("Humanoid") and desc.Health > 0 then
+			local model = desc.Parent
+			if model and model ~= char and not isPlayerModel(model) then
+				local mobRoot = model:FindFirstChild("HumanoidRootPart") or model.PrimaryPart or model:FindFirstChildWhichIsA("BasePart")
+				if mobRoot then
+					local d = (mobRoot.Position - root.Position).Magnitude
+					if d < bestDist then
+						bestDist = d
+						bestHum = desc
+						bestRoot = mobRoot
+					end
+				end
+			end
+		end
+	end
+
+	return bestHum, bestRoot
+end
+
+local function triggerAttack()
+	local char = LP.Character
+	if not char then return end
+	local tool = char:FindFirstChildOfClass("Tool")
+	if tool then
+		pcall(function() tool:Activate() end)
+	end
+end
+
+-- Auto Farm Dungeon Mob Toggle
+AutoDungeonMobBtn.MouseButton1Click:Connect(function()
+	autoDungeonMobActive = not autoDungeonMobActive
+	AutoDungeonMobBtn.Text = autoDungeonMobActive and "🐉 Auto Farm Dungeon Mob: ON" or "🐉 Auto Farm Dungeon Mob: OFF"
+	AutoDungeonMobBtn.BackgroundColor3 = autoDungeonMobActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+task.spawn(function()
+	while task.wait(0.08) do
+		if autoDungeonMobActive then
+			pcall(function()
+				local char = LP.Character
+				local root = char and char:FindFirstChild("HumanoidRootPart")
+				local hum = char and char:FindFirstChildOfClass("Humanoid")
+				if not root or not hum or hum.Health <= 0 then return end
+
+				local _, mobRoot = getNearestMonster(currentMobDist)
+				if mobRoot then
+					root.CFrame = mobRoot.CFrame * CFrame.new(0, 0, 4)
+					triggerAttack()
+				end
+			end)
+		end
+	end
+end)
+
+-- Dungeon Mob Pull Aura Toggle
+MobAuraBtn.MouseButton1Click:Connect(function()
+	mobAuraActive = not mobAuraActive
+	MobAuraBtn.Text = mobAuraActive and "🧲 Dungeon Mob Pull Aura: ON" or "🧲 Dungeon Mob Pull Aura: OFF"
+	MobAuraBtn.BackgroundColor3 = mobAuraActive and Color3.fromRGB(0, 170, 80) or Color3.fromRGB(100, 100, 100)
+end)
+
+RunService.Heartbeat:Connect(function()
+	if not mobAuraActive then return end
+	pcall(function()
+		local char = LP.Character
+		local root = char and char:FindFirstChild("HumanoidRootPart")
+		if not root then return end
+
+		local pullTarget = root.CFrame * CFrame.new(0, 0, -5)
+		for _, desc in ipairs(workspace:GetDescendants()) do
+			if desc:IsA("Humanoid") and desc.Health > 0 then
+				local model = desc.Parent
+				if model and model ~= char and not isPlayerModel(model) then
+					local mobRoot = model:FindFirstChild("HumanoidRootPart") or model.PrimaryPart
+					if mobRoot and (mobRoot.Position - root.Position).Magnitude <= currentMobDist then
+						mobRoot.CFrame = pullTarget
+					end
+				end
+			end
+		end
+	end)
+end)
+
+-- TP Dungeon Portal / Next Room
+TpDungeonBtn.MouseButton1Click:Connect(function()
+	pcall(function()
+		local char = LP.Character
+		local root = char and char:FindFirstChild("HumanoidRootPart")
+		if not root then return end
+
+		local keywords = {"portal", "dungeon", "gate", "next", "room", "exit", "warp", "tp"}
+		for _, obj in ipairs(workspace:GetDescendants()) do
+			if obj:IsA("BasePart") then
+				local lowerName = obj.Name:lower()
+				for _, kw in ipairs(keywords) do
+					if lowerName:find(kw) then
+						root.CFrame = obj.CFrame + Vector3.new(0, 4, 0)
+						return
+					end
+				end
+			end
+		end
+	end)
+end)
+
+-- Delete All Map Parts
+local function isInsideAnyCharacter(obj)
+	for _, player in ipairs(Players:GetPlayers()) do
+		if player.Character and (obj == player.Character or obj:IsDescendantOf(player.Character)) then
+			return true
+		end
+	end
+	return false
+end
+
+DeleteMapBtn.MouseButton1Click:Connect(function()
+	pcall(function()
+		for _, v in ipairs(workspace:GetChildren()) do
+			if v ~= workspace.CurrentCamera and (v:IsA("Model") or v:IsA("BasePart")) then
+				if not isInsideAnyCharacter(v) then
+					v:Destroy()
+				end
+			end
+		end
+	end)
+end)
+
+-- Instant Win / Objective TP
+WinBtn.MouseButton1Click:Connect(function()
+	pcall(function()
+		for _, obj in ipairs(workspace:GetDescendants()) do
+			if obj:IsA("BasePart") then
+				local n = obj.Name:lower()
+				if n:find("win") or n:find("goal") or n:find("end") or n:find("flag") or n:find("finish") then
+					if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+						LP.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 5, 0)
+						break
+					end
+				end
+			end
+		end
+	end)
+end)
+
+-- Bring All Players
+BringAllBtn.MouseButton1Click:Connect(function()
+	pcall(function()
+		if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+			local myPos = LP.Character.HumanoidRootPart.CFrame
+			for _, player in ipairs(Players:GetPlayers()) do
+				if player ~= LP and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+					player.Character.HumanoidRootPart.CFrame = myPos + Vector3.new(3, 0, 3)
+				end
+			end
+		end
+	end)
+end)
+
+-- Reset / Kill Self
+ResetBtn.MouseButton1Click:Connect(function()
+	pcall(function()
+		if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+			LP.Character.Humanoid.Health = 0
+		end
+	end)
+end)
+
+-- Fly Logic
+FlyBtn.MouseButton1Click:Connect(function() flying = true end)
+LandBtn.MouseButton1Click:Connect(function()
+	flying = false
+	verticalDir = 0
+	if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+		LP.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.zero
+	end
+end)
+
+FlyUpBtn.MouseButton1Down:Connect(function() verticalDir = 1 end)
+FlyUpBtn.TouchTap:Connect(function() verticalDir = (verticalDir == 1) and 0 or 1 end)
+FlyDownBtn.MouseButton1Down:Connect(function() verticalDir = -1 end)
+FlyDownBtn.TouchTap:Connect(function() verticalDir = (verticalDir == -1) and 0 or -1 end)
+
+RunService.RenderStepped:Connect(function()
+	if flying and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") and LP.Character:FindFirstChild("Humanoid") then
+		local hrp = LP.Character.HumanoidRootPart
+		local hum = LP.Character.Humanoid
+		hrp.AssemblyLinearVelocity = Vector3.new(0, 1, 0)
+		local moveDir = hum.MoveDirection
+		local speedMultiplier = currentFlySpeed / 50
+		local upward = Vector3.new(0, verticalDir * speedMultiplier, 0)
+		if moveDir.Magnitude > 0 then
+			local flatLook = cam.CFrame.LookVector * Vector3.new(1, 0, 1)
+			if flatLook.Magnitude > 0 then
+				hrp.CFrame = hrp.CFrame + flatLook.Unit * moveDir.Magnitude * speedMultiplier + upward
+			end
+		elseif verticalDir ~= 0 then
+			hrp.CFrame = hrp.CFrame + upward
+		end
+	end
+end)
+
+-- Toggle & Close Hub
+ToggleBtn.MouseButton1Click:Connect(function()
+	RoundIconBtn.Position = MainFrame.Position
+	MainFrame.Visible = false
+	RoundIconBtn.Visible = true
+end)
+
+RoundIconBtn.MouseButton1Click:Connect(function()
+	MainFrame.Position = RoundIconBtn.Position
+	RoundIconBtn.Visible = false
+	MainFrame.Visible = true
+end)
+
+ExitHubBtn.MouseButton1Click:Connect(function() SG:Destroy() end)
