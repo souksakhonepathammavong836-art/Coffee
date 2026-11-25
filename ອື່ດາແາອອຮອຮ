@@ -1,0 +1,220 @@
+-- [[ Coffee Hub - Arena Fast Attack ]] --
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local LocalPlayer = Players.LocalPlayer
+
+if game.CoreGui:FindFirstChild("CoffeeFastAttackHub") then
+    game.CoreGui.CoffeeFastAttackHub:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "CoffeeFastAttackHub"
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 225, 0, 290)
+MainFrame.Position = UDim2.new(0.5, -112, 0.25, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 30)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
+
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
+
+local TopBar = Instance.new("Frame")
+TopBar.Size = UDim2.new(1, 0, 0, 32)
+TopBar.BackgroundColor3 = Color3.fromRGB(38, 38, 48)
+TopBar.BorderSizePixel = 0
+TopBar.Parent = MainFrame
+
+Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 8)
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -40, 1, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "Coffee Hub - Fast Attack"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 14
+Title.Font = Enum.Font.GothamBold
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = TopBar
+
+local MinBtn = Instance.new("TextButton")
+MinBtn.Size = UDim2.new(0, 26, 0, 26)
+MinBtn.Position = UDim2.new(1, -30, 0, 3)
+MinBtn.BackgroundColor3 = Color3.fromRGB(65, 65, 80)
+MinBtn.Text = "-"
+MinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinBtn.Font = Enum.Font.GothamBold
+MinBtn.TextSize = 16
+MinBtn.Parent = TopBar
+
+Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 6)
+
+local Content = Instance.new("Frame")
+Content.Size = UDim2.new(1, 0, 1, -36)
+Content.Position = UDim2.new(0, 0, 0, 36)
+Content.BackgroundTransparency = 1
+Content.Parent = MainFrame
+
+local minimized = false
+MinBtn.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    Content.Visible = not minimized
+    MainFrame.Size = minimized and UDim2.new(0, 225, 0, 32) or UDim2.new(0, 225, 0, 290)
+    MinBtn.Text = minimized and "+" or "-"
+end)
+
+local function CreateToggle(text, posY, callback)
+    local Btn = Instance.new("TextButton")
+    Btn.Size = UDim2.new(0.9, 0, 0, 35)
+    Btn.Position = UDim2.new(0.05, 0, 0, posY)
+    Btn.BackgroundColor3 = Color3.fromRGB(45, 45, 58)
+    Btn.Text = text .. ": OFF"
+    Btn.TextColor3 = Color3.fromRGB(230, 230, 230)
+    Btn.Font = Enum.Font.GothamSemibold
+    Btn.TextSize = 13
+    Btn.Parent = Content
+
+    Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 6)
+
+    local state = false
+    Btn.MouseButton1Click:Connect(function()
+        state = not state
+        Btn.Text = text .. (state and ": ON" or ": OFF")
+        Btn.BackgroundColor3 = state and Color3.fromRGB(46, 160, 67) or Color3.fromRGB(45, 45, 58)
+        callback(state)
+    end)
+end
+
+-- ຕົວແປຄວບຄຸມ
+local fastAttackEnabled = false
+local attackDelay = 0.08 -- ຄ່າເລີ່ມຕົ້ນ (ປັບໄດ້ລະຫວ່າງ 0.03 - 0.30)
+local speedEnabled = false
+local noclipEnabled = false
+local infJumpEnabled = false
+
+-- ປຸ່ມຕີໄວ
+CreateToggle("ຕີໄວ (Fast Attack)", 6, function(state)
+    fastAttackEnabled = state
+end)
+
+-- ແຖບປັບຄວາມໄວການຕີ (Delay)
+local DelayLabel = Instance.new("TextLabel")
+DelayLabel.Size = UDim2.new(0.54, 0, 0, 30)
+DelayLabel.Position = UDim2.new(0.05, 0, 0, 47)
+DelayLabel.BackgroundColor3 = Color3.fromRGB(34, 34, 44)
+DelayLabel.Text = "Delay: 0.08s"
+DelayLabel.TextColor3 = Color3.fromRGB(255, 220, 120)
+DelayLabel.Font = Enum.Font.GothamBold
+DelayLabel.TextSize = 12
+DelayLabel.Parent = Content
+Instance.new("UICorner", DelayLabel).CornerRadius = UDim.new(0, 6)
+
+local SlowerBtn = Instance.new("TextButton")
+SlowerBtn.Size = UDim2.new(0.16, 0, 0, 30)
+SlowerBtn.Position = UDim2.new(0.61, 0, 0, 47)
+SlowerBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 75)
+SlowerBtn.Text = "+Slow"
+SlowerBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SlowerBtn.Font = Enum.Font.GothamBold
+SlowerBtn.TextSize = 11
+SlowerBtn.Parent = Content
+Instance.new("UICorner", SlowerBtn).CornerRadius = UDim.new(0, 6)
+
+local FasterBtn = Instance.new("TextButton")
+FasterBtn.Size = UDim2.new(0.16, 0, 0, 30)
+FasterBtn.Position = UDim2.new(0.79, 0, 0, 47)
+FasterBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 75)
+FasterBtn.Text = "-Fast"
+FasterBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FasterBtn.Font = Enum.Font.GothamBold
+FasterBtn.TextSize = 11
+FasterBtn.Parent = Content
+Instance.new("UICorner", FasterBtn).CornerRadius = UDim.new(0, 6)
+
+local function RefreshDelayText()
+    DelayLabel.Text = string.format("Delay: %.2fs", attackDelay)
+end
+
+SlowerBtn.MouseButton1Click:Connect(function()
+    attackDelay = math.min(0.50, attackDelay + 0.02)
+    RefreshDelayText()
+end)
+
+FasterBtn.MouseButton1Click:Connect(function()
+    attackDelay = math.max(0.03, attackDelay - 0.02)
+    RefreshDelayText()
+end)
+
+-- ປຸ່ມເສີມສຳລັບ Arena
+CreateToggle("ແລ່ນໄວ (Speed 45)", 85, function(state)
+    speedEnabled = state
+    if not state and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+        LocalPlayer.Character.Humanoid.WalkSpeed = 16
+    end
+end)
+
+CreateToggle("ທະລຸກຳແພງ (Noclip)", 126, function(state)
+    noclipEnabled = state
+end)
+
+CreateToggle("ໂດດບໍ່ຈຳກັດ (Inf Jump)", 167, function(state)
+    infJumpEnabled = state
+end)
+
+-- Loop ຕີໄວ (Tool + Tap)
+task.spawn(function()
+    while true do
+        task.wait(attackDelay)
+        if fastAttackEnabled then
+            local char = LocalPlayer.Character
+            if char then
+                local tool = char:FindFirstChildOfClass("Tool")
+                if tool then
+                    pcall(function()
+                        tool:Activate()
+                    end)
+                end
+
+                pcall(function()
+                    local cam = workspace.CurrentCamera
+                    local x = cam and cam.ViewportSize.X * 0.65 or 600
+                    local y = cam and cam.ViewportSize.Y * 0.65 or 400
+                    VirtualInputManager:SendMouseButtonEvent(x, y, 0, true, game, 0)
+                    task.wait(0.01)
+                    VirtualInputManager:SendMouseButtonEvent(x, y, 0, false, game, 0)
+                end)
+            end
+        end
+    end
+end)
+
+-- Loop Movement & Noclip
+RunService.Stepped:Connect(function()
+    local char = LocalPlayer.Character
+    if char then
+        local hum = char:FindFirstChild("Humanoid")
+        if hum and speedEnabled then
+            hum.WalkSpeed = 45
+        end
+        if noclipEnabled then
+            for _, part in ipairs(char:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
+        end
+    end
+end)
+
+UserInputService.JumpRequest:Connect(function()
+    if infJumpEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+        LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
