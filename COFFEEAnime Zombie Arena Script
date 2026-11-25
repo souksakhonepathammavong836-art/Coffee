@@ -1,0 +1,131 @@
+-- [[ Coffee GUI - Open/Close & Minimize/Expand Template (English) ]] --
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+if game.CoreGui:FindFirstChild("CoffeeToggleGUI") then
+    game.CoreGui.CoffeeToggleGUI:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "CoffeeToggleGUI"
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ResetOnSpawn = false
+
+-- 1. Floating button to open/close the main window
+local OpenCloseBtn = Instance.new("TextButton")
+OpenCloseBtn.Name = "OpenCloseBtn"
+OpenCloseBtn.Size = UDim2.new(0, 95, 0, 34)
+OpenCloseBtn.Position = UDim2.new(0.05, 0, 0.2, 0)
+OpenCloseBtn.BackgroundColor3 = Color3.fromRGB(35, 130, 220)
+OpenCloseBtn.Text = "Hide GUI"
+OpenCloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+OpenCloseBtn.Font = Enum.Font.GothamBold
+OpenCloseBtn.TextSize = 13
+OpenCloseBtn.Active = true
+OpenCloseBtn.Draggable = true
+OpenCloseBtn.Parent = ScreenGui
+Instance.new("UICorner", OpenCloseBtn).CornerRadius = UDim.new(0, 8)
+
+-- 2. Main GUI window
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+local normalSize = UDim2.new(0, 230, 0, 220)
+local miniSize = UDim2.new(0, 230, 0, 34)
+MainFrame.Size = normalSize
+MainFrame.Position = UDim2.new(0.5, -115, 0.25, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(22, 22, 28)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = true
+MainFrame.Parent = ScreenGui
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
+
+-- Top bar
+local TopBar = Instance.new("Frame")
+TopBar.Size = UDim2.new(1, 0, 0, 34)
+TopBar.BackgroundColor3 = Color3.fromRGB(36, 36, 48)
+TopBar.BorderSizePixel = 0
+TopBar.Parent = MainFrame
+Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 8)
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -42, 1, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "Coffee Hub UI"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 14
+Title.Font = Enum.Font.GothamBold
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = TopBar
+
+-- Minimize / Expand button (- / +)
+local MinMaxBtn = Instance.new("TextButton")
+MinMaxBtn.Size = UDim2.new(0, 26, 0, 26)
+MinMaxBtn.Position = UDim2.new(1, -30, 0, 4)
+MinMaxBtn.BackgroundColor3 = Color3.fromRGB(65, 65, 82)
+MinMaxBtn.Text = "-"
+MinMaxBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinMaxBtn.Font = Enum.Font.GothamBold
+MinMaxBtn.TextSize = 16
+MinMaxBtn.Parent = TopBar
+Instance.new("UICorner", MinMaxBtn).CornerRadius = UDim.new(0, 6)
+
+-- Content container
+local Content = Instance.new("Frame")
+Content.Size = UDim2.new(1, 0, 1, -38)
+Content.Position = UDim2.new(0, 0, 0, 38)
+Content.BackgroundTransparency = 1
+Content.Parent = MainFrame
+
+-- Minimize / Expand state
+local isMinimized = false
+MinMaxBtn.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    Content.Visible = not isMinimized
+    MainFrame.Size = isMinimized and miniSize or normalSize
+    MinMaxBtn.Text = isMinimized and "+" or "-"
+end)
+
+-- Open / Close window state
+local isVisible = true
+OpenCloseBtn.MouseButton1Click:Connect(function()
+    isVisible = not isVisible
+    MainFrame.Visible = isVisible
+    OpenCloseBtn.Text = isVisible and "Hide GUI" or "Show GUI"
+    OpenCloseBtn.BackgroundColor3 = isVisible and Color3.fromRGB(35, 130, 220) or Color3.fromRGB(46, 160, 67)
+end)
+
+-- Helper function to create toggle buttons inside Content
+local function AddButton(labelText, yPos, onToggle)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0.9, 0, 0, 36)
+    btn.Position = UDim2.new(0.05, 0, 0, yPos)
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 58)
+    btn.Text = labelText .. ": OFF"
+    btn.TextColor3 = Color3.fromRGB(235, 235, 235)
+    btn.Font = Enum.Font.GothamSemibold
+    btn.TextSize = 13
+    btn.Parent = Content
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+
+    local active = false
+    btn.MouseButton1Click:Connect(function()
+        active = not active
+        btn.Text = labelText .. (active and ": ON" or ": OFF")
+        btn.BackgroundColor3 = active and Color3.fromRGB(46, 160, 67) or Color3.fromRGB(45, 45, 58)
+        if onToggle then
+            onToggle(active)
+        end
+    end)
+end
+
+-- Example feature buttons
+AddButton("Feature 1", 8, function(state)
+    print("Feature 1:", state)
+end)
+
+AddButton("Feature 2", 52, function(state)
+    print("Feature 2:", state)
+end)
